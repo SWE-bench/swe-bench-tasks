@@ -17,7 +17,7 @@ sb-dockerfile-gen-og SWE-bench/SWE-bench_Verified --instance_ids django__django-
 
 ## Output
 
-Generated Dockerfiles are written to `src/dockerfiles/<instance_id>/Dockerfile`.
+Generated Dockerfiles are written to `src/dockerfiles/<instance_id>.Dockerfile`.
 
 ## Install
 

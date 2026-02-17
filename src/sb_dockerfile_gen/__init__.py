@@ -13,23 +13,17 @@ import sb_dockerfile_gen.data
 from sb_dockerfile_gen.constants import (
     CONTAINER_ENV_NAME,
     CONTAINER_WORKDIR,
-    END_TEST_OUTPUT,
-    FAIL_ONLY_REPOS,
     HEADERS,
     MAP_REPO_TO_ENV_YML_PATHS,
     MAP_REPO_TO_INSTALL,
-    MAP_REPO_TO_PARSER_NAME,
     MAP_REPO_TO_REQS_PATHS,
     MAP_REPO_VERSION_TO_SPECS,
-    NON_TEST_EXTS,
     REPLACE_REQ_PACKAGES,
-    START_TEST_OUTPUT,
     SWE_BENCH_URL_RAW,
     _DOCKERFILE_BASE,
 )
 from sb_dockerfile_gen.utils import (
     generate_heredoc_delimiter,
-    get_modified_files,
     git_clone_timesafe,
     make_heredoc_run_command,
 )
@@ -181,29 +175,6 @@ def get_requirements(instance: dict) -> str:
     return requirements_text
 
 
-def get_test_directives(instance: dict) -> list:
-    if instance["repo"] == "swe-bench/humaneval":
-        return ["test.py"]
-
-    diff_pat = r"diff --git a/.* b/(.*)"
-    test_patch = instance["test_patch"]
-    directives = re.findall(diff_pat, test_patch)
-    directives = [
-        d for d in directives if not any(d.endswith(ext) for ext in NON_TEST_EXTS)
-    ]
-
-    if instance["repo"] == "django/django":
-        directives_transformed = []
-        for d in directives:
-            d = d[: -len(".py")] if d.endswith(".py") else d
-            d = d[len("tests/") :] if d.startswith("tests/") else d
-            d = d.replace("/", ".")
-            directives_transformed.append(d)
-        directives = directives_transformed
-
-    return directives
-
-
 def make_repo_script_list(specs, repo, base_commit) -> str:
     setup_commands = [
         *git_clone_timesafe(repo, base_commit, CONTAINER_WORKDIR),
@@ -325,78 +296,6 @@ def _get_dockerfile(instance) -> str:
     return dockerfile
 
 
-# ── Eval script generation ─────────────────────────────────────────────
-
-
-def _get_eval_script(instance) -> str:
-    repo = instance["repo"]
-    version = instance.get("version")
-    base_commit = instance["base_commit"]
-    test_patch = instance["test_patch"]
-    specs = MAP_REPO_VERSION_TO_SPECS[repo][version]
-
-    repo_directory = CONTAINER_WORKDIR
-    env_name = CONTAINER_ENV_NAME
-
-    delimiter = generate_heredoc_delimiter(test_patch)
-    test_files = get_modified_files(test_patch)
-    reset_tests_command = f"git checkout {base_commit} {' '.join(test_files)}"
-    apply_test_patch_command = (
-        f"git apply -v - <<'{delimiter}'\n{test_patch}\n{delimiter}"
-    )
-
-    test_cmds = specs["test_cmd"]
-    if isinstance(test_cmds, str):
-        test_cmds = [test_cmds]
-    test_command = " ".join([*test_cmds, *get_test_directives(instance)])
-
-    eval_commands = [
-        "source /opt/miniconda3/bin/activate",
-        f"conda activate {env_name}",
-        f"cd {repo_directory}",
-    ]
-    if "eval_commands" in specs:
-        eval_commands += specs["eval_commands"]
-    eval_commands += [
-        f"git config --global --add safe.directory {repo_directory}",
-        f"cd {repo_directory}",
-        "git status",
-        "git show",
-        f"git -c core.fileMode=false diff {base_commit}",
-        "source /opt/miniconda3/bin/activate",
-        f"conda activate {env_name}",
-    ]
-    if "install" in specs:
-        eval_commands.append(specs["install"])
-    eval_commands += [
-        reset_tests_command,
-        apply_test_patch_command,
-        f": '{START_TEST_OUTPUT}'",
-        test_command,
-        f": '{END_TEST_OUTPUT}'",
-        reset_tests_command,
-    ]
-
-    return "\n".join(["#!/bin/bash", "set -uxo pipefail"] + eval_commands) + "\n"
-
-
-# ── Metadata generation ────────────────────────────────────────────────
-
-
-def _get_metadata(instance) -> dict:
-    f2p = instance.get("FAIL_TO_PASS", "[]")
-    p2p = instance.get("PASS_TO_PASS", "[]")
-    return {
-        "instance_id": instance["instance_id"],
-        "repo": instance["repo"],
-        "version": instance.get("version"),
-        "log_parser": MAP_REPO_TO_PARSER_NAME[instance["repo"]],
-        "eval_type": "fail_only" if instance["repo"] in FAIL_ONLY_REPOS else "pass_and_fail",
-        "FAIL_TO_PASS": json.loads(f2p) if isinstance(f2p, str) else f2p,
-        "PASS_TO_PASS": json.loads(p2p) if isinstance(p2p, str) else p2p,
-    }
-
-
 # ── CLI ────────────────────────────────────────────────────────────────
 
 
@@ -436,27 +335,21 @@ def generate_instances(
     output_dir: str = "src/instances",
     instance_ids: list[str] | None = None,
 ):
-    """Generate Dockerfile, eval.sh, and metadata.json for each instance."""
+    """Generate Dockerfiles for each instance."""
     instances = load_instances(dataset_name_or_path, split, instance_ids)
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
     for instance in instances:
-        instance_dir = output_path / instance["instance_id"]
-        instance_dir.mkdir(parents=True, exist_ok=True)
+        dockerfile_path = output_path / f"{instance['instance_id']}.Dockerfile"
+        dockerfile_path.write_text(_get_dockerfile(instance))
 
-        (instance_dir / "Dockerfile").write_text(_get_dockerfile(instance))
-        (instance_dir / "eval.sh").write_text(_get_eval_script(instance))
-        (instance_dir / "metadata.json").write_text(
-            json.dumps(_get_metadata(instance), indent=2) + "\n"
-        )
-
-    print(f"Generated {len(instances)} instances in {output_path}")
+    print(f"Generated {len(instances)} Dockerfiles in {output_path}")
 
 
 def main():
     parser = ArgumentParser(
-        description="Generate Dockerfiles, eval scripts, and metadata for SWE-bench (original Python benchmarks)"
+        description="Generate Dockerfiles for SWE-bench (original Python benchmarks)"
     )
     parser.add_argument(
         "dataset",
