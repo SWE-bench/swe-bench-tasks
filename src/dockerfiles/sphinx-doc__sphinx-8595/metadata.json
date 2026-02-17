@@ -1,0 +1,11 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8595",
+  "repo": "sphinx-doc/sphinx",
+  "version": "3.5",
+  "log_parser": "parse_log_sphinx",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "tests/test_ext_autodoc_automodule.py::test_empty_all"
+  ],
+  "PASS_TO_PASS": []
+}

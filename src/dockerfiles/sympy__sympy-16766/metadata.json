@@ -1,0 +1,19 @@
+{
+  "instance_id": "sympy__sympy-16766",
+  "repo": "sympy/sympy",
+  "version": "1.5",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_PythonCodePrinter"
+  ],
+  "PASS_TO_PASS": [
+    "test_MpmathPrinter",
+    "test_NumPyPrinter",
+    "test_SciPyPrinter",
+    "test_pycode_reserved_words",
+    "test_printmethod",
+    "test_codegen_ast_nodes",
+    "test_issue_14283"
+  ]
+}

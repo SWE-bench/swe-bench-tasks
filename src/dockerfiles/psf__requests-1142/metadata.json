@@ -1,0 +1,17 @@
+{
+  "instance_id": "psf__requests-1142",
+  "repo": "psf/requests",
+  "version": "1.1",
+  "log_parser": "parse_log_requests",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_requests.py::RequestsTestCase::test_no_content_length"
+  ],
+  "PASS_TO_PASS": [
+    "test_requests.py::RequestsTestCase::test_basic_building",
+    "test_requests.py::RequestsTestCase::test_entry_points",
+    "test_requests.py::RequestsTestCase::test_invalid_url",
+    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment",
+    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+  ]
+}

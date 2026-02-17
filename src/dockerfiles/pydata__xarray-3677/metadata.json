@@ -1,0 +1,33 @@
+{
+  "instance_id": "pydata__xarray-3677",
+  "repo": "pydata/xarray",
+  "version": "0.12",
+  "log_parser": "parse_log_xarray",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_dataarray"
+  ],
+  "PASS_TO_PASS": [
+    "xarray/tests/test_merge.py::TestMergeInternals::test_broadcast_dimension_size",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_arrays",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_datasets",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dataarray_unnamed",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_simple",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_dims",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_error",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_alignment_error",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_wrong_input_error",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_single_var",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_multi_var",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_preserve_attrs",
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_broadcast",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_broadcast_equals",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_compat",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_auto_align",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[fill_value0]",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2]",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2.0]",
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_no_conflicts"
+  ]
+}

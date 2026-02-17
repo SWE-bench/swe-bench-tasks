@@ -1,0 +1,15 @@
+{
+  "instance_id": "django__django-11066",
+  "repo": "django/django",
+  "version": "3.0",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_existing_content_type_rename_other_database (contenttypes_tests.test_operations.ContentTypeOperationsTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_content_type_rename_conflict (contenttypes_tests.test_operations.ContentTypeOperationsTests)",
+    "test_existing_content_type_rename (contenttypes_tests.test_operations.ContentTypeOperationsTests)",
+    "test_missing_content_type_rename_ignore (contenttypes_tests.test_operations.ContentTypeOperationsTests)"
+  ]
+}

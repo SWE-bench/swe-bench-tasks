@@ -1,0 +1,13 @@
+{
+  "instance_id": "django__django-15127",
+  "repo": "django/django",
+  "version": "4.1",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_override_settings_level_tags (messages_tests.tests.TestLevelTags)"
+  ],
+  "PASS_TO_PASS": [
+    "test_eq (messages_tests.tests.MessageTests)"
+  ]
+}

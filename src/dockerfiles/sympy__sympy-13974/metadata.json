@@ -1,0 +1,16 @@
+{
+  "instance_id": "sympy__sympy-13974",
+  "repo": "sympy/sympy",
+  "version": "1.1",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_tensor_product_simp"
+  ],
+  "PASS_TO_PASS": [
+    "test_tensor_product_abstract",
+    "test_tensor_product_expand",
+    "test_tensor_product_commutator",
+    "test_issue_5923"
+  ]
+}

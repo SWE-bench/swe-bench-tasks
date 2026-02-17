@@ -1,0 +1,15 @@
+{
+  "instance_id": "pytest-dev__pytest-5809",
+  "repo": "pytest-dev/pytest",
+  "version": "4.6",
+  "log_parser": "parse_log_pytest",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "testing/test_pastebin.py::TestPaste::test_create_new_paste"
+  ],
+  "PASS_TO_PASS": [
+    "testing/test_pastebin.py::TestPasteCapture::test_failed",
+    "testing/test_pastebin.py::TestPasteCapture::test_all",
+    "testing/test_pastebin.py::TestPasteCapture::test_non_ascii_paste_text"
+  ]
+}

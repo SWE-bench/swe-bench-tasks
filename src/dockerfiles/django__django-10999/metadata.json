@@ -1,0 +1,23 @@
+{
+  "instance_id": "django__django-10999",
+  "repo": "django/django",
+  "version": "3.0",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_negative (utils_tests.test_dateparse.DurationParseTests)",
+    "test_parse_postgresql_format (utils_tests.test_dateparse.DurationParseTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_parse_date (utils_tests.test_dateparse.DateParseTests)",
+    "test_parse_datetime (utils_tests.test_dateparse.DateParseTests)",
+    "test_parse_time (utils_tests.test_dateparse.DateParseTests)",
+    "test_days (utils_tests.test_dateparse.DurationParseTests)",
+    "test_fractions_of_seconds (utils_tests.test_dateparse.DurationParseTests)",
+    "test_hours_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)",
+    "test_iso_8601 (utils_tests.test_dateparse.DurationParseTests)",
+    "test_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)",
+    "test_parse_python_format (utils_tests.test_dateparse.DurationParseTests)",
+    "test_seconds (utils_tests.test_dateparse.DurationParseTests)"
+  ]
+}

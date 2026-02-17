@@ -1,0 +1,14 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-14141",
+  "repo": "scikit-learn/scikit-learn",
+  "version": "0.22",
+  "log_parser": "parse_log_scikit",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "sklearn/utils/tests/test_show_versions.py::test_get_deps_info"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/utils/tests/test_show_versions.py::test_get_sys_info",
+    "sklearn/utils/tests/test_show_versions.py::test_show_versions_with_blas"
+  ]
+}

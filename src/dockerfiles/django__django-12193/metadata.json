@@ -1,0 +1,23 @@
+{
+  "instance_id": "django__django-12193",
+  "repo": "django/django",
+  "version": "3.1",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_get_context_does_not_mutate_attrs (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)"
+  ],
+  "PASS_TO_PASS": [
+    "test_render_check_exception (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_check_test (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_empty (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_false (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_int (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_none (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_true (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_render_value (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_value_from_datadict (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_value_from_datadict_string_int (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)",
+    "test_value_omitted_from_data (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)"
+  ]
+}

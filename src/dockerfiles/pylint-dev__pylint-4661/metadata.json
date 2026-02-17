@@ -1,0 +1,11 @@
+{
+  "instance_id": "pylint-dev__pylint-4661",
+  "repo": "pylint-dev/pylint",
+  "version": "2.10",
+  "log_parser": "parse_log_pylint",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "tests/lint/unittest_lint.py::test_pylint_home"
+  ],
+  "PASS_TO_PASS": []
+}

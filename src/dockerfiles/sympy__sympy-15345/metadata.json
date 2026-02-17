@@ -1,0 +1,20 @@
+{
+  "instance_id": "sympy__sympy-15345",
+  "repo": "sympy/sympy",
+  "version": "1.4",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_Function"
+  ],
+  "PASS_TO_PASS": [
+    "test_Integer",
+    "test_Rational",
+    "test_Pow",
+    "test_Mul",
+    "test_constants",
+    "test_containers",
+    "test_Integral",
+    "test_Derivative"
+  ]
+}

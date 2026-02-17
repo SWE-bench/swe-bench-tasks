@@ -1,0 +1,19 @@
+{
+  "instance_id": "pylint-dev__pylint-6386",
+  "repo": "pylint-dev/pylint",
+  "version": "2.14",
+  "log_parser": "parse_log_pylint",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "tests/config/test_config.py::test_short_verbose"
+  ],
+  "PASS_TO_PASS": [
+    "tests/config/test_config.py::test_can_read_toml_env_variable",
+    "tests/config/test_config.py::test_unknown_message_id",
+    "tests/config/test_config.py::test_unknown_option_name",
+    "tests/config/test_config.py::test_unknown_short_option_name",
+    "tests/config/test_config.py::test_unknown_confidence",
+    "tests/config/test_config.py::test_unknown_yes_no",
+    "tests/config/test_config.py::test_unknown_py_version"
+  ]
+}

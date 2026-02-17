@@ -1,0 +1,14 @@
+{
+  "instance_id": "sympy__sympy-23413",
+  "repo": "sympy/sympy",
+  "version": "1.11",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_hermite_normal"
+  ],
+  "PASS_TO_PASS": [
+    "test_smith_normal",
+    "test_smith_normal_deprecated"
+  ]
+}

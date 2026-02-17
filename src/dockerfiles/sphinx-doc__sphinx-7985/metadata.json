@@ -1,0 +1,16 @@
+{
+  "instance_id": "sphinx-doc__sphinx-7985",
+  "repo": "sphinx-doc/sphinx",
+  "version": "3.2",
+  "log_parser": "parse_log_sphinx",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "tests/test_build_linkcheck.py::test_defaults",
+    "tests/test_build_linkcheck.py::test_anchors_ignored"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_build_linkcheck.py::test_defaults_json",
+    "tests/test_build_linkcheck.py::test_auth",
+    "tests/test_build_linkcheck.py::test_linkcheck_request_headers"
+  ]
+}

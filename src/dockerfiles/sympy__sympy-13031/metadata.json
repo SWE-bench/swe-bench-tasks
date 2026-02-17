@@ -1,0 +1,21 @@
+{
+  "instance_id": "sympy__sympy-13031",
+  "repo": "sympy/sympy",
+  "version": "1.1",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_sparse_matrix"
+  ],
+  "PASS_TO_PASS": [
+    "test_transpose",
+    "test_trace",
+    "test_CL_RL",
+    "test_add",
+    "test_errors",
+    "test_len",
+    "test_sparse_zeros_sparse_eye",
+    "test_copyin",
+    "test_sparse_solve"
+  ]
+}

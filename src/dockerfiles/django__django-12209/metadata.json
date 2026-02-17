@@ -1,0 +1,11 @@
+{
+  "instance_id": "django__django-12209",
+  "repo": "django/django",
+  "version": "3.1",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "partial(func, *args, **keywords) - new function with partial application"
+  ],
+  "PASS_TO_PASS": []
+}

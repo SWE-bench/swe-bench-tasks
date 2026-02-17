@@ -1,0 +1,21 @@
+{
+  "instance_id": "sympy__sympy-21847",
+  "repo": "sympy/sympy",
+  "version": "1.9",
+  "log_parser": "parse_log_sympy",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_monomials"
+  ],
+  "PASS_TO_PASS": [
+    "test_monomial_count",
+    "test_monomial_mul",
+    "test_monomial_div",
+    "test_monomial_gcd",
+    "test_monomial_lcm",
+    "test_monomial_max",
+    "test_monomial_pow",
+    "test_monomial_min",
+    "test_monomial_divides"
+  ]
+}

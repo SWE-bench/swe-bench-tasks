@@ -1,0 +1,21 @@
+{
+  "instance_id": "django__django-15863",
+  "repo": "django/django",
+  "version": "4.2",
+  "log_parser": "parse_log_django",
+  "eval_type": "pass_and_fail",
+  "FAIL_TO_PASS": [
+    "test_inputs (template_tests.filter_tests.test_floatformat.FunctionTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_floatformat01 (template_tests.filter_tests.test_floatformat.FloatformatTests)",
+    "test_floatformat02 (template_tests.filter_tests.test_floatformat.FloatformatTests)",
+    "test_float_dunder_method (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_force_grouping (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_infinity (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "#15789",
+    "test_negative_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_unlocalize (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)"
+  ]
+}
