@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_594218b5bc4f
+RUN <<EOF_7be84966e85a
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_205b8830023a' > /root/environment.yml
+cat <<'EOF_dc44eaf0cba7' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -97,7 +97,7 @@ dependencies:
       - pyerfa==2.0.0.3
       - pygments==2.18.0
       - pyparsing==3.2.0
-      - pytest==7.4.0
+      - pytest==7.1.2
       - pytest-arraydiff==0.5.0
       - pytest-astropy==0.10.0
       - pytest-astropy-header==0.2.2
@@ -111,7 +111,7 @@ dependencies:
       - pytest-xdist==3.3.1
       - python-dateutil==2.9.0.post0
       - pyyaml==6.0.1
-      - setuptools==68.0.0
+      - setuptools==58.0.0
       - sgp4==2.23
       - six==1.16.0
       - skyfield==1.49
@@ -124,10 +124,10 @@ dependencies:
       - zipp==3.20.2
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_205b8830023a
+EOF_dc44eaf0cba7
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_594218b5bc4f
+EOF_7be84966e85a
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc

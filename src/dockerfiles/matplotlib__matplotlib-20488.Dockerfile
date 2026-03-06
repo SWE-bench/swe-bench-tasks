@@ -187,7 +187,7 @@ EOF_787242a19933
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_90ab273a6363
+RUN <<EOF_d436fff3c6d5
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/matplotlib/matplotlib /testbed
@@ -207,20 +207,14 @@ source /opt/miniconda3/bin/activate
 conda activate testbed
 echo "Current environment: $CONDA_DEFAULT_ENV"
 cd /testbed
-apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libfreetype6-dev pkg-config texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super
-QHULL_URL="http://www.qhull.org/download/qhull-2020-src-8.0.2.tgz"
-QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"
-QHULL_BUILD_DIR="/testbed/build"
-wget -O "$QHULL_TAR" "$QHULL_URL"
-mkdir -p "$QHULL_BUILD_DIR"
-tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"
+apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev libfreetype6-dev pkg-config texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super
 python -m pip install -e .
 
 # Configure git
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_90ab273a6363
+EOF_d436fff3c6d5
 
 
 WORKDIR /testbed/

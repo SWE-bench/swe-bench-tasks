@@ -415,13 +415,7 @@ SPECS_MATPLOTLIB = {
         "packages": "environment.yml",
         "install": "python -m pip install -e .",
         "pre_install": [
-            "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng",
-            'QHULL_URL="http://www.qhull.org/download/qhull-2020-src-8.0.2.tgz"',
-            'QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"',
-            'QHULL_BUILD_DIR="/testbed/build"',
-            'wget -O "$QHULL_TAR" "$QHULL_URL"',
-            'mkdir -p "$QHULL_BUILD_DIR"',
-            'tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"',
+            "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng",
         ],
         "pip_packages": [
             "contourpy==1.1.0",
@@ -451,13 +445,7 @@ SPECS_MATPLOTLIB.update(
             "packages": "requirements.txt",
             "install": "python -m pip install -e .",
             "pre_install": [
-                "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libfreetype6-dev pkg-config texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super",
-                'QHULL_URL="http://www.qhull.org/download/qhull-2020-src-8.0.2.tgz"',
-                'QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"',
-                'QHULL_BUILD_DIR="/testbed/build"',
-                'wget -O "$QHULL_TAR" "$QHULL_URL"',
-                'mkdir -p "$QHULL_BUILD_DIR"',
-                'tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"',
+                "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev libfreetype6-dev pkg-config texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super",
             ],
             "pip_packages": ["pytest", "ipython"],
             "test_cmd": TEST_PYTEST,
@@ -472,13 +460,7 @@ SPECS_MATPLOTLIB.update(
             "packages": "requirements.txt",
             "install": "python -m pip install -e .",
             "pre_install": [
-                "apt-get -y update && apt-get -y upgrade && apt-get install -y imagemagick ffmpeg libfreetype6-dev pkg-config",
-                'QHULL_URL="http://www.qhull.org/download/qhull-2020-src-8.0.2.tgz"',
-                'QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"',
-                'QHULL_BUILD_DIR="/testbed/build"',
-                'wget -O "$QHULL_TAR" "$QHULL_URL"',
-                'mkdir -p "$QHULL_BUILD_DIR"',
-                'tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"',
+                "apt-get -y update && apt-get -y upgrade && apt-get install -y imagemagick ffmpeg libqhull-dev libfreetype6-dev pkg-config",
             ],
             "pip_packages": ["pytest"],
             "test_cmd": TEST_PYTEST,
@@ -492,7 +474,7 @@ SPECS_MATPLOTLIB.update(
             "python": "3.5",
             "install": "python setup.py build; python setup.py install",
             "pre_install": [
-                "apt-get -y update && apt-get -y upgrade && && apt-get install -y imagemagick ffmpeg"
+                "apt-get -y update && apt-get -y upgrade && apt-get install -y imagemagick ffmpeg"
             ],
             "pip_packages": ["pytest"],
             "execute_test_as_nonroot": True,
@@ -645,6 +627,11 @@ for k in ["4.1", "4.2", "4.3", "5.0", "5.1", "5.2", "v5.3"]:
     ]
 for k in ["v5.3"]:
     SPECS_ASTROPY[k]["python"] = "3.10"
+for k in ["3.0", "3.1", "3.2"]:
+    SPECS_ASTROPY[k]["pip_packages"] = [
+        p.replace("pytest==7.4.0", "pytest==7.1.2").replace("setuptools==68.0.0", "setuptools==58.0.0")
+        for p in SPECS_ASTROPY[k]["pip_packages"]
+    ]
 
 SPECS_SYMPY = {
     k: {
