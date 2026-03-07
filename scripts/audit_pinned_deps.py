@@ -8,12 +8,24 @@ Detects:
   2. Packages in the YML but NOT in the container (phantom deps)
   3. Version mismatches between container and YML
 
+Results are saved incrementally to a JSON cache file so runs can be
+interrupted and resumed without re-auditing completed instances.
+
 Usage:
   # Audit all available images (parallel, up to 8 at a time)
   python scripts/audit_pinned_deps.py
 
   # Audit specific instances
   python scripts/audit_pinned_deps.py django__django-10087 sympy__sympy-24661
+
+  # Resume a previous run (skips already-audited instances)
+  python scripts/audit_pinned_deps.py --cache audit_results.json
+
+  # Force re-audit of all instances (ignore cache)
+  python scripts/audit_pinned_deps.py --no-cache
+
+  # Show report from existing cache without running any containers
+  python scripts/audit_pinned_deps.py --report-only --cache audit_results.json
 
   # Output as JSON
   python scripts/audit_pinned_deps.py --json
@@ -23,6 +35,7 @@ Usage:
 """
 
 import argparse
+import fcntl
 import glob
 import json
 import os
@@ -36,6 +49,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_DIR = SCRIPT_DIR.parent
 ENV_DIR = REPO_DIR / "src" / "sb_dockerfile_gen" / "data" / "environments"
 DOCKERFILES_DIR = REPO_DIR / "src" / "dockerfiles"
+DEFAULT_CACHE = SCRIPT_DIR / "audit_results.json"
 
 
 def normalize_pkg_name(name: str) -> str:
@@ -129,8 +143,50 @@ def find_yml_file(instance_id: str) -> str | None:
     return None
 
 
-def audit_instance(instance_id: str) -> dict:
-    """Compare pip freeze from Docker with the cached YML."""
+# ── Cache helpers ─────────────────────────────────────────────────────
+
+
+def load_cache(cache_path: Path) -> dict[str, dict]:
+    """Load cached results from JSON file. Returns {instance_id: result}."""
+    if cache_path.exists():
+        try:
+            with open(cache_path) as f:
+                data = json.load(f)
+            return {r["instance_id"]: r for r in data}
+        except (json.JSONDecodeError, KeyError):
+            return {}
+    return {}
+
+
+def save_to_cache(cache_path: Path, result: dict):
+    """Append a single result to the cache file (process-safe with file lock)."""
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = cache_path.with_suffix(".lock")
+
+    with open(lock_path, "w") as lock_f:
+        fcntl.flock(lock_f, fcntl.LOCK_EX)
+        try:
+            # Read current cache
+            existing = load_cache(cache_path)
+            # Update with new result
+            existing[result["instance_id"]] = result
+            # Write back
+            with open(cache_path, "w") as f:
+                json.dump(
+                    sorted(existing.values(), key=lambda r: r["instance_id"]),
+                    f,
+                    indent=2,
+                )
+                f.write("\n")
+        finally:
+            fcntl.flock(lock_f, fcntl.LOCK_UN)
+
+
+# ── Core audit ────────────────────────────────────────────────────────
+
+
+def audit_instance(instance_id: str, cache_path: Path | None = None) -> dict:
+    """Compare pip list from Docker with the cached YML."""
     result = {
         "instance_id": instance_id,
         "status": "ok",
@@ -145,6 +201,8 @@ def audit_instance(instance_id: str) -> dict:
     if not yml_path:
         result["status"] = "error"
         result["errors"].append("No cached environment.yml found")
+        if cache_path:
+            save_to_cache(cache_path, result)
         return result
 
     # Find the Docker image
@@ -152,9 +210,11 @@ def audit_instance(instance_id: str) -> dict:
     if not image:
         result["status"] = "skip"
         result["errors"].append("No Docker image found")
+        if cache_path:
+            save_to_cache(cache_path, result)
         return result
 
-    # Get pip freeze from container
+    # Get pip list from container
     try:
         proc = subprocess.run(
             [
@@ -173,11 +233,15 @@ def audit_instance(instance_id: str) -> dict:
         if proc.returncode != 0:
             result["status"] = "error"
             result["errors"].append(f"pip list failed: {proc.stderr[:200]}")
+            if cache_path:
+                save_to_cache(cache_path, result)
             return result
         container_pkgs = parse_pip_freeze(proc.stdout)
     except subprocess.TimeoutExpired:
         result["status"] = "error"
         result["errors"].append("Docker run timed out")
+        if cache_path:
+            save_to_cache(cache_path, result)
         return result
 
     # Parse YML — get both pip and conda sections
@@ -185,9 +249,8 @@ def audit_instance(instance_id: str) -> dict:
     # Combined: all packages declared in the YML
     yml_all = {**yml_conda_pkgs, **yml_pip_pkgs}
 
-    # Compare pip freeze (container) against YML pip section
-    # Only flag drift for pip-managed packages; conda packages (python, zlib, etc.)
-    # won't show up in pip freeze and that's expected.
+    # Compare pip list (container) against YML
+    # Skip the repo-under-test (installed via pip install -e .)
     repo_name = instance_id.split("__")[1].rsplit("-", 1)[0].lower()
     normalized_repo = normalize_pkg_name(repo_name)
     repo_aliases = {repo_name, normalized_repo, repo_name.replace("-", "_"), repo_name.replace("_", "-")}
@@ -216,6 +279,9 @@ def audit_instance(instance_id: str) -> dict:
     if result["undeclared"] or result["phantom"] or result["mismatched"]:
         result["status"] = "drift"
 
+    if cache_path:
+        save_to_cache(cache_path, result)
+
     return result
 
 
@@ -228,39 +294,8 @@ def get_all_instance_ids() -> list[str]:
     return ids
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Audit pinned deps vs Docker containers")
-    parser.add_argument("instances", nargs="*", help="Instance IDs to audit (default: all)")
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument("--workers", type=int, default=8, help="Parallel workers (default: 8)")
-    parser.add_argument("--only-drift", action="store_true", help="Only show instances with drift")
-    args = parser.parse_args()
-
-    instances = args.instances or get_all_instance_ids()
-    print(f"Auditing {len(instances)} instances with {args.workers} workers...", file=sys.stderr)
-
-    results = []
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {pool.submit(audit_instance, iid): iid for iid in instances}
-        for i, future in enumerate(as_completed(futures), 1):
-            result = future.result()
-            results.append(result)
-            if not args.json:
-                status_icon = {"ok": ".", "drift": "D", "skip": "S", "error": "E"}
-                print(status_icon.get(result["status"], "?"), end="", flush=True, file=sys.stderr)
-                if i % 80 == 0:
-                    print(file=sys.stderr)
-
-    if not args.json:
-        print(file=sys.stderr)
-
-    results.sort(key=lambda r: r["instance_id"])
-
-    if args.json:
-        print(json.dumps(results, indent=2))
-        return
-
-    # Summary
+def print_report(results: list[dict], only_drift: bool = False):
+    """Print human-readable report."""
     ok = sum(1 for r in results if r["status"] == "ok")
     drift = sum(1 for r in results if r["status"] == "drift")
     skip = sum(1 for r in results if r["status"] == "skip")
@@ -271,7 +306,7 @@ def main():
     print(f"{'='*60}")
 
     for r in results:
-        if args.only_drift and r["status"] != "drift":
+        if only_drift and r["status"] != "drift":
             continue
         if r["status"] == "ok":
             continue
@@ -285,6 +320,99 @@ def main():
             print(f"    - PHANTOM (in yml, not in container): {item}")
         for item in r["mismatched"]:
             print(f"    ~ MISMATCH: {item}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Audit pinned deps vs Docker containers")
+    parser.add_argument("instances", nargs="*", help="Instance IDs to audit (default: all)")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument("--workers", type=int, default=8, help="Parallel workers (default: 8)")
+    parser.add_argument("--only-drift", action="store_true", help="Only show instances with drift")
+    parser.add_argument(
+        "--cache", type=Path, default=DEFAULT_CACHE,
+        help=f"Path to cache file (default: {DEFAULT_CACHE})",
+    )
+    parser.add_argument("--no-cache", action="store_true", help="Ignore existing cache, re-audit everything")
+    parser.add_argument("--report-only", action="store_true", help="Print report from cache without running containers")
+    args = parser.parse_args()
+
+    cache_path = args.cache
+    instances = args.instances or get_all_instance_ids()
+
+    # Report-only mode: just print from cache
+    if args.report_only:
+        cached = load_cache(cache_path)
+        if not cached:
+            print(f"No cache found at {cache_path}", file=sys.stderr)
+            sys.exit(1)
+        # Filter to requested instances if specified
+        if args.instances:
+            results = [cached[iid] for iid in instances if iid in cached]
+        else:
+            results = sorted(cached.values(), key=lambda r: r["instance_id"])
+        if args.json:
+            print(json.dumps(results, indent=2))
+        else:
+            print_report(results, args.only_drift)
+        return
+
+    # Load cache to skip already-audited instances
+    cached = {} if args.no_cache else load_cache(cache_path)
+    to_audit = [iid for iid in instances if iid not in cached]
+    from_cache = [cached[iid] for iid in instances if iid in cached]
+
+    if from_cache:
+        print(
+            f"Loaded {len(from_cache)} cached results from {cache_path}",
+            file=sys.stderr,
+        )
+
+    if not to_audit:
+        print("All instances already cached, nothing to audit.", file=sys.stderr)
+        results = sorted(from_cache, key=lambda r: r["instance_id"])
+        if args.json:
+            print(json.dumps(results, indent=2))
+        else:
+            print_report(results, args.only_drift)
+        return
+
+    print(
+        f"Auditing {len(to_audit)} instances with {args.workers} workers "
+        f"({len(from_cache)} cached)...",
+        file=sys.stderr,
+    )
+
+    new_results = []
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        futures = {
+            pool.submit(audit_instance, iid, cache_path): iid
+            for iid in to_audit
+        }
+        for i, future in enumerate(as_completed(futures), 1):
+            result = future.result()
+            new_results.append(result)
+            if not args.json:
+                status_icon = {"ok": ".", "drift": "D", "skip": "S", "error": "E"}
+                print(
+                    status_icon.get(result["status"], "?"),
+                    end="",
+                    flush=True,
+                    file=sys.stderr,
+                )
+                if i % 80 == 0:
+                    print(file=sys.stderr)
+
+    if not args.json:
+        print(file=sys.stderr)
+
+    all_results = sorted(
+        from_cache + new_results, key=lambda r: r["instance_id"]
+    )
+
+    if args.json:
+        print(json.dumps(all_results, indent=2))
+    else:
+        print_report(all_results, args.only_drift)
 
 
 if __name__ == "__main__":
