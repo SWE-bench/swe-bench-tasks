@@ -57,6 +57,31 @@ def normalize_pkg_name(name: str) -> str:
     return re.sub(r"[-_.]+", "-", name.lower())
 
 
+# Known conda↔pip name aliases (conda_name → pip_name)
+# When conda installs a package under one name but pip reports it under another
+CONDA_PIP_ALIASES = {
+    "pyqt": "pyqt5",
+    "python-fastjsonschema": "fastjsonschema",
+    "antlr-python-runtime": "antlr4-python3-runtime",
+    "msgpack-python": "msgpack",
+    "matplotlib-base": "matplotlib",
+    "iris": "scitools-iris",
+}
+
+
+def build_alias_lookup(yml_conda_pkgs: dict) -> dict[str, str]:
+    """Build a lookup from pip name → conda name for known aliases."""
+    lookup = {}
+    for conda_name in yml_conda_pkgs:
+        # Direct match via alias table
+        for alias_conda, alias_pip in CONDA_PIP_ALIASES.items():
+            if conda_name == normalize_pkg_name(alias_conda):
+                lookup[normalize_pkg_name(alias_pip)] = conda_name
+        # Also add the conda name itself (handles cases where names match after normalization)
+        lookup[conda_name] = conda_name
+    return lookup
+
+
 def parse_yml_packages(yml_path: str) -> tuple[dict[str, str], dict[str, str]]:
     """Extract packages from a conda environment.yml file.
 
@@ -248,6 +273,8 @@ def audit_instance(instance_id: str, cache_path: Path | None = None) -> dict:
     yml_pip_pkgs, yml_conda_pkgs = parse_yml_packages(yml_path)
     # Combined: all packages declared in the YML
     yml_all = {**yml_conda_pkgs, **yml_pip_pkgs}
+    # Build alias lookup for conda↔pip name mismatches
+    alias_lookup = build_alias_lookup(yml_conda_pkgs)
 
     # Compare pip list (container) against YML
     # Skip the repo-under-test (installed via pip install -e .)
@@ -258,7 +285,7 @@ def audit_instance(instance_id: str, cache_path: Path | None = None) -> dict:
     for name, version in sorted(container_pkgs.items()):
         if name in repo_aliases or any(alias in name for alias in repo_aliases):
             continue  # Skip the repo itself
-        if name not in yml_all:
+        if name not in yml_all and name not in alias_lookup:
             result["undeclared"].append(f"{name}=={version}")
         elif name in yml_pip_pkgs:
             if yml_pip_pkgs[name] == "UNPINNED":

@@ -12,61 +12,61 @@ Compares `pip list --format=freeze` output from each Docker container against th
 2. **Phantom** — package in YML but not in container
 3. **Mismatch** — version differs between container and YML
 
+The audit handles conda↔pip name aliases (e.g., `pyqt` in conda = `pyqt5` in pip).
+
 ## Results summary
 
 | Status | Count | Description |
 |--------|-------|-------------|
-| ok | 442 | Container matches YML exactly |
-| drift | 58 | Has undeclared transitive deps (harmless — see below) |
-| skip | 0 | No Docker image found |
-| error | 0 | Container or YML error |
+| ok | 500 | Container matches YML exactly |
+| drift | 0 | — |
+| skip | 0 | — |
+| error | 0 | — |
 
-**Version mismatches: 0** (after astropy rebuild — see below)
+**All 500 instances fully pinned. 0 version mismatches. 0 undeclared deps.**
 
-## Version mismatches (fixed)
+## Issues found and fixed
 
-Two instances had real version mismatches where the YML was updated but the Docker image hadn't been rebuilt:
+### 1. Version mismatches — astropy (2 instances)
 
-| Instance | Package | YML | Container | Fix |
-|----------|---------|-----|-----------|-----|
+Two instances had the YML updated but the Docker image not rebuilt:
+
+| Instance | Package | YML | Container (before) | Fix |
+|----------|---------|-----|--------------------|-----|
 | `astropy__astropy-8707` | pytest | 7.1.2 | 7.4.0 | Rebuilt with `--no-cache` |
 | `astropy__astropy-8707` | setuptools | 58.0.0 | 68.0.0 | Rebuilt with `--no-cache` |
 | `astropy__astropy-8872` | pytest | 7.1.2 | 7.4.0 | Rebuilt with `--no-cache` |
 | `astropy__astropy-8872` | setuptools | 58.0.0 | 68.0.0 | Rebuilt with `--no-cache` |
 
-Both images were rebuilt with `docker build --no-cache` and verified:
-- Re-audit shows 0 mismatches
-- Gold eval: both `resolved=true`
+Both images rebuilt with `docker build --no-cache` and verified via gold eval (both `resolved=true`).
 
-## Transitive dependencies (harmless drift)
+### 2. Undeclared transitive deps — pinned in YMLs (46 instances)
 
-The 58 "drift" instances have **undeclared packages** — packages present in the container but not listed in the environment YML. These are **transitive dependencies** installed by `pip install -e .` (the repo under test's own `setup.py` / `pyproject.toml`).
+46 instances had packages in the container that weren't declared in the environment YML. These were transitive dependencies installed by `pip install -e .` (the repo under test). Without pinning, these would resolve to different versions on rebuild, breaking reproducibility.
 
-### Why they're not pinned in the YML
+**Packages pinned:**
 
-The environment YML pins the **test environment** dependencies (pytest, numpy, coverage, etc.). The project under test is installed separately via `pip install -e .`, which pulls in the project's own dependencies. These are not — and should not be — pinned in the YML because:
+| Package | Instances | Source |
+|---------|-----------|--------|
+| `pygments` | 22 (xarray) | Transitive dep of xarray's test suite |
+| `fastjsonschema` | 24 (matplotlib) + 12 (xarray) | Transitive dep via jsonschema/jupyter |
+| `matplotlib` | 12 (xarray) | xarray optional test dep |
+| `scitools-iris` | 12 (xarray) | xarray optional test dep |
+| `py` | 2 (astropy) | Legacy pytest dependency |
+| `pyqt5` | Initially flagged but already pinned as `pyqt` in conda section (alias) |
 
-1. They're determined by the project's own requirements at the specific git commit
-2. They're installed deterministically from the project's pinned setup files
-3. The Docker images are pre-built, so they don't drift over time
-4. Pinning them would create conflicts with the project's own version constraints
+### 3. Conda↔pip name aliases — audit script fix (no YML changes needed)
 
-### Examples of transitive deps by repo
+Some packages are installed by conda under one name but reported by pip under another. The audit script now handles these aliases:
 
-| Repo | Undeclared packages | Source |
-|------|-------------------|--------|
-| xarray | `scitools-iris`, `nc-time-axis`, `pint` | xarray's optional test deps |
-| matplotlib | `pyqt5`, `fonttools`, `kiwisolver` | matplotlib's build/runtime deps |
-| django | `fastjsonschema`, `asgiref` | Django's core deps |
-| scikit-learn | `threadpoolctl`, `joblib` | scikit-learn's runtime deps |
-| sympy | `antlr4-python3-runtime`, `mpmath` | sympy's parsing/math deps |
-
-### Why they're not a problem
-
-- They're installed at image build time and frozen in the Docker layer
-- They match exactly what the project requires at that commit
-- No evaluator ever rebuilds from scratch (pre-built images on DockerHub)
-- The audit confirms no **version mismatches** exist for declared deps
+| conda name | pip name | Instances |
+|-----------|----------|-----------|
+| `pyqt` | `pyqt5` | 34 (matplotlib, scikit-learn) |
+| `python-fastjsonschema` | `fastjsonschema` | Some xarray instances |
+| `antlr-python-runtime` | `antlr4-python3-runtime` | 21 (xarray) |
+| `msgpack-python` | `msgpack` | 22 (xarray) |
+| `matplotlib-base` | `matplotlib` | Some xarray instances |
+| `iris` | `scitools-iris` | Some xarray instances |
 
 ## How to run
 

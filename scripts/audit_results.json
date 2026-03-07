@@ -161,20 +161,16 @@
   },
   {
     "instance_id": "astropy__astropy-8707",
-    "status": "drift",
-    "undeclared": [
-      "py==1.11.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "astropy__astropy-8872",
-    "status": "drift",
-    "undeclared": [
-      "py==1.11.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
@@ -2085,297 +2081,216 @@
   },
   {
     "instance_id": "matplotlib__matplotlib-22719",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.20.0",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-22865",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-22871",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-23299",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-23314",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-23412",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-23476",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24026",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24149",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24177",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24570",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24627",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24637",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24870",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-24970",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25122",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25287",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25311",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25332",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.20.0",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25479",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25775",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-25960",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-26113",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-26208",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-26291",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-26342",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "matplotlib__matplotlib-26466",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
@@ -2470,329 +2385,176 @@
   },
   {
     "instance_id": "pydata__xarray-2905",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-3095",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-3151",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-3305",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-3677",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-3993",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4075",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4094",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4356",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4629",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4687",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4695",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-4966",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6461",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6599",
-    "status": "drift",
-    "undeclared": [
-      "fastjsonschema==2.21.1",
-      "matplotlib==3.10.0",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.11.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6721",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6744",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6938",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-6992",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.10.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-7229",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.9.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-7233",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.9.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "pydata__xarray-7393",
-    "status": "drift",
-    "undeclared": [
-      "antlr4-python3-runtime==4.11.1",
-      "fastjsonschema==2.20.0",
-      "matplotlib==3.9.2",
-      "msgpack==1.1.0",
-      "pygments==2.19.1",
-      "scitools-iris==3.9.0"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
@@ -3223,70 +2985,56 @@
   },
   {
     "instance_id": "scikit-learn__scikit-learn-25102",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-25232",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-25747",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-25931",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-25973",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-26194",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
   },
   {
     "instance_id": "scikit-learn__scikit-learn-26323",
-    "status": "drift",
-    "undeclared": [
-      "pyqt5==5.15.10"
-    ],
+    "status": "ok",
+    "undeclared": [],
     "phantom": [],
     "mismatched": [],
     "errors": []
