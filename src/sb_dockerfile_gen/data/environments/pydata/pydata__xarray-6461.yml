@@ -276,4 +276,5 @@ dependencies:
       - pytz==2023.3
       - scipy==1.11.1
       - setuptools==68.0.0
+      - pygments==2.19.1
 prefix: /opt/miniconda3/envs/testbed

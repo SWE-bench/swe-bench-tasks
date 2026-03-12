@@ -282,4 +282,8 @@ dependencies:
       - pytz==2023.3
       - scipy==1.11.1
       - setuptools==68.0.0
+      - fastjsonschema==2.20.0
+      - matplotlib==3.9.2
+      - pygments==2.19.1
+      - scitools-iris==3.10.0
 prefix: /opt/miniconda3/envs/testbed
