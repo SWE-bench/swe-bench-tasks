@@ -1,6 +1,6 @@
-# SWE-bench Dockerfiles (OG Python)
+# SWE-bench Dockerfiles
 
-Dockerfile generator for the original SWE-bench Python benchmarks.
+Dockerfile generator for the SWE-bench benchmark. This repo is just for the original SWE-bench benchmark and does not contain any data related to the newer benchmarks we released like SWE-bench Multilingual or SWE-bench Multimodal.
 
 ## Usage
 
