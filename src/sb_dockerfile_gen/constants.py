@@ -627,6 +627,11 @@ for k in ["4.1", "4.2", "4.3", "5.0", "5.1", "5.2", "v5.3"]:
     ]
 for k in ["v5.3"]:
     SPECS_ASTROPY[k]["python"] = "3.10"
+for k in ["3.0", "3.1", "3.2"]:
+    SPECS_ASTROPY[k]["pip_packages"] = [
+        p.replace("pytest==7.4.0", "pytest==7.1.2").replace("setuptools==68.0.0", "setuptools==58.0.0")
+        for p in SPECS_ASTROPY[k]["pip_packages"]
+    ]
 
 SPECS_SYMPY = {
     k: {
