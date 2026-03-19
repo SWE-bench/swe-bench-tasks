@@ -393,7 +393,7 @@ EOF_828dd5ec9404
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_857e2adf803e
+RUN <<EOF_f8ab83b2f296
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/matplotlib/matplotlib /testbed
@@ -419,14 +419,14 @@ QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"
 QHULL_BUILD_DIR="/testbed/build"
 wget -O "$QHULL_TAR" "$QHULL_URL"
 mkdir -p "$QHULL_BUILD_DIR"
-tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"
+tar --no-same-owner -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"
 python -m pip install -e .
 
 # Configure git
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_857e2adf803e
+EOF_f8ab83b2f296
 
 
 WORKDIR /testbed/
