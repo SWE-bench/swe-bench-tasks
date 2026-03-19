@@ -13,12 +13,15 @@ import sb_dockerfile_gen.data
 from sb_dockerfile_gen.constants import (
     CONTAINER_ENV_NAME,
     CONTAINER_WORKDIR,
+    END_TEST_OUTPUT,
     HEADERS,
     MAP_REPO_TO_ENV_YML_PATHS,
     MAP_REPO_TO_INSTALL,
     MAP_REPO_TO_REQS_PATHS,
     MAP_REPO_VERSION_TO_SPECS,
+    NON_TEST_EXTS,
     REPLACE_REQ_PACKAGES,
+    START_TEST_OUTPUT,
     SWE_BENCH_URL_RAW,
     _DOCKERFILE_BASE,
 )
@@ -294,6 +297,73 @@ def _get_dockerfile(instance) -> str:
     dockerfile += f"\n{repo_script}\n" if repo_script else ""
     dockerfile += "\nWORKDIR /testbed/\n"
     return dockerfile
+
+
+# ── Eval script generation ─────────────────────────────────────────────
+
+
+def _get_test_directives(instance: dict) -> list[str]:
+    """Get test file directives from the test_patch."""
+    diff_pat = r"diff --git a/.* b/(.*)"
+    directives = re.findall(diff_pat, instance["test_patch"])
+    directives = [
+        d
+        for d in directives
+        if not any(d.endswith(ext) for ext in NON_TEST_EXTS)
+    ]
+    return directives
+
+
+def _get_eval_script(instance: dict) -> str:
+    """Generate the eval.sh script for an instance."""
+    repo = instance["repo"]
+    version = instance.get("version")
+    base_commit = instance["base_commit"]
+    test_patch = instance["test_patch"]
+    specs = MAP_REPO_VERSION_TO_SPECS[repo][version]
+
+    # Files modified by the test patch
+    test_files = re.findall(r"diff --git a/.* b/(.*)", test_patch)
+    reset_tests_command = f"git checkout {base_commit} {' '.join(test_files)}"
+
+    HEREDOC_DELIMITER = "EOF_114329324912"
+    apply_test_patch_command = (
+        f"git apply -v - <<'{HEREDOC_DELIMITER}'\n{test_patch}\n{HEREDOC_DELIMITER}"
+    )
+
+    test_command = " ".join(
+        [specs["test_cmd"], *_get_test_directives(instance)]
+    )
+
+    eval_commands = [
+        "#!/bin/bash",
+        "set -uxo pipefail",
+        "source /opt/miniconda3/bin/activate",
+        f"conda activate {CONTAINER_ENV_NAME}",
+        f"cd {CONTAINER_WORKDIR}",
+    ]
+    if "eval_commands" in specs:
+        eval_commands += specs["eval_commands"]
+    eval_commands += [
+        f"git config --global --add safe.directory {CONTAINER_WORKDIR}",
+        f"cd {CONTAINER_WORKDIR}",
+        "git status",
+        "git show",
+        f"git -c core.fileMode=false diff {base_commit}",
+        "source /opt/miniconda3/bin/activate",
+        f"conda activate {CONTAINER_ENV_NAME}",
+    ]
+    if "install" in specs:
+        eval_commands.append(specs["install"])
+    eval_commands += [
+        reset_tests_command,
+        apply_test_patch_command,
+        f": '{START_TEST_OUTPUT}'",
+        test_command,
+        f": '{END_TEST_OUTPUT}'",
+        reset_tests_command,
+    ]
+    return "\n".join(eval_commands) + "\n"
 
 
 # ── CLI ────────────────────────────────────────────────────────────────
