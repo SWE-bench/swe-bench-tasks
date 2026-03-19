@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_2ea0b593f16f
+RUN <<EOF_6c7de4f258b8
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_971201d65448' > /root/environment.yml
+cat <<'EOF_1163f8eecd5c' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -43,37 +43,56 @@ channels:
 dependencies:
   - _libgcc_mutex=0.1=main
   - _openmp_mutex=5.1=1_gnu
-  - ca-certificates=2024.9.24=h06a4308_0
-  - exceptiongroup=1.2.0=py39h06a4308_0
-  - iniconfig=1.1.1=pyhd3eb1b0_0
-  - ld_impl_linux-64=2.40=h12ee557_0
+  - atomicwrites=1.4.0=py_0
+  - attrs=21.4.0=pyhd3eb1b0_0
+  - backports=1.1=pyhd3eb1b0_1
+  - ca-certificates=2025.12.2=h06a4308_0
+  - certifi=2020.6.20=pyhd3eb1b0_3
+  - configparser=4.0.2=py27_0
+  - contextlib2=0.6.0.post1=pyhd3eb1b0_0
+  - funcsigs=1.0.2=py27_0
+  - importlib_metadata=1.3.0=py27_0
   - libffi=3.4.4=h6a678d5_1
-  - libgcc-ng=11.2.0=h1234567_1
-  - libgomp=11.2.0=h1234567_1
-  - libstdcxx-ng=11.2.0=h1234567_1
-  - ncurses=6.4=h6a678d5_0
-  - openssl=3.0.15=h5eee18b_0
-  - packaging=24.1=py39h06a4308_0
-  - pip=24.2=py39h06a4308_0
-  - pluggy=1.0.0=py39h06a4308_1
-  - pytest=7.4.4=py39h06a4308_0
-  - python=3.9.20=he870216_1
-  - readline=8.2=h5eee18b_0
-  - setuptools=75.1.0=py39h06a4308_0
-  - sqlite=3.45.3=h5eee18b_0
-  - tk=8.6.14=h39e8969_0
-  - tomli=2.0.1=py39h06a4308_0
-  - tzdata=2024b=h04d1e81_0
-  - wheel=0.44.0=py39h06a4308_0
-  - xz=5.4.6=h5eee18b_1
-  - zlib=1.2.13=h5eee18b_1
+  - libgcc=15.2.0=h69a1729_7
+  - libgcc-ng=15.2.0=h166f726_7
+  - libgomp=15.2.0=h4751f2c_7
+  - libstdcxx=15.2.0=h39759b7_7
+  - libstdcxx-ng=15.2.0=hc03a8fd_7
+  - libxcb=1.17.0=h9b100fa_0
+  - libzlib=1.3.1=hb25bd0a_0
+  - more-itertools=5.0.0=py27_0
+  - ncurses=6.5=h7934f7d_0
+  - packaging=20.9=pyhd3eb1b0_0
+  - pathlib2=2.3.5=py27_0
+  - pip=19.3.1=py27_0
+  - pluggy=0.13.1=py27_0
+  - pthread-stubs=0.3=h0ce48e5_1
+  - py=1.10.0=pyhd3eb1b0_0
+  - pyparsing=2.4.7=pyhd3eb1b0_0
+  - pytest=4.6.4=py27_0
+  - python=2.7.18=h42bf7aa_3
+  - readline=8.3=hc2a1206_0
+  - scandir=1.10.0=pyh5d7bf9c_3
+  - setuptools=44.0.0=py27_0
+  - six=1.16.0=pyhd3eb1b0_1
+  - sqlite=3.51.1=h3e8d24a_1
+  - tk=8.6.15=h54e0aa7_0
+  - wcwidth=0.2.5=pyhd3eb1b0_0
+  - wheel=0.37.1=pyhd3eb1b0_0
+  - xorg-libx11=1.8.12=h9b100fa_1
+  - xorg-libxau=1.0.12=h9b100fa_0
+  - xorg-libxdmcp=1.1.5=h9b100fa_0
+  - xorg-xorgproto=2024.1=h5eee18b_1
+  - zipp=0.6.0=py_0
+  - zlib=1.3.1=hb25bd0a_0
   - pip:
+    - backports-functools-lru-cache==1.6.6
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_971201d65448
+EOF_1163f8eecd5c
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_2ea0b593f16f
+EOF_6c7de4f258b8
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc

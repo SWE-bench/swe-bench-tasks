@@ -122,6 +122,7 @@ dependencies:
       - typing-extensions==4.12.2
       - wcwidth==0.2.13
       - zipp==3.20.2
+      - py==1.11.0
 prefix: /opt/miniconda3/envs/testbed
 
 EOF_205b8830023a
