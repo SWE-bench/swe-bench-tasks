@@ -311,6 +311,19 @@ def _get_test_directives(instance: dict) -> list[str]:
         for d in directives
         if not any(d.endswith(ext) for ext in NON_TEST_EXTS)
     ]
+    # Django's runtests.py expects dotted module paths, not file paths.
+    # Convert e.g. "tests/queries/test_qs_combinators.py" → "queries.test_qs_combinators"
+    # and "django/test/testcases.py" → "django.test.testcases"
+    if instance["repo"] == "django/django":
+        converted = []
+        for d in directives:
+            if d.endswith(".py"):
+                if d.startswith("tests/"):
+                    d = d[len("tests/"):]  # strip tests/ prefix
+                d = d[:-len(".py")]         # strip .py suffix
+                d = d.replace("/", ".")     # convert path separators to dots
+            converted.append(d)
+        directives = converted
     return directives
 
 
