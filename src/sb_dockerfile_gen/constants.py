@@ -1039,3 +1039,27 @@ MAP_REPO_TO_PARSER_NAME = {
     "sphinx-doc/sphinx": "parse_log_sphinx",
     "sympy/sympy": "parse_log_sympy",
 }
+
+# Per-instance repairs, keyed by instance_id.
+#
+# Files in src/dockerfiles/ are generated and get overwritten, so fixes must
+# live here. Each entry may set:
+#   eval_pre        shell lines injected just before the test command
+#   dockerfile_post lines appended to the Dockerfile (needs an image rebuild)
+#   why             why the instance needs it
+INSTANCE_OVERRIDES: dict[str, dict] = {
+    "astropy__astropy-8872": {
+        "eval_pre": ["export SETUPTOOLS_USE_DISTUTILS=stdlib"],
+        "why": (
+            "image ships setuptools 68, whose vendored _distutils warns on "
+            "LooseVersion; astropy sets filterwarnings=error so collection fails"
+        ),
+    },
+    "astropy__astropy-8707": {
+        "eval_pre": ["python -m pip install -q 'pytest<7.2'"],
+        "why": (
+            "pytest 7.2+ raises PytestRemovedIn8Warning for nose-style setup(); "
+            "astropy sets filterwarnings=error so 139 tests error at setup"
+        ),
+    },
+}

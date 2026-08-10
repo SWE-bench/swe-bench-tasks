@@ -11,6 +11,7 @@ import requests
 import sb_dockerfile_gen.data
 
 from sb_dockerfile_gen.constants import (
+    INSTANCE_OVERRIDES,
     CONTAINER_ENV_NAME,
     CONTAINER_WORKDIR,
     END_TEST_OUTPUT,
@@ -368,9 +369,11 @@ def _get_eval_script(instance: dict) -> str:
     ]
     if "install" in specs:
         eval_commands.append(specs["install"])
+    override = INSTANCE_OVERRIDES.get(instance["instance_id"], {})
     eval_commands += [
         reset_tests_command,
         apply_test_patch_command,
+        *override.get("eval_pre", []),
         f": '{START_TEST_OUTPUT}'",
         test_command,
         f": '{END_TEST_OUTPUT}'",
