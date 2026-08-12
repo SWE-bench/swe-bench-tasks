@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_594218b5bc4f
+RUN <<EOF_adf1aff08cee
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_205b8830023a' > /root/environment.yml
+cat <<'EOF_397f7484d6bf' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -122,17 +122,18 @@ dependencies:
       - typing-extensions==4.12.2
       - wcwidth==0.2.13
       - zipp==3.20.2
+      - py==1.11.0
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_205b8830023a
+EOF_397f7484d6bf
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_594218b5bc4f
+EOF_adf1aff08cee
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_fb2fc7b5e063
+RUN <<EOF_209f874383ad
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/astropy/astropy /testbed
@@ -141,7 +142,8 @@ cd /testbed
 git reset --hard b750a0e6ee76fb6b8a099a4d16ec51977be46bf6
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci b750a0e6ee76fb6b8a099a4d16ec51977be46bf6)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -158,7 +160,7 @@ python -m pip install -e .[test] --verbose
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_fb2fc7b5e063
+EOF_209f874383ad
 
 
 WORKDIR /testbed/

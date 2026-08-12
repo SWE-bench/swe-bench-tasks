@@ -112,7 +112,7 @@ EOF_d919b8a562e6
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_f53601db6686
+RUN <<EOF_9971f2c4a567
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/astropy/astropy /testbed
@@ -121,7 +121,8 @@ cd /testbed
 git reset --hard a7141cd90019b62688d507ae056298507678c058
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci a7141cd90019b62688d507ae056298507678c058)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -138,7 +139,7 @@ python -m pip install -e .[test] --verbose
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_f53601db6686
+EOF_9971f2c4a567
 
 
 WORKDIR /testbed/

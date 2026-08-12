@@ -78,7 +78,7 @@ EOF_3bb17ff0a6f9
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_df5797152672
+RUN <<EOF_ef6128ffb70f
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/pytest-dev/pytest /testbed
@@ -87,7 +87,8 @@ cd /testbed
 git reset --hard 19ad5889353c7f5f2b65cc2acd346b7a9e95dfcd
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci 19ad5889353c7f5f2b65cc2acd346b7a9e95dfcd)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -104,7 +105,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_df5797152672
+EOF_ef6128ffb70f
 
 
 WORKDIR /testbed/

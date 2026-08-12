@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_34a9a06fd561
+RUN <<EOF_f911ae2f05e0
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_504b5489579b' > /root/environment.yml
+cat <<'EOF_0d3b8e5082bc' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -362,17 +362,18 @@ dependencies:
       - pytz==2023.3
       - scipy==1.11.1
       - setuptools==68.0.0
+      - pygments==2.19.1
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_504b5489579b
+EOF_0d3b8e5082bc
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_34a9a06fd561
+EOF_f911ae2f05e0
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_f5ae945558c1
+RUN <<EOF_2152d390d136
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/pydata/xarray /testbed
@@ -381,7 +382,8 @@ cd /testbed
 git reset --hard 1757dffac2fa493d7b9a074b84cf8c830a706688
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci 1757dffac2fa493d7b9a074b84cf8c830a706688)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -398,7 +400,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_f5ae945558c1
+EOF_2152d390d136
 
 
 WORKDIR /testbed/

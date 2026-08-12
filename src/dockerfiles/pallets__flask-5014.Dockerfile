@@ -135,7 +135,7 @@ EOF_948030431112
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_afc30ce01810
+RUN <<EOF_b3b80ebe2e99
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/pallets/flask /testbed
@@ -144,7 +144,8 @@ cd /testbed
 git reset --hard 7ee9ceb71e868944a46e1ff00b506772a53a4f1d
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci 7ee9ceb71e868944a46e1ff00b506772a53a4f1d)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -161,7 +162,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_afc30ce01810
+EOF_b3b80ebe2e99
 
 
 WORKDIR /testbed/

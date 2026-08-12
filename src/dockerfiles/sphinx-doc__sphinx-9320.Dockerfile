@@ -107,7 +107,7 @@ EOF_31628c936cdd
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_bec3fe08f07c
+RUN <<EOF_594435205bc0
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/sphinx-doc/sphinx /testbed
@@ -116,7 +116,8 @@ cd /testbed
 git reset --hard e05cef574b8f23ab1b57f57e7da6dee509a4e230
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci e05cef574b8f23ab1b57f57e7da6dee509a4e230)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -142,7 +143,7 @@ python -m pip install -e .[test]
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_bec3fe08f07c
+EOF_594435205bc0
 
 
 WORKDIR /testbed/

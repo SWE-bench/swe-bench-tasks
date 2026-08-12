@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_a2656a1a2518
+RUN <<EOF_1b2a267cf0a8
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_32b8b16cff4d' > /root/environment.yml
+cat <<'EOF_fefb7b93d119' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -371,17 +371,18 @@ dependencies:
       - setuptools==68.1.2
       - setuptools-scm==7.1.0
       - typing-extensions==4.7.1
+      - fastjsonschema==2.20.0
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_32b8b16cff4d
+EOF_fefb7b93d119
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_a2656a1a2518
+EOF_1b2a267cf0a8
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_0648101696e0
+RUN <<EOF_914cdc91bc57
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/matplotlib/matplotlib /testbed
@@ -390,7 +391,8 @@ cd /testbed
 git reset --hard 66ba515e671638971bd11a34cff12c107a437e0b
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci 66ba515e671638971bd11a34cff12c107a437e0b)
-git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done
+git branch | grep -v '^\*' | xargs -r git branch -D || true
+git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -401,20 +403,14 @@ source /opt/miniconda3/bin/activate
 conda activate testbed
 echo "Current environment: $CONDA_DEFAULT_ENV"
 cd /testbed
-apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng
-QHULL_URL="http://www.qhull.org/download/qhull-2020-src-8.0.2.tgz"
-QHULL_TAR="/tmp/qhull-2020-src-8.0.2.tgz"
-QHULL_BUILD_DIR="/testbed/build"
-wget -O "$QHULL_TAR" "$QHULL_URL"
-mkdir -p "$QHULL_BUILD_DIR"
-tar -xvzf "$QHULL_TAR" -C "$QHULL_BUILD_DIR"
+apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng
 python -m pip install -e .
 
 # Configure git
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_0648101696e0
+EOF_914cdc91bc57
 
 
 WORKDIR /testbed/

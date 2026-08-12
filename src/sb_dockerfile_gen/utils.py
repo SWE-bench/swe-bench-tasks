@@ -36,7 +36,12 @@ def git_clone_timesafe(repo: str, base_commit: str, workdir: str) -> list[str]:
         f"git reset --hard {base_commit}",
         "git remote remove origin",
         f"TARGET_TIMESTAMP=$(git show -s --format=%ci {base_commit})",
-        'git tag -l | while read tag; do TAG_COMMIT=$(git rev-list -n 1 "$tag"); TAG_TIME=$(git show -s --format=%ci "$TAG_COMMIT"); if [[ "$TAG_TIME" > "$TARGET_TIMESTAMP" ]]; then git tag -d "$tag"; fi; done',
+        # Delete every tag and branch rather than pruning by date: the previous
+        # `git tag -l | while read` form silently stopped early because a git
+        # command in the loop body consumed the piped stdin. The assertion below
+        # was catching the leftovers by failing the build; this removes the cause.
+        "git branch | grep -v '^\\*' | xargs -r git branch -D || true",
+        "git tag -l | xargs -r git tag -d",
         "git reflog expire --expire=now --all",
         "git gc --prune=now --aggressive",
         "AFTER_TIMESTAMP=$(date -d \"$TARGET_TIMESTAMP + 1 second\" '+%Y-%m-%d %H:%M:%S')",
