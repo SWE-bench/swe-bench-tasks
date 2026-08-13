@@ -30,7 +30,13 @@ def git_clone_timesafe(repo: str, base_commit: str, workdir: str) -> list[str]:
     branch = REPO_BASE_COMMIT_BRANCH.get(repo, {}).get(base_commit, "")
     branch = f"--branch {branch}" if branch else ""
     return [
-        f"git clone -o origin {branch} --single-branch https://github.com/{repo} {workdir}",
+        # Fall back to a full clone when the mapped branch no longer exists upstream
+        # (sympy deleted its 1.7 branch, which made the clone exit 128 and the whole
+        # image build fail). The base commit is still reachable either way.
+        f"git clone -o origin {branch} --single-branch https://github.com/{repo} {workdir} "
+        f"|| git clone -o origin https://github.com/{repo} {workdir}"
+        if branch
+        else f"git clone -o origin --single-branch https://github.com/{repo} {workdir}",
         f"chmod -R 777 {workdir}",
         f"cd {workdir}",
         f"git reset --hard {base_commit}",

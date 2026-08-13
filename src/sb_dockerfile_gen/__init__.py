@@ -297,6 +297,11 @@ def _get_dockerfile(instance) -> str:
     dockerfile += '\nRUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc\n'
     dockerfile += f"\n{repo_script}\n" if repo_script else ""
     dockerfile += "\nWORKDIR /testbed/\n"
+    # Spec-provided trailing Dockerfile stanzas (ENV/ENTRYPOINT/etc). Used where a
+    # test suite needs a service in the container rather than a step in eval.sh,
+    # which lets the fix ship in the image instead of requiring a dataset revision.
+    for extra in specs.get("dockerfile_extra", []):
+        dockerfile += f"\n{extra}\n"
     return dockerfile
 
 
@@ -373,6 +378,8 @@ def _get_eval_script(instance: dict) -> str:
     eval_commands += [
         reset_tests_command,
         apply_test_patch_command,
+        # eval_pre may come from the repo/version spec or a per-instance override
+        *specs.get("eval_pre", []),
         *override.get("eval_pre", []),
         f": '{START_TEST_OUTPUT}'",
         test_command,

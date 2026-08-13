@@ -282,5 +282,4 @@ dependencies:
       - fastjsonschema==2.20.0
       - matplotlib==3.9.2
       - pygments==2.19.1
-      - scitools-iris==3.9.0
 prefix: /opt/miniconda3/envs/testbed

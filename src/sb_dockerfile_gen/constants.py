@@ -211,6 +211,40 @@ SPECS_DJANGO.update(
 )
 SPECS_DJANGO["1.9"]["test_cmd"] = TEST_DJANGO_NO_PARALLEL
 
+# test_requests.py talks to os.environ["HTTPBIN_URL"], defaulting to the public
+# httpbin.org. That service rate-limits and currently returns 504s, which fails
+# graded tests (e.g. test_set_cookie_on_301 sees an empty cookie jar). Ship a local
+# httpbin and point the tests at it, which is what upstream requests moved to.
+_REQUESTS_LOCAL_HTTPBIN = [
+    "httpbin==0.7.0",
+    "flask<2",
+    "werkzeug<2",
+    "markupsafe<2.1",
+    "itsdangerous<2",
+    "jinja2<3",
+]
+# Ship the local httpbin in the image: install it, expose HTTPBIN_URL, and start it
+# from an ENTRYPOINT so it is already listening when the harness execs eval.sh. Doing
+# it here rather than in eval_pre means the fix lands in the image and needs no
+# dataset revision.
+_REQUESTS_HTTPBIN_DOCKERFILE = [
+    'RUN /opt/miniconda3/envs/testbed/bin/python -m pip install '
+    '"httpbin==0.7.0" "flask<2" "werkzeug<2" "markupsafe<2.1" "itsdangerous<2" "jinja2<3"',
+    'ENV HTTPBIN_URL=http://127.0.0.1:8080/',
+    "RUN printf '%s\\n' '#!/bin/bash' "
+    "'nohup /opt/miniconda3/envs/testbed/bin/python -c \"from httpbin import app; app.run(host=\\\"127.0.0.1\\\", port=8080)\" >/tmp/httpbin.log 2>&1 &' "
+    "'for i in $(seq 1 30); do curl -sf http://127.0.0.1:8080/get >/dev/null 2>&1 && break; sleep 1; done' "
+    "'exec \"$@\"' > /usr/local/bin/with-httpbin && chmod +x /usr/local/bin/with-httpbin",
+    'ENTRYPOINT ["/usr/local/bin/with-httpbin"]',
+]
+
+_REQUESTS_START_HTTPBIN = [
+    'nohup python -c "from httpbin import app; app.run(host=\'127.0.0.1\', port=8080)" '
+    ">/tmp/httpbin.log 2>&1 &",
+    "for i in $(seq 1 30); do curl -sf http://127.0.0.1:8080/get >/dev/null 2>&1 && break; sleep 1; done",
+    "export HTTPBIN_URL=http://127.0.0.1:8080/",
+]
+
 SPECS_REQUESTS = {
     k: {
         "python": "3.9",
@@ -416,6 +450,11 @@ SPECS_MATPLOTLIB = {
         "install": "python -m pip install -e .",
         "pre_install": [
             "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng",
+            # The upgrade above pulls the current tzdata, whose future DST projections
+            # differ from what these tests hardcode (test_auto_date_locator_intmult_tz
+            # expects Canada/Pacific 2040 = -0800; tzdata 2026c gives -0700). Pin to a
+            # release contemporary with these instances.
+            "DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades tzdata=2022a-0ubuntu1 || true",
         ],
         "pip_packages": [
             "contourpy==1.1.0",
@@ -446,6 +485,7 @@ SPECS_MATPLOTLIB.update(
             "install": "python -m pip install -e .",
             "pre_install": [
                 "apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev libfreetype6-dev pkg-config texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super",
+                "DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades tzdata=2022a-0ubuntu1 || true",
             ],
             "pip_packages": ["pytest", "ipython"],
             "test_cmd": TEST_PYTEST,
@@ -461,6 +501,7 @@ SPECS_MATPLOTLIB.update(
             "install": "python -m pip install -e .",
             "pre_install": [
                 "apt-get -y update && apt-get -y upgrade && apt-get install -y imagemagick ffmpeg libqhull-dev libfreetype6-dev pkg-config",
+                "DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades tzdata=2022a-0ubuntu1 || true",
             ],
             "pip_packages": ["pytest"],
             "test_cmd": TEST_PYTEST,
@@ -475,6 +516,7 @@ SPECS_MATPLOTLIB.update(
             "install": "python setup.py build; python setup.py install",
             "pre_install": [
                 "apt-get -y update && apt-get -y upgrade && apt-get install -y imagemagick ffmpeg"
+                "DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades tzdata=2022a-0ubuntu1 || true",
             ],
             "pip_packages": ["pytest"],
             "execute_test_as_nonroot": True,
