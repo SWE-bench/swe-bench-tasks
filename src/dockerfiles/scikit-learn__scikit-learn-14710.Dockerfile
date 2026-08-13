@@ -131,10 +131,10 @@ EOF_2dd0a4d3ff75
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_43dbed6361c5
+RUN <<EOF_50bc4466e580
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/scikit-learn/scikit-learn /testbed
+git clone -o origin --single-branch https://github.com/scikit-learn/scikit-learn /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard 4b6273b87442a4437d8b3873ea3022ae163f4fdf
@@ -159,7 +159,7 @@ python -m pip install -v --no-use-pep517 --no-build-isolation -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_43dbed6361c5
+EOF_50bc4466e580
 
 
 WORKDIR /testbed/

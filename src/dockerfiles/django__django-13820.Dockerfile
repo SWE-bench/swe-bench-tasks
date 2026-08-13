@@ -114,10 +114,10 @@ EOF_a770cf09b367
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_35bedcec76cf
+RUN <<EOF_5593dd9ed42d
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/django/django /testbed
+git clone -o origin --single-branch https://github.com/django/django /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard 98ad327864aed8df245fd19ea9d2743279e11643
@@ -142,7 +142,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_35bedcec76cf
+EOF_5593dd9ed42d
 
 
 WORKDIR /testbed/

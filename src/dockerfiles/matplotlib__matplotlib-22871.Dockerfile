@@ -384,10 +384,10 @@ EOF_319916a6b365
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_baf580c82dee
+RUN <<EOF_650ad5272b5f
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/matplotlib/matplotlib /testbed
+git clone -o origin --single-branch https://github.com/matplotlib/matplotlib /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard a7b7260bf06c20d408215d95ce20a1a01c12e5b1
@@ -407,13 +407,14 @@ conda activate testbed
 echo "Current environment: $CONDA_DEFAULT_ENV"
 cd /testbed
 apt-get -y update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick ffmpeg libqhull-dev texlive texlive-latex-extra texlive-fonts-recommended texlive-xetex texlive-luatex cm-super dvipng
+DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades tzdata=2022a-0ubuntu1 || true
 python -m pip install -e .
 
 # Configure git
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_baf580c82dee
+EOF_650ad5272b5f
 
 
 WORKDIR /testbed/

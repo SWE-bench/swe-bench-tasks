@@ -78,10 +78,10 @@ EOF_bec659d82567
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_04b3c74bec01
+RUN <<EOF_c5c151c8e181
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/sympy/sympy /testbed
+git clone -o origin --single-branch https://github.com/sympy/sympy /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard 88664e6e0b781d0a8b5347896af74b555e92891e
@@ -106,7 +106,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_04b3c74bec01
+EOF_c5c151c8e181
 
 
 WORKDIR /testbed/

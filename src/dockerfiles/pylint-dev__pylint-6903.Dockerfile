@@ -140,10 +140,10 @@ EOF_c5e0c1364d92
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_4535ac415dff
+RUN <<EOF_c611d3896bb5
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/pylint-dev/pylint /testbed
+git clone -o origin --single-branch https://github.com/pylint-dev/pylint /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6
@@ -168,7 +168,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_4535ac415dff
+EOF_c611d3896bb5
 
 
 WORKDIR /testbed/

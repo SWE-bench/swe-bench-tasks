@@ -107,10 +107,10 @@ EOF_9697167aba8f
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_3f015ff7994e
+RUN <<EOF_aa5407264a5a
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/sphinx-doc/sphinx /testbed
+git clone -o origin --single-branch https://github.com/sphinx-doc/sphinx /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard 07983a5a8704ad91ae855218ecbda1c8598200ca
@@ -144,7 +144,7 @@ python -m pip install -e .[test]
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_3f015ff7994e
+EOF_aa5407264a5a
 
 
 WORKDIR /testbed/

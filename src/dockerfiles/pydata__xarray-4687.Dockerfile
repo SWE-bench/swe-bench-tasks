@@ -31,11 +31,11 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_da8d094b3878
+RUN <<EOF_834f8f27a218
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-cat <<'EOF_0c4defbea756' > /root/environment.yml
+cat <<'EOF_bdcb75570447' > /root/environment.yml
 name: testbed
 channels:
   - defaults
@@ -365,21 +365,20 @@ dependencies:
       - fastjsonschema==2.20.0
       - matplotlib==3.9.2
       - pygments==2.19.1
-      - scitools-iris==3.10.0
 prefix: /opt/miniconda3/envs/testbed
 
-EOF_0c4defbea756
+EOF_bdcb75570447
 conda env create -f /root/environment.yml
 conda activate testbed
-EOF_da8d094b3878
+EOF_834f8f27a218
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_29a4f0949603
+RUN <<EOF_cfa381a7b6f8
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/pydata/xarray /testbed
+git clone -o origin --single-branch https://github.com/pydata/xarray /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard d3b6aa6d8b997df115a53c001d00222a0f92f63a
@@ -404,7 +403,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_29a4f0949603
+EOF_cfa381a7b6f8
 
 
 WORKDIR /testbed/

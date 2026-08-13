@@ -97,10 +97,10 @@ EOF_9b40b53aef0f
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_43facc3ccd0f
+RUN <<EOF_6d0452dd13e7
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/astropy/astropy /testbed
+git clone -o origin --single-branch https://github.com/astropy/astropy /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard a3f4ae6cd24d5ecdf49f213d77b3513dd509a06c
@@ -126,7 +126,7 @@ python -m pip install -e .[test] --verbose
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_43facc3ccd0f
+EOF_6d0452dd13e7
 
 
 WORKDIR /testbed/

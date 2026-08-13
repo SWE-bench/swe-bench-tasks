@@ -335,10 +335,10 @@ EOF_bdd52833c802
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_4c7ab7c612d4
+RUN <<EOF_06fe00226270
 #!/bin/bash
 set -euxo pipefail
-git clone -o origin  --single-branch https://github.com/pydata/xarray /testbed
+git clone -o origin --single-branch https://github.com/pydata/xarray /testbed
 chmod -R 777 /testbed
 cd /testbed
 git reset --hard 6bb2b855498b5c68d7cca8cceb710365d58e6048
@@ -363,7 +363,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_4c7ab7c612d4
+EOF_06fe00226270
 
 
 WORKDIR /testbed/
