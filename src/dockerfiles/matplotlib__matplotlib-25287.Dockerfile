@@ -394,7 +394,7 @@ EOF_6c2e62662442
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_a9f9f869ec98
+RUN <<EOF_b4b3ac6341df
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/matplotlib/matplotlib /testbed
@@ -403,8 +403,9 @@ cd /testbed
 git reset --hard f8ffce6d44127d4ea7d6491262ab30046b03294b
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci f8ffce6d44127d4ea7d6491262ab30046b03294b)
+TARGET_EPOCH=$(git show -s --format=%ct f8ffce6d44127d4ea7d6491262ab30046b03294b)
+for tag in $(git tag -l); do TAG_EPOCH=$(git log -1 --format=%ct "$tag" 2>/dev/null || echo 0); if [ "${TAG_EPOCH:-0}" -gt "$TARGET_EPOCH" ]; then git tag -d "$tag" >/dev/null 2>&1 || true; fi; done
 git branch | grep -v '^\*' | xargs -r git branch -D || true
-git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -422,7 +423,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_a9f9f869ec98
+EOF_b4b3ac6341df
 
 
 WORKDIR /testbed/

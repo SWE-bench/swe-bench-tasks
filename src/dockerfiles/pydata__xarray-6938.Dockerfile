@@ -334,7 +334,7 @@ EOF_2b23ff46229c
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_3b8efcaec39e
+RUN <<EOF_dd6d24e43ba9
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/pydata/xarray /testbed
@@ -343,8 +343,9 @@ cd /testbed
 git reset --hard c4e40d991c28be51de9ac560ce895ac7f9b14924
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci c4e40d991c28be51de9ac560ce895ac7f9b14924)
+TARGET_EPOCH=$(git show -s --format=%ct c4e40d991c28be51de9ac560ce895ac7f9b14924)
+for tag in $(git tag -l); do TAG_EPOCH=$(git log -1 --format=%ct "$tag" 2>/dev/null || echo 0); if [ "${TAG_EPOCH:-0}" -gt "$TARGET_EPOCH" ]; then git tag -d "$tag" >/dev/null 2>&1 || true; fi; done
 git branch | grep -v '^\*' | xargs -r git branch -D || true
-git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -361,7 +362,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_3b8efcaec39e
+EOF_dd6d24e43ba9
 
 
 WORKDIR /testbed/

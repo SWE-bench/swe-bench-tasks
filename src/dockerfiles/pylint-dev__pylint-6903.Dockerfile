@@ -140,7 +140,7 @@ EOF_c5e0c1364d92
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_898cac8ab2ee
+RUN <<EOF_4535ac415dff
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/pylint-dev/pylint /testbed
@@ -149,8 +149,9 @@ cd /testbed
 git reset --hard ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6)
+TARGET_EPOCH=$(git show -s --format=%ct ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6)
+for tag in $(git tag -l); do TAG_EPOCH=$(git log -1 --format=%ct "$tag" 2>/dev/null || echo 0); if [ "${TAG_EPOCH:-0}" -gt "$TARGET_EPOCH" ]; then git tag -d "$tag" >/dev/null 2>&1 || true; fi; done
 git branch | grep -v '^\*' | xargs -r git branch -D || true
-git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -167,7 +168,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_898cac8ab2ee
+EOF_4535ac415dff
 
 
 WORKDIR /testbed/

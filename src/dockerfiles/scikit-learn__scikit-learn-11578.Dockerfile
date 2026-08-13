@@ -129,7 +129,7 @@ EOF_499b5b33ef17
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_196aefb78a27
+RUN <<EOF_8e8827e30236
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/scikit-learn/scikit-learn /testbed
@@ -138,8 +138,9 @@ cd /testbed
 git reset --hard dd69361a0d9c6ccde0d2353b00b86e0e7541a3e3
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci dd69361a0d9c6ccde0d2353b00b86e0e7541a3e3)
+TARGET_EPOCH=$(git show -s --format=%ct dd69361a0d9c6ccde0d2353b00b86e0e7541a3e3)
+for tag in $(git tag -l); do TAG_EPOCH=$(git log -1 --format=%ct "$tag" 2>/dev/null || echo 0); if [ "${TAG_EPOCH:-0}" -gt "$TARGET_EPOCH" ]; then git tag -d "$tag" >/dev/null 2>&1 || true; fi; done
 git branch | grep -v '^\*' | xargs -r git branch -D || true
-git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -156,7 +157,7 @@ python -m pip install -v --no-use-pep517 --no-build-isolation -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_196aefb78a27
+EOF_8e8827e30236
 
 
 WORKDIR /testbed/

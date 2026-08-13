@@ -128,7 +128,7 @@ EOF_2055bf9757f4
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_709203d598f0
+RUN <<EOF_121aa1e2c2e2
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin  --single-branch https://github.com/django/django /testbed
@@ -137,8 +137,9 @@ cd /testbed
 git reset --hard d90e34c61b27fba2527834806639eebbcfab9631
 git remote remove origin
 TARGET_TIMESTAMP=$(git show -s --format=%ci d90e34c61b27fba2527834806639eebbcfab9631)
+TARGET_EPOCH=$(git show -s --format=%ct d90e34c61b27fba2527834806639eebbcfab9631)
+for tag in $(git tag -l); do TAG_EPOCH=$(git log -1 --format=%ct "$tag" 2>/dev/null || echo 0); if [ "${TAG_EPOCH:-0}" -gt "$TARGET_EPOCH" ]; then git tag -d "$tag" >/dev/null 2>&1 || true; fi; done
 git branch | grep -v '^\*' | xargs -r git branch -D || true
-git tag -l | xargs -r git tag -d
 git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
@@ -155,7 +156,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_709203d598f0
+EOF_121aa1e2c2e2
 
 
 WORKDIR /testbed/
