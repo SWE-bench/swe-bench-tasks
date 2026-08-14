@@ -375,11 +375,10 @@ EOF_834f8f27a218
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_cfa381a7b6f8
+RUN <<EOF_11e593119d1f
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/pydata/xarray /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard d3b6aa6d8b997df115a53c001d00222a0f92f63a
 git remote remove origin
@@ -392,6 +391,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -403,7 +403,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_cfa381a7b6f8
+EOF_11e593119d1f
 
 
 WORKDIR /testbed/

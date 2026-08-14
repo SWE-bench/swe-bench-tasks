@@ -78,11 +78,10 @@ EOF_2ea0b593f16f
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_bec35bafcf8d
+RUN <<EOF_0fdcdc102066
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/psf/requests /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard 847735553aeda6e6633f2b32e14ba14ba86887a4
 git remote remove origin
@@ -95,6 +94,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -106,7 +106,7 @@ python -m pip install .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_bec35bafcf8d
+EOF_0fdcdc102066
 
 
 WORKDIR /testbed/

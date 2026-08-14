@@ -121,11 +121,10 @@ EOF_dbf59dbda24c
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_5b1ef2c05dd3
+RUN <<EOF_b3042c350dbc
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/django/django /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard 0c42cdf0d2422f4c080e93594d5d15381d6e955e
 git remote remove origin
@@ -138,6 +137,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -149,7 +149,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_5b1ef2c05dd3
+EOF_b3042c350dbc
 
 
 WORKDIR /testbed/

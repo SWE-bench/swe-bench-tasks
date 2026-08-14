@@ -108,11 +108,10 @@ EOF_f98d027ca7ed
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_180ba8429e94
+RUN <<EOF_e11cd5be49af
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/sphinx-doc/sphinx /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard 3ea1ec84cc610f7a9f4f6b354e264565254923ff
 git remote remove origin
@@ -125,6 +124,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -145,7 +145,7 @@ python -m pip install -e .[test]
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_180ba8429e94
+EOF_e11cd5be49af
 
 
 WORKDIR /testbed/

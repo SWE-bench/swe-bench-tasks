@@ -124,11 +124,10 @@ EOF_ac2a2c2aac9e
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_aaa0f2a3d636
+RUN <<EOF_f00cdd13672f
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/pylint-dev/pylint /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard 1f8c4d9eb185c16a2c1d881c054f015e1c2eb334
 git remote remove origin
@@ -141,6 +140,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -152,7 +152,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_aaa0f2a3d636
+EOF_f00cdd13672f
 
 
 WORKDIR /testbed/

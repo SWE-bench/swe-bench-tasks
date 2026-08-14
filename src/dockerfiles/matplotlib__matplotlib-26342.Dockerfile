@@ -393,11 +393,10 @@ EOF_828dd5ec9404
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_d616c2b45a36
+RUN <<EOF_3a40555cab3b
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/matplotlib/matplotlib /testbed
-chmod -R 777 /testbed
 cd /testbed
 git reset --hard 2aee6ccd7c7e1f8d282c1e7579f4ee546b838542
 git remote remove origin
@@ -410,6 +409,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
+chmod -R 777 /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -423,7 +423,7 @@ python -m pip install -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_d616c2b45a36
+EOF_3a40555cab3b
 
 
 WORKDIR /testbed/
