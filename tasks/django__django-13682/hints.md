@@ -1,0 +1,3 @@
+I agree with the motivation here. As per comments on the PR, I think we need to leverage the System check framework for this, rather than raising runtime errors, but other than that +1.
+Would it be worthwhile to change the error message for if the name keyword argument is mistakenly passed as a positional argument? Currently the message is: ValueError: dictionary update sequence element #0 has length 1; 2 is required
+Author appears caught up on feedback.

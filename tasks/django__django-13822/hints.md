@@ -1,0 +1,1 @@
+Thanks for the report. It looks that app_label is missing in ​ManyToManyField.contribute_to_class(): self.remote_field.related_name = "_%s_%s_%s_+" % (cls._meta.app_label, cls.__name__.lower(), name)

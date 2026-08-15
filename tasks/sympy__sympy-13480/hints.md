@@ -1,0 +1,1 @@
+There is a typo on [line 590](https://github.com/sympy/sympy/blob/master/sympy/functions/elementary/hyperbolic.py#L590): `cotm` should be `cothm`.

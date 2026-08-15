@@ -1,0 +1,2 @@
+In check constraints you can use range lookup and it works fine, e.g. models.CheckConstraint( check=models.Q(month__range=[1, 13]), name='check_valid_month', ) also casting an iterator to a list works good, e.g. models.CheckConstraint( check=models.Q(month__in=list(range(1, 13))), name='check_valid_month', ) so in this case iterator is an issue. I would check later if this can be easily fix and if not we should document this limitation.
+Just to confirm, I modified the migration to use range() and makemigrations no longer detects any changes.

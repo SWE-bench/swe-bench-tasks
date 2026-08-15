@@ -1,0 +1,25 @@
+{
+  "FAIL_TO_PASS": [
+    "test_FracField_nested"
+  ],
+  "PASS_TO_PASS": [
+    "test_FracField___init__",
+    "test_FracField___hash__",
+    "test_FracField___eq__",
+    "test_sfield",
+    "test_FracElement___hash__",
+    "test_FracElement_copy",
+    "test_FracElement_as_expr",
+    "test_FracElement_from_expr",
+    "test_FracElement__lt_le_gt_ge__",
+    "test_FracElement___neg__",
+    "test_FracElement___add__",
+    "test_FracElement___sub__",
+    "test_FracElement___mul__",
+    "test_FracElement___div__",
+    "test_FracElement___pow__",
+    "test_FracElement_diff",
+    "test_FracElement_evaluate",
+    "test_FracElement_subs"
+  ]
+}

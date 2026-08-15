@@ -1,0 +1,3 @@
+Thanks for the report. I was able to reproduce this issue with AddField() when adding a new ForeignKey but probably few more operations are affected because ​_remake_table() is used widely in the SQLite backend. This should be easy to fix by unquoting ​db_table. Reproduced at 4122d9d3f1983eea612f236e941d937bd8589a0d.
+Created ​PR, but I am not sure why docs and isort failing.
+Patch is targeting model names containing quotes while the changes should live in _remake_table as pointed out by Mariusz. @Ngalim you'll want to change ​this line to perform .strip('"') to strip possibly leading and trailing ".

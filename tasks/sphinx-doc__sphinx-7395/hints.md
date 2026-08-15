@@ -1,0 +1,3 @@
+Unfortunately, python specific index types (like `builtin`) were deprecated in 10 years ago: https://github.com/sphinx-doc/sphinx/commit/3e9182550a#diff-238bd7cedf25808f7e89537fbcd798dcR188-R189
+And we are considering to remove it in future: #6970 . But we need to consider about it more deeply...
+What should be used in the Python documentation?

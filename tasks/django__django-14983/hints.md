@@ -1,0 +1,4 @@
+Based on your logic, is it irritating to have 0001_initial and 0001_squashed_0002_auto_20141202_1234? Should the first squashed migration be 0003_...?
+I don't think so. The squashed migration replaces 0001 to 0002, so sticking to 0001 seems fine to me. Rethinking the initial thought about 0002_auto_20141202_2345 making sense if 0002_auto_20141202_1234 is gone an only the squashed migration is around: no, it doesn't make sense. The squashed migration says "0001 to 0002 is squashed". Thus continuing with 0003 seems to be the right choice.
+I guess it makes sense. If there is no way to reset the sequence of migrations, I wonder what happens when app has 10K migrations.
+​PR

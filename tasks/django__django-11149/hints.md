@@ -1,0 +1,3 @@
+OK, yes. Fleshing it out I can reproduce this against 2.1.7 with the models and inline provided. A user with only the view permission for both Report and Photo can edit the M2M in the inline. When the M2M is handled as a normal field, rather than an inline, the behaviour is correct. Elevating to a Release Blocker as a regression and/or a bug in the new view permissions feature.
+Zip with sample project. load fixture.json to populate database Username: readonly Password:1234567890abc
+Sample project attached: migrate db; load fixture.json. Log in to admin as readonly with password 1234567890abc. Navigate to Issue > Report admin. You can adjust the M2M. You shouldn't be able to.

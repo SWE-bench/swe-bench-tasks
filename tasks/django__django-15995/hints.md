@@ -1,0 +1,2 @@
+I think this worth doing, having get_queryset perform self._check_fk_val() should catch the currently tested .all() case as well. In the mean time I think you should be able to use MyModel._meta.get_field("related_set") for your introspection needs.
+Replying to Simon Charette: ... In the mean time I think you should be able to use MyModel._meta.get_field("related_set") for your introspection needs. Thanks for the tip! I just needed to remove the _set as it's not part of the ManyToOneRel field name in _meta.

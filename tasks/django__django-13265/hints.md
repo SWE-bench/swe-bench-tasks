@@ -1,0 +1,3 @@
+Thanks for this report. IMO order_with_respect_to should be included in CreateModel()'s options, I'm not sure why it is in a separate operation when it refers to a ForeignKey.
+I reproduced the issue adding order_with_respect_to and indexes = [models.Index(fields='_order')] at the same time to an existent model. class Meta: order_with_respect_to = 'foo' indexes = [models.Index(fields='_order')] A small broken test: ​https://github.com/iurisilvio/django/commit/5c6504e67f1d2749efd13daca440dfa54708a4b2 I'll try to fix the issue, but I'm not sure the way to fix it. Can we reorder autodetected migrations?
+​PR

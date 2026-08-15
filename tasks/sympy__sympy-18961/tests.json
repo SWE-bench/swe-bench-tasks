@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "test_digits"
+  ],
+  "PASS_TO_PASS": [
+    "test_count_digits"
+  ]
+}

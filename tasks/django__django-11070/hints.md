@@ -1,0 +1,3 @@
+This seems OK/good in theory. We're a bit ahead of the curve in terms of current browser support so there's a question about when (and whether) this gets adopted. ​PR has failures that need addressing.
+Hi, what is the status of this pull request? I just wanted to open the same pull request and then I found this ticket...
+After months of inactivity, feel free to take over the patch (crediting the original author), and polish it so as it can get in the review queue again.

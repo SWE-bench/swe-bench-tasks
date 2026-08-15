@@ -1,0 +1,1 @@
+I didn't reproduce but the report and the suggested patch make sense, accepting on that basis. Are you interested in submitting a Github pull request incorporating your patch and a regression test?

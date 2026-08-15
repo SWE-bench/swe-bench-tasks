@@ -1,0 +1,11 @@
+diff --git a/testing/test_mark_expression.py b/testing/test_mark_expression.py
+--- a/testing/test_mark_expression.py
++++ b/testing/test_mark_expression.py
+@@ -130,6 +130,7 @@ def test_syntax_errors(expr: str, column: int, message: str) -> None:
+         "123.232",
+         "True",
+         "False",
++        "None",
+         "if",
+         "else",
+         "while",

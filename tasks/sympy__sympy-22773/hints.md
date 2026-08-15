@@ -1,0 +1,3 @@
+I think this is probably a good enough way to solve it. The option would be to set the delimiter to `|`, but both approaches would include modifying and restoring the delimiter, so I cannot really see any benefit of the other way, rather the opposite.
+
+I think the only "requirement" is to add a test for it (and make sure the file ends with a single empty line in case you add the test at the end of the file). And, worst case, update any test that may use the previous formatting (but I do not know if there are any). Think about it, otherwise I can create a PR for it.

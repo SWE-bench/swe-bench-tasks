@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/preprocessing/tests/test_common.py::test_missing_value_handling[est0-minmax_scale-False]"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/preprocessing/tests/test_common.py::test_missing_value_handling[est1-quantile_transform-True]"
+  ]
+}

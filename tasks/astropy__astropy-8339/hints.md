@@ -1,0 +1,4 @@
+Thanks, @javier-iaa . If you already have the fix, for proper credit, I would recommend that you submit your proposed patch as a proper pull request. Please refer to http://docs.astropy.org/en/latest/development/workflow/development_workflow.html
+I'll do that. I'm pretty new to github so this will be nice practice. Thanks! 
+Thanks, @javier-iaa . If you already have the fix, for proper credit, I would recommend that you submit your proposed patch as a proper pull request. Please refer to http://docs.astropy.org/en/latest/development/workflow/development_workflow.html
+I'll do that. I'm pretty new to github so this will be nice practice. Thanks! 

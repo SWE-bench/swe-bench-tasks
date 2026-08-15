@@ -1,0 +1,74 @@
+diff --git a/tests/check_framework/test_urls.py b/tests/check_framework/test_urls.py
+--- a/tests/check_framework/test_urls.py
++++ b/tests/check_framework/test_urls.py
+@@ -161,6 +161,47 @@ def test_check_view_not_class(self):
+             ],
+         )
+ 
++    @override_settings(
++        ROOT_URLCONF="check_framework.urls.path_compatibility.matched_angle_brackets"
++    )
++    def test_no_warnings_matched_angle_brackets(self):
++        self.assertEqual(check_url_config(None), [])
++
++    @override_settings(
++        ROOT_URLCONF="check_framework.urls.path_compatibility.unmatched_angle_brackets"
++    )
++    def test_warning_unmatched_angle_brackets(self):
++        self.assertEqual(
++            check_url_config(None),
++            [
++                Warning(
++                    "Your URL pattern 'beginning-with/<angle_bracket' has an unmatched "
++                    "'<' bracket.",
++                    id="urls.W010",
++                ),
++                Warning(
++                    "Your URL pattern 'ending-with/angle_bracket>' has an unmatched "
++                    "'>' bracket.",
++                    id="urls.W010",
++                ),
++                Warning(
++                    "Your URL pattern 'closed_angle>/x/<opened_angle' has an unmatched "
++                    "'>' bracket.",
++                    id="urls.W010",
++                ),
++                Warning(
++                    "Your URL pattern 'closed_angle>/x/<opened_angle' has an unmatched "
++                    "'<' bracket.",
++                    id="urls.W010",
++                ),
++                Warning(
++                    "Your URL pattern '<mixed>angle_bracket>' has an unmatched '>' "
++                    "bracket.",
++                    id="urls.W010",
++                ),
++            ],
++        )
++
+ 
+ class UpdatedToPathTests(SimpleTestCase):
+     @override_settings(
+diff --git a/tests/check_framework/urls/path_compatibility/matched_angle_brackets.py b/tests/check_framework/urls/path_compatibility/matched_angle_brackets.py
+new file mode 100644
+--- /dev/null
++++ b/tests/check_framework/urls/path_compatibility/matched_angle_brackets.py
+@@ -0,0 +1,5 @@
++from django.urls import path
++
++urlpatterns = [
++    path("<int:angle_bracket>", lambda x: x),
++]
+diff --git a/tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py b/tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py
+new file mode 100644
+--- /dev/null
++++ b/tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py
+@@ -0,0 +1,8 @@
++from django.urls import path
++
++urlpatterns = [
++    path("beginning-with/<angle_bracket", lambda x: x),
++    path("ending-with/angle_bracket>", lambda x: x),
++    path("closed_angle>/x/<opened_angle", lambda x: x),
++    path("<mixed>angle_bracket>", lambda x: x),
++]

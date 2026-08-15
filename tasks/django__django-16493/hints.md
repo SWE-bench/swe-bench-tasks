@@ -1,0 +1,2 @@
+Yes, OK. That looks correct. We're essentially saying that when hasattr(self, "_storage_callable") that should unconditionally be used by deconstruct. 🤔
+We should probably use getattr(self, "_storage_callable", self.storage) in both lines.

@@ -1,0 +1,4 @@
+Sounds reasonable. Or maybe that's not supported in cftime? cc @spencerkclark 
+Yes, I agree, this seems reasonable.  It's true that there is no object equivalent to `datetime.date` in cftime, but I do not think that is necessarily a requirement.  We can raise an error in that instance.
+
+I'll admit I personally have not found a need for functionality like this -- I typically prefer to use something like `da.time.dt.floor("D")`, since it retains the `np.datetime64` or cftime type -- but if folks would find it useful I think it makes sense to add (this has come up [on StackOverflow](https://stackoverflow.com/questions/65182281/xarray-dt-date-dt-normalize-missing/) before too).

@@ -1,0 +1,1 @@
+Thanks for the report, however GenericForeignKey doesn't support prefetch_related(), from the same reason it doesn't not support also filter(), exclude(), etc. Please see ​documentation.

@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "test_max_degree"
+  ],
+  "PASS_TO_PASS": [
+    "test_decompose",
+    "test_best_origin",
+    "test_point_sort",
+    "test_polytopes_intersecting_sides",
+    "test_main_integrate3d",
+    "test_main_integrate",
+    "test_polygon_integrate",
+    "test_distance_to_side",
+    "test_lineseg_integrate",
+    "test_integration_reduction",
+    "test_integration_reduction_dynamic",
+    "test_is_vertex"
+  ]
+}

@@ -1,0 +1,1 @@
+It returns all four possible solutions for 10*(x**2) + 12*(x*y) + 12*(y**2) - 34 when the parameter "permute" is passed as True in the Diophantine function. But yes, it returns an empty set for  2*x**2+y**2-16. Meanwhile I will try working on it. Suggestions are welcome.

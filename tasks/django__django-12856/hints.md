@@ -1,0 +1,6 @@
+Demonstration
+Agreed. We can simply call cls._check_local_fields() for UniqueConstraint's fields. I attached tests.
+Tests.
+Hello Django Team, My name is Jannah Mandwee, and I am working on my final project for my undergraduate software engineering class (here is the link to the assignment: ​https://web.eecs.umich.edu/~weimerw/481/hw6.html). I have to contribute to an open-source project and was advised to look through easy ticket pickings. I am wondering if it is possible to contribute to this ticket or if there is another ticket you believe would be a better fit for me. Thank you for your help.
+Replying to Jannah Mandwee: Hello Django Team, My name is Jannah Mandwee, and I am working on my final project for my undergraduate software engineering class (here is the link to the assignment: ​https://web.eecs.umich.edu/~weimerw/481/hw6.html). I have to contribute to an open-source project and was advised to look through easy ticket pickings. I am wondering if it is possible to contribute to this ticket or if there is another ticket you believe would be a better fit for me. Thank you for your help. Hi Jannah, I'm working in this ticket. You can consult this report: https://code.djangoproject.com/query?status=!closed&easy=1&stage=Accepted&order=priority there are all the tickets marked as easy.
+CheckConstraint might have the same bug.

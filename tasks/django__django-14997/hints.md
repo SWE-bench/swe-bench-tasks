@@ -1,0 +1,2 @@
+Thanks for the report. Regression in 3aa545281e0c0f9fac93753e3769df9e0334dbaa.
+Thanks for the report! Looks like we don't check if an alias is set on the Col before we update it to new_table in Expressions.rename_table_references when running _remake_table.

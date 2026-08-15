@@ -1,0 +1,14 @@
+diff --git a/tests/utils_tests/test_functional.py b/tests/utils_tests/test_functional.py
+--- a/tests/utils_tests/test_functional.py
++++ b/tests/utils_tests/test_functional.py
+@@ -233,6 +233,10 @@ def test_lazy_bytes_and_str_result_classes(self):
+         with self.assertRaisesMessage(ValueError, msg):
+             lazy_obj()
+ 
++    def test_lazy_str_cast_mixed_result_types(self):
++        lazy_value = lazy(lambda: [1], str, list)()
++        self.assertEqual(str(lazy_value), "[1]")
++
+     def test_classproperty_getter(self):
+         class Foo:
+             foo_attr = 123

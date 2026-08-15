@@ -1,0 +1,2 @@
+I've opened a pull request. And am happy to adjust if needed. ​https://github.com/django/django/pull/16614
+Thanks for this report. As far as I'm aware, we should switch the default to "https" via the ​deprecation process (see #32375 for a similar change).

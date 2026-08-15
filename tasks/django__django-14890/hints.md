@@ -1,0 +1,1 @@
+Thanks for the report. I'm not sure what behavior would be expected, so we should raise TypeError.

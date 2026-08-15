@@ -1,0 +1,1 @@
+I agree that we can do sth better here, but I'm not sure if maintaining the order of checks is feasible in a long-term. I would add a hint to the E410, e.g. Insert 'django.contrib.sessions.middleware.SessionMiddleware' before 'django.contrib.auth.middleware.AuthenticationMiddleware'.

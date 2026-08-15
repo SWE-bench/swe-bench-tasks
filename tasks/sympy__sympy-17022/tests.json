@@ -1,0 +1,15 @@
+{
+  "FAIL_TO_PASS": [
+    "test_NumPyPrinter"
+  ],
+  "PASS_TO_PASS": [
+    "test_numpy_piecewise_regression",
+    "test_PythonCodePrinter",
+    "test_MpmathPrinter",
+    "test_SciPyPrinter",
+    "test_pycode_reserved_words",
+    "test_printmethod",
+    "test_codegen_ast_nodes",
+    "test_issue_14283"
+  ]
+}

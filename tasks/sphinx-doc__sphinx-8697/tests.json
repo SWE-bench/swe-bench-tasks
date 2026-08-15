@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_environment.py::test_env_relfn2path"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_environment.py::test_config_status",
+    "tests/test_environment.py::test_images",
+    "tests/test_environment.py::test_object_inventory"
+  ]
+}

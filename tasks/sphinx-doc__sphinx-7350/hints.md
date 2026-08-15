@@ -1,0 +1,1 @@
+I'm hitting this bug as well, but I believe this bug is in `autodoc` not `napoleon`, since all `napoleon` does is convert Google/Numpy style docstrings to valid reST. As far as I can tell from the code, it doesn't set `:noindex:` for any other option so I don't see how Attributes is handled any differently.

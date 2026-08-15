@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "test_override_show_save_and_add_another (admin_views.test_templatetags.AdminTemplateTagsTest)",
+    "test_submit_row (admin_views.test_templatetags.AdminTemplateTagsTest)"
+  ],
+  "PASS_TO_PASS": [
+    "test_choice_links (admin_views.test_templatetags.DateHierarchyTests)",
+    "test_override_change_form_template_tags (admin_views.test_templatetags.AdminTemplateTagsTest)",
+    "test_override_change_list_template_tags (admin_views.test_templatetags.AdminTemplateTagsTest)"
+  ]
+}

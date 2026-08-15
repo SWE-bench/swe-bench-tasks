@@ -1,0 +1,22 @@
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -1225,6 +1225,8 @@ def test_is_upper():
+     assert a.is_upper is True
+     a = Matrix([[1], [2], [3]])
+     assert a.is_upper is False
++    a = zeros(4, 2)
++    assert a.is_upper is True
+ 
+ 
+ def test_is_lower():
+@@ -1880,6 +1882,9 @@ def test_hessenberg():
+     A = Matrix([[3, 4, 1], [2, 4, 5], [3, 1, 2]])
+     assert not A.is_upper_hessenberg
+ 
++    A = zeros(5, 2)
++    assert A.is_upper_hessenberg
++
+ 
+ def test_cholesky():
+     raises(NonSquareMatrixError, lambda: Matrix((1, 2)).cholesky())

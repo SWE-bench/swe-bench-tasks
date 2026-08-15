@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test_hermite_normal"
+  ],
+  "PASS_TO_PASS": [
+    "test_smith_normal",
+    "test_smith_normal_deprecated"
+  ]
+}

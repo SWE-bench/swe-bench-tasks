@@ -1,0 +1,2 @@
+Hi Sjoerd. OK, so this is related to the changes in 9cc6a60040b0f64f8ea066dd215176d4bd16621d. Happy to Accept as a potential Cleanup/optimization — I guess ultimately it depends on what the change looks like. (i.e. is the nicer behaviour worth the extra complexity? etc) I'm assuming you're ready/willing to make the patch...? Thanks!
+Yes, definitely willing to pick it up as a patch. It should be a fairly minimal addition.

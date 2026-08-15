@@ -1,0 +1,1 @@
+Hi Alasdair, Thanks for the report, and the effort on StackOverflow. I'm happy to take this as improvement on the system check for 2.2.1. (Yes, catching an incorrect path is probably worthwhile.)

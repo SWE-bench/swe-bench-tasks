@@ -1,0 +1,1 @@
+I was able to reproduce the problem with your models. Moving the FonteVariavelModel model to the fonte app seems to work. Even if there's a bug in Django, as a workaround, why not simply move the model?

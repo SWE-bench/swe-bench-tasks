@@ -1,0 +1,2 @@
+I agree that this behavior should be edited, but I think the ticket type should be Cleanup/optimization.
+Well, they actually continue to suggest to me that everything after the view argument should be keyword-only, or that kwargs should come later, but I suspect those to be a harder sell ;) Keyword-only arguments would be great, but it will affect too many users. We reject such tickets in most of cases, however here it's justified because kwargs as a positional argument can be confusing, so let's raise a TypeError when kwargs is not a dict.

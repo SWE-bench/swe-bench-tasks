@@ -1,0 +1,3 @@
++0: It might be useful. But all we can check is only inside sphinx-document. If users copy extra file in deploy script, we'll misdetect broken links. And it is hard if local hyperlink is absolute path. We don't know where the document will be placed.
+At least this could be an optional feature; I'd guess there are a lot of sphinx deployments which do not add anything manually and just stick to what sphinx generates.
+Agreed. I also believe it is useful.

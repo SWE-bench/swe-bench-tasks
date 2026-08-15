@@ -1,0 +1,4 @@
+Thanks for the report. Simple encoding should fix this issue, e.g. diff --git a/django/core/mail/utils.py b/django/core/mail/utils.py index d18dfe4667..68f9e464d6 100644 --- a/django/core/mail/utils.py +++ b/django/core/mail/utils.py @@ -14,6 +14,10 @@ class CachedDnsName: def get_fqdn(self): if not hasattr(self, '_fqdn'): self._fqdn = socket.getfqdn() + try: + self._fqdn.encode('ascii') + except UnicodeEncodeError: + self._fqdn = self._fqdn.encode('idna').decode('ascii') return self._fqdn
+Agreed. The patch you pasted in is essentially the same as I was about to submit as a pull request. Is it alright if I go ahead and submit that and add your name to the commit message?
+Sure, feel free. Test is also required.
+​PR

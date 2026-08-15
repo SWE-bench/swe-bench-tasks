@@ -1,0 +1,31 @@
+diff --git a/sympy/parsing/tests/test_mathematica.py b/sympy/parsing/tests/test_mathematica.py
+--- a/sympy/parsing/tests/test_mathematica.py
++++ b/sympy/parsing/tests/test_mathematica.py
+@@ -15,6 +15,7 @@ def test_mathematica():
+         'x+y': 'x+y',
+         '355/113': '355/113',
+         '2.718281828': '2.718281828',
++        'Cos(1/2 * π)': 'Cos(π/2)',
+         'Sin[12]': 'sin(12)',
+         'Exp[Log[4]]': 'exp(log(4))',
+         '(x+1)(x+3)': '(x+1)*(x+3)',
+@@ -94,6 +95,7 @@ def test_parser_mathematica_tokenizer():
+     assert chain("+x") == "x"
+     assert chain("-1") == "-1"
+     assert chain("- 3") == "-3"
++    assert chain("α") == "α"
+     assert chain("+Sin[x]") == ["Sin", "x"]
+     assert chain("-Sin[x]") == ["Times", "-1", ["Sin", "x"]]
+     assert chain("x(a+1)") == ["Times", "x", ["Plus", "a", "1"]]
+diff --git a/sympy/testing/quality_unicode.py b/sympy/testing/quality_unicode.py
+--- a/sympy/testing/quality_unicode.py
++++ b/sympy/testing/quality_unicode.py
+@@ -48,6 +48,8 @@
+ 
+ unicode_strict_whitelist = [
+     r'*/sympy/parsing/latex/_antlr/__init__.py',
++    # test_mathematica.py uses some unicode for testing Greek characters are working #24055
++    r'*/sympy/parsing/tests/test_mathematica.py',
+ ]
+ 
+ 

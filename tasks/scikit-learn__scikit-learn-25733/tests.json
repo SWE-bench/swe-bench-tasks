@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/utils/tests/test_deprecation.py::test_deprecated",
+    "sklearn/utils/tests/test_deprecation.py::test_is_deprecated"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/utils/tests/test_deprecation.py::test_pickle"
+  ]
+}

@@ -1,0 +1,6 @@
+This is likely a regression caused by 1e38f1191de21b6e96736f58df57dfb851a28c1f Stefanos, could you confirm the following patch addresses your issue django/db/models/expressions.py diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py index a9768919a2..90d90119d0 100644 a b class Expression(BaseExpression, Combinable): 421421 422422_connector_combinators = { 423423 connector: [ 424 (fields.IntegerField, fields.IntegerField, fields.IntegerField), 424425 (fields.IntegerField, fields.DecimalField, fields.DecimalField), 425426 (fields.DecimalField, fields.IntegerField, fields.DecimalField), 426427 (fields.IntegerField, fields.FloatField, fields.FloatField),
+I confirmed that it's a regression in 1e38f1191de21b6e96736f58df57dfb851a28c1f.
+Stefanos, Would you like to prepare a patch? Simon's proposition works for me.
+Yes, that patch fixed the issue. Thanks a lot!
+I also saw this issue in master (I use django-money): django.core.exceptions.FieldError: Expression contains mixed types: MoneyField, IntegerField. You must set output_field. Works fine in 3.1
+I can confirm that the above patch does not fix the issue I have seen. The issue does not occur in the 3.1 release.

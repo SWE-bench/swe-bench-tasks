@@ -1,0 +1,15 @@
+base_commit: 58e78209c8577b9890e957b624466e5beed7eb08
+created_at: '2019-09-18T22:56:31Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+- SWE-bench/SWE-bench_Lite
+difficulty: 1-4 hours
+environment_setup_commit: 70381f282f2d9d039da860e391fe51649df2779d
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.sympy_1776_sympy-17630:latest
+instance_id: sympy__sympy-17630
+log_parser: parse_log_sympy
+repo: sympy/sympy
+split: test
+version: '1.5'

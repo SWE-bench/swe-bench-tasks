@@ -1,0 +1,10 @@
+diff --git a/tests/view_tests/tests/test_static.py b/tests/view_tests/tests/test_static.py
+--- a/tests/view_tests/tests/test_static.py
++++ b/tests/view_tests/tests/test_static.py
+@@ -191,3 +191,6 @@ def test_was_modified_since_fp(self):
+         mtime = 1343416141.107817
+         header = http_date(mtime)
+         self.assertFalse(was_modified_since(header, mtime))
++
++    def test_was_modified_since_empty_string(self):
++        self.assertTrue(was_modified_since(header="", mtime=1))

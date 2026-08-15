@@ -1,0 +1,1 @@
+Looks straightforward - could you open a PR?

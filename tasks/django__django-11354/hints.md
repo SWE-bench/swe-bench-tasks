@@ -1,0 +1,2 @@
+I'm attaching a test for Django's test suite that I wrote quickly to reproduce this.
+Hi, ​PR To finding the inherited columns, thought two approaches: a- try to parse the columns from raw sql with using a convert function which returns a list from sql string. (with regex pattern maybe) b- if the query contains a column that comes from the inherited model, take this field name with get_fields() - get_fields(include_parents=False) I chose b. I hoped to find a property that contains whether the model is inherited. Is this possible? Because of that, it performs every time.

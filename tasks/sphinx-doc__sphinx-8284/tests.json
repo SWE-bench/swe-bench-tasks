@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_build_manpage.py::test_all",
+    "tests/test_build_manpage.py::test_captioned_code_block",
+    "tests/test_build_manpage.py::test_rubric",
+    "tests/test_smartquotes.py::test_smartquotes_excludes_builders"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_build_manpage.py::test_man_make_section_directory",
+    "tests/test_build_manpage.py::test_default_man_pages",
+    "tests/test_smartquotes.py::test_basic",
+    "tests/test_smartquotes.py::test_text_builder",
+    "tests/test_smartquotes.py::test_latex_builder",
+    "tests/test_smartquotes.py::test_ja_html_builder",
+    "tests/test_smartquotes.py::test_smartquotes_disabled",
+    "tests/test_smartquotes.py::test_smartquotes_action",
+    "tests/test_smartquotes.py::test_smartquotes_excludes_language"
+  ]
+}

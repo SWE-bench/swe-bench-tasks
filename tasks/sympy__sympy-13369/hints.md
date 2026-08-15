@@ -1,0 +1,2 @@
+The initial problem occurs on line 1005 of polys.polyroots.py, since to_rational_coeffs fails. I do not know why it is necessary to have rational coefficients to solve a cubic.
+It seems to me that the treatment of polynomials with `EX` domain has not been completed. Transforming the equation to one with rational coefficients will succeed only rarely. It should be possible to continue with `_try_heuristics` in case the coefficients cannot be made rational.

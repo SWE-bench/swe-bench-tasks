@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test_actions_replace_global_action (modeladmin.test_actions.AdminActionsTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_actions_inheritance (modeladmin.test_actions.AdminActionsTests)",
+    "test_get_actions_respects_permissions (modeladmin.test_actions.AdminActionsTests)"
+  ]
+}

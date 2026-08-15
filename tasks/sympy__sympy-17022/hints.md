@@ -1,0 +1,1 @@
+If the shape is an explicit number, we can just print `eye(n)`. For unknown shape, it's harder. We can raise an exception for now. It's better to raise an exception than give a wrong answer. 

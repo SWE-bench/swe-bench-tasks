@@ -1,0 +1,3 @@
+Thanks for this ticket, I was able to reproduce this issue.
+Tests.
+Just a note, the failing queryset does not have to be constructed by setting the query param of a newly created queryset - like this: qs2 = Publication.objects.all() qs2.query = pickle.loads(pickle.dumps(qs.query)) The same problem occurs even if the whole queryset is pickled and unpickled and then a copy is created by calling .all(). qs2 = pickle.loads(pickle.dumps(qs)).all()

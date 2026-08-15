@@ -1,0 +1,1 @@
+Fix floatformat for zero values

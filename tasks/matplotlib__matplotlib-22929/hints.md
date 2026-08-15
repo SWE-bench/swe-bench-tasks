@@ -1,0 +1,1 @@
+I have a solution that works when running in the shell, but not in the test as I get a runtime warning because of the nan-values. Will see if I can find a solution in the next few days.

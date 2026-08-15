@@ -1,0 +1,2 @@
+Hi. Can you provide a working example of the issue please, and exactly what you mean by " it is rendered incorrectly". Creating a test project with a UTF8 403_csrf.html works as expected, so I'm guessing there's something else going on. Thanks.
+I think I'd rather omit content_type when it is text/html (several other locations are affected, too). I'll try a patch to see what's the outcome in tests.

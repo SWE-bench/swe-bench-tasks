@@ -1,0 +1,2 @@
+The check is new in Django 2.2 (371ece2f0682e51f2f796854d3e091827a7cea63). It might be possible to modify it so that it detects AuthenticationMiddleware subclasses. You could also simply add that error to your SILENCED_SYSTEM_CHECKS setting.
+Agreed, import_string should be used to perform issubclass checks.

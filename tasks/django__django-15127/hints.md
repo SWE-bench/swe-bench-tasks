@@ -1,0 +1,2 @@
+If you aren't planning to provide a patch (with a test), could you provide some minimal code that demonstrates the issue?
+LEVEL_TAGS is a constant defined in the django.contrib.messages.storage.base module that's why it needs to be updated after changing MESSAGE_TAGS (see #16574 and ​override_settings_tags() hook). It should be possible to add a setting_changed receiver and update LEVEL_TAGS when needed.

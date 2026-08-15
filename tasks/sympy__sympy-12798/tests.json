@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "test_rf_eval_apply",
+    "test_ff_eval_apply"
+  ],
+  "PASS_TO_PASS": [
+    "test_factorial_diff",
+    "test_factorial_rewrite",
+    "test_binomial_diff",
+    "test_binomial_rewrite"
+  ]
+}

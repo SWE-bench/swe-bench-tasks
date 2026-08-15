@@ -1,0 +1,12 @@
+base_commit: c667e73df92215cf1446c3eda71a56fdaebba426
+created_at: '2023-04-12T10:00:55Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 362f6df12abf9bd769d4915fabf955c993ea22cf
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.astropy_1776_astropy-14628:latest
+instance_id: astropy__astropy-14628
+log_parser: parse_log_astropy
+repo: astropy/astropy
+split: test
+version: '5.2'

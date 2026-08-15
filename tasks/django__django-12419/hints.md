@@ -1,0 +1,1 @@
+Hi Adam, Yes, I think this fits our secure by default philosophy. As long as the BC is documented in the release notes I think we should have this.

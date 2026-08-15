@@ -1,0 +1,1 @@
+patch of the EnumSerializer

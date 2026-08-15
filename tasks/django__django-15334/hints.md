@@ -1,0 +1,3 @@
+The situation isn't completely straightforward. There's a discussion on ​django-developers. Accepting the ticket to do something.
+I've created a proof of concept implementation ​https://github.com/django/django/pull/10707/ I think prefetching is probably closer to what a user would expect from the api.
+Patch needs both documentation and a deprecation warning when self._prefetch_related_lookups and chunk_size is None. The idea is to eventually turn this deprecation warning into an error and never performs prefetching unless a chunk size is specified.

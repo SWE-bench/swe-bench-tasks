@@ -1,0 +1,1 @@
+I would like to work on this issue. PS. i am new to this django. so any advice would be appreciated

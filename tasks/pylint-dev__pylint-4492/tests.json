@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/unittest_reporting.py::test_multi_format_output"
+  ],
+  "PASS_TO_PASS": [
+    "tests/unittest_reporting.py::test_template_option",
+    "tests/unittest_reporting.py::test_parseable_output_deprecated",
+    "tests/unittest_reporting.py::test_parseable_output_regression",
+    "tests/unittest_reporting.py::test_display_results_is_renamed"
+  ]
+}

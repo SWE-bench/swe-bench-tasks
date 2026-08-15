@@ -1,0 +1,39 @@
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -14,6 +14,7 @@
+ """
+ 
+ from django.db import models
++from django.db.models.expressions import OrderBy
+ 
+ 
+ class Author(models.Model):
+@@ -30,7 +31,12 @@ class Article(models.Model):
+     pub_date = models.DateTimeField()
+ 
+     class Meta:
+-        ordering = ('-pub_date', 'headline')
++        ordering = (
++            '-pub_date',
++            'headline',
++            models.F('author__name').asc(),
++            OrderBy(models.F('second_author__name')),
++        )
+ 
+     def __str__(self):
+         return self.headline
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -408,7 +408,9 @@ def test_default_ordering_by_f_expression(self):
+     def test_deprecated_values_annotate(self):
+         msg = (
+             "Article QuerySet won't use Meta.ordering in Django 3.1. Add "
+-            ".order_by('-pub_date', 'headline') to retain the current query."
++            ".order_by('-pub_date', 'headline', OrderBy(F(author__name), "
++            "descending=False), OrderBy(F(second_author__name), "
++            "descending=False)) to retain the current query."
+         )
+         with self.assertRaisesMessage(RemovedInDjango31Warning, msg):
+             list(Article.objects.values('author').annotate(Count('headline')))

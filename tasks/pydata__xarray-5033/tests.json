@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "xarray/tests/test_backends_api.py::test_custom_engine"
+  ],
+  "PASS_TO_PASS": [
+    "xarray/tests/test_backends_api.py::test__get_default_engine"
+  ]
+}

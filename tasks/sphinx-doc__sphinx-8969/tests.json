@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_directive_patch.py::test_csv_table_directive"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_directive_patch.py::test_code_directive",
+    "tests/test_directive_patch.py::test_math_directive"
+  ]
+}

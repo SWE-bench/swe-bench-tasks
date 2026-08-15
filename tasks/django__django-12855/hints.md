@@ -1,0 +1,1 @@
+Agreed. We can deprecate it in Django 3.1 and remove in Django 4.0. Aymeric ​proposed to deprecate it in Django 3.1 when we discussed DEP 201.

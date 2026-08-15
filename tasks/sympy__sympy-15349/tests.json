@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_quaternion_conversions"
+  ],
+  "PASS_TO_PASS": [
+    "test_quaternion_construction",
+    "test_quaternion_complex_real_addition",
+    "test_quaternion_functions"
+  ]
+}

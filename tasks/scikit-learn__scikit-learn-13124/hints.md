@@ -1,0 +1,2 @@
+thanks for the report.
+It's a regression introduced in #7823, the problem is that we're shuffling each stratification in the same way (i.e, with the same random state). I think we should provide different splits when users provide different random state.

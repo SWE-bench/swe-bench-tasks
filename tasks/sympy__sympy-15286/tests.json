@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "test_ellipse_equation_using_slope"
+  ],
+  "PASS_TO_PASS": [
+    "test_object_from_equation",
+    "test_ellipse_geom",
+    "test_construction",
+    "test_ellipse_random_point",
+    "test_repr",
+    "test_transform",
+    "test_bounds",
+    "test_reflect",
+    "test_is_tangent",
+    "test_parameter_value",
+    "test_second_moment_of_area",
+    "test_circumference"
+  ]
+}

@@ -1,0 +1,1 @@
+Normally I would reject this ticket as migrations are auto-generated code and it's not worth adding complicated logic to make them fully isort-compatible. However, this is a small tweak, so I'm happy to make it a slightly more accurate. Please send patch via a GitHub PR.

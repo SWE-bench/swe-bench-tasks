@@ -1,0 +1,13 @@
+base_commit: 94621cef29f80282436d73e8d2c0aa76dab81273
+created_at: '2022-06-11T18:21:32Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: d25872b0fc99dbf7e666a91f59bd4ed125186aa1
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.mwaskom_1776_seaborn-2848:latest
+instance_id: mwaskom__seaborn-2848
+log_parser: parse_log_seaborn
+repo: mwaskom/seaborn
+split: test
+version: '0.12'

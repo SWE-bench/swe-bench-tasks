@@ -1,0 +1,4 @@
+After some serious digging, the bug was introduced here: ​https://github.com/django/django/commit/9e3f141701b96b6974b3386f83dc76e70a41377d via #26466. The problem seems to be, that the URL is not properly parsed. The path and GET attributes needs to be handled differently for that to work.
+I can also confirm what Chrome and Firefox both send an encoded path, but they do not "re"-encode the query.
+After some serious digging, the bug was introduced here: ​https://github.com/django/django/commit/9e3f141701b96b6974b3386f83dc76e70a41377d via #26466. The problem seems to be, that the URL is not properly parsed. The path and GET attributes needs to be handled differently for that to work.
+I can also confirm what Chrome and Firefox both send an encoded path, but they do not "re"-encode the query.

@@ -1,0 +1,16 @@
+{
+  "FAIL_TO_PASS": [
+    "test_staticfiles_dirs_prefix (check_framework.test_caches.CheckCacheLocationTest)",
+    "test_staticfiles_dirs_prefix_not_conflict (check_framework.test_caches.CheckCacheLocationTest)"
+  ],
+  "PASS_TO_PASS": [
+    "Don't error if 'default' is present in CACHES setting.",
+    "Error if 'default' not present in CACHES setting.",
+    "test_absolute_path (check_framework.test_caches.CheckCacheAbsolutePath)",
+    "test_relative_path (check_framework.test_caches.CheckCacheAbsolutePath)",
+    "test_cache_path_contains_media_static_setting (check_framework.test_caches.CheckCacheLocationTest)",
+    "test_cache_path_inside_media_static_setting (check_framework.test_caches.CheckCacheLocationTest)",
+    "test_cache_path_matches_media_static_setting (check_framework.test_caches.CheckCacheLocationTest)",
+    "test_cache_path_not_conflict (check_framework.test_caches.CheckCacheLocationTest)"
+  ]
+}

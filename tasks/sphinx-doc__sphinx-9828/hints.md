@@ -1,0 +1,2 @@
++1: Reasonable. I prefer to name it as `gettext_allow_fuzzy_translations` for the setting because we've given "gettext_" prefix to the i18n settings so far.
+https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-internationalization

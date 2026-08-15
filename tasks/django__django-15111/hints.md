@@ -1,0 +1,3 @@
+Hi rsp2k. I'm inclined to accept this — no problem setting the User-Agent. Initially though I'm going to close as needsinfo — that info being, are you up for finishing this? I see you removed your assignment, but the patch needs tests. Specifically they could go in django/tests/admin_scripts/tests.py in the StartProject and StartApp classes. If so can you add the tests, ​open a PR on GitHub, re-open the ticket, and assign yourself again? Thanks.
+Thank you for your reply. I am working on the tests now and will follow the steps you outlined. I took myself off the ticket because I thought it might not get routed properly, my mistake. I'm reassigning it now.
+Super, thanks for the follow-up! Let's accept for review. Welcome aboard!

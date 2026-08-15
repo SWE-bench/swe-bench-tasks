@@ -1,0 +1,1 @@
+This operation is unsupported, see ​documentation: In addition, only LIMIT, OFFSET, COUNT(*), ORDER BY, and specifying columns (i.e. slicing, count(), order_by(), and values()/values_list()) are allowed on the resulting QuerySet. but I agree that we should raise a descriptive error for update() and delete() (see related #27995).

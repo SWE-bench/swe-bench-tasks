@@ -1,0 +1,1 @@
+FIrst solution variant was - ​https://github.com/django/django/pull/15816 But now I see it is not correct. I'll be back with new pull request

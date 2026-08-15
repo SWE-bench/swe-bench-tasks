@@ -1,0 +1,2 @@
+Thanks for this ticket, however I don't see why you cannot use makemigrations --check for the same purpose. You can start a discussion on DevelopersMailingList if you don't agree.
+Based on short discussion ​https://groups.google.com/d/msg/django-developers/wr8MYU-d8pU/f86jYOZ6AQAJ.

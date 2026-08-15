@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "testing/python/setup_plan.py::test_show_multi_test_fixture_setup_and_teardown_correctly_simple",
+    "testing/python/setup_plan.py::test_show_multi_test_fixture_setup_and_teardown_same_as_setup_show"
+  ],
+  "PASS_TO_PASS": [
+    "testing/python/setup_plan.py::test_show_fixtures_and_test"
+  ]
+}

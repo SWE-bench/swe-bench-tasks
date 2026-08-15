@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "test_no_migrations (auth_tests.test_apps.AppConfigTests)"
+  ],
+  "PASS_TO_PASS": []
+}

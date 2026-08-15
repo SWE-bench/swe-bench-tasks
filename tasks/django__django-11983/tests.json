@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_bounded_params_with_dst_time_zone (admin_changelist.test_date_hierarchy.DateHierarchyTests)",
+    "test_bounded_params_with_time_zone (admin_changelist.test_date_hierarchy.DateHierarchyTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_bounded_params (admin_changelist.test_date_hierarchy.DateHierarchyTests)",
+    "test_invalid_params (admin_changelist.test_date_hierarchy.DateHierarchyTests)"
+  ]
+}

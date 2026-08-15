@@ -1,0 +1,1 @@
+The #8832 mechanism fixed some problems with explicitly numbered footnotes (and #10169 extended this to named footnotes). But this mechanism is flawed when new named or explicitly numbered footnotes occur in-between multiple references to same original one.

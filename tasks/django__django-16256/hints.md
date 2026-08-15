@@ -1,0 +1,3 @@
+Jon, would you like to prepare a patch? (against the main branch.)
+Yeah I can take care of that. I’ll be traveling for the next 2 days then recovering from jetlag and then back on the road again, so I just want to set expectations that this won’t be immediate :(
+Replying to Jon Janzen: Yeah I can take care of that. I’ll be traveling for the next 2 days then recovering from jetlag and then back on the road again, so I just want to set expectations that this won’t be immediate :( Thanks and don't worry, it's a release blocker so we have time to the end of November.

@@ -1,0 +1,2 @@
+​https://github.com/django/django/pull/9812
+Keryn I found it difficult to add a test for the patch, since I cannot find a proper way to create the environment needed to catch this case. On ​https://github.com/django/django/blob/master/tests/admin_scripts/tests.py#L2166, the tests use a target settings file, and if it is not present the tests will fail, so I need to configure somehow the settings, before(?) executing the actual command. Any proposal or insight? Chris

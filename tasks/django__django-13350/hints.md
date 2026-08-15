@@ -1,0 +1,6 @@
+Reproduced at ed880d92b50c641c3e7f6e8ce5741085ffe1f8fb with django.core.files.uploadhandler.TemporaryFileUploadHandler.
+I am analysing a bit the code to deal with uploads. I have noticed that file_complete method is never called if upload is interrupted. Now, since content lenght seems to be unreliable (in my tests is always 0) I am thinking how to solve this issue in a clean way. One of the option I am thinking about is to add a new flag to TemporaryFileUploadHandler that will be set to True within file_complete and having some cleanup code within upload_complete that will check if the flag is True or False and will delete the incomplete file. Does this sound right?
+Does this have a PR merged? If not can I look into this? I want to get started with contributing to Django for a while now, but I haven't been able to do so. Also, could someone please tell me if this ticket is easy enough for a beginner to resolve?
+Hi Sanskar. There's no patch. You can look into Mattia's suggestion to see if it makes sense.
+​PR
+All tests run on my machine (macOS) but the CI test on Windows fails because of a PermissionError, due to the temporary file being used by some other process. Is there any possible fix for this on Windows? Or should I just alter my patch to handle such os errors and label this patch as POSIX only?

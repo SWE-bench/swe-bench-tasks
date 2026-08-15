@@ -1,0 +1,1 @@
+Yes, I suppose this is a valid complaint. Additional args should probably be forwarded on prediction methods in Pipeline.

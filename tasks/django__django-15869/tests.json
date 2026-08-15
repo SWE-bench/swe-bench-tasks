@@ -1,0 +1,20 @@
+{
+  "FAIL_TO_PASS": [
+    "test_length_is_warning (template_tests.filter_tests.test_length_is.DeprecationTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_empty_list (template_tests.filter_tests.test_length_is.FunctionTests)",
+    "test_string (template_tests.filter_tests.test_length_is.FunctionTests)",
+    "test_length_is01 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is02 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is03 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is04 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is05 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is06 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is07 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is08 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is09 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is10 (template_tests.filter_tests.test_length_is.LengthIsTests)",
+    "test_length_is11 (template_tests.filter_tests.test_length_is.LengthIsTests)"
+  ]
+}

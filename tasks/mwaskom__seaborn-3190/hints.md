@@ -1,0 +1,1 @@
+Would this simply mean refactoring the code to use `^` or `xor` functions instead?

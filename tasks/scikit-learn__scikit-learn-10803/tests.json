@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/neighbors/tests/test_kde.py::test_kde_badargs"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/neighbors/tests/test_kde.py::test_kde_algorithm_metric_choice[haversine-kd_tree]",
+    "sklearn/neighbors/tests/test_kde.py::test_kde_score"
+  ]
+}

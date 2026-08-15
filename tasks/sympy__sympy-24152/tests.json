@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test_tensor_product_expand"
+  ],
+  "PASS_TO_PASS": [
+    "test_sparse_matrices",
+    "test_tensor_product_dagger",
+    "test_tensor_product_abstract",
+    "test_tensor_product_commutator",
+    "test_tensor_product_simp",
+    "test_issue_5923"
+  ]
+}

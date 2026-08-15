@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test_file_from_buffer_unnamed_attachment (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_disk_response (responses.test_fileresponse.FileResponseTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_compressed_response (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_buffer_response (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_disk_as_attachment (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_named_pipe_response (responses.test_fileresponse.FileResponseTests)",
+    "test_unicode_attachment (responses.test_fileresponse.FileResponseTests)"
+  ]
+}

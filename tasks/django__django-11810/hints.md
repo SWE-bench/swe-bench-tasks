@@ -1,0 +1,1 @@
+This seems to have been happening forever. sql.Query.select_related is made a dict on .add_select_related but never copied on .clone.

@@ -1,0 +1,3 @@
+Did you consider overriding the get_success_url() method? Perhaps that method could be documented. Also there is settings.LOGIN_REDIRECT_URL. Do you have a use case that requires customizing the redirect for different login views?
+Yes I have, the issue with that is when redirect_authenticated_user = True, dispatch also has redirect logic. No I don't. It's mostly for symmetry with LogoutView so that I have redirects in the same view file, and not in the settings.
+I guess we could see what a patch looks like.

@@ -1,0 +1,9 @@
+So it turns out this oddball behaviour is necessary because the formset cannot be rendered after the lack of management form has been detected, hence you should perform special behaviour for these cases of management form tampering (e.g. redirecting to the same page to make the user start over). Sorry for wasting anyone's time on this.
+I would like to reopen this and propose changing the formset implementation to never let a ValidationError exception escape .is_valid(). The rationale: management form tampering indicates a problem on the user side and it's not something the site's code can or should recover from. Have the formset become invalid and otherwise behave as if it did not contain any forms.
+Pull request: ​https://github.com/django/django/pull/3634
+Actually, I may have been premature in accepting this. It seems this will make debugging quite a bit tricker (when you forget to include a management form, the form will be silently invalid, correct?). At the least, there should be some error message (see also #13060). Also the current behavior is ​documented so we have to consider backwards compatibility here.
+I agree that adding "management form is invalid" to non-form-specific errors is a nice improvement. Can you provide good wording for that? As for documentation, it's all damned lies as it used to raise in the constructor like the docs show but now it raises in is_valid instead :)
+I think we could use the same wording as the existing exception.
+I've added a non-form error to the formset for the case where management form is not valid. Formset's default string representations do not show non-form errors but they do render individual field errors for the management form which should be enough.
+Comments for improvement on PR.
+Thanks for the original work Patryk Zawadzki. I've continued it in PR ​https://github.com/django/django/pull/13607

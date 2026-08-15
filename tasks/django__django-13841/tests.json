@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "test_development_no_file (version.tests.VersionTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_development (version.tests.VersionTests)",
+    "test_get_version_invalid_version (version.tests.VersionTests)",
+    "test_get_version_tuple (version.tests.VersionTests)",
+    "test_releases (version.tests.VersionTests)"
+  ]
+}

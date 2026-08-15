@@ -1,0 +1,21 @@
+{
+  "FAIL_TO_PASS": [
+    "test_Permutation",
+    "test_Permutation_subclassing",
+    "test_from_sequence",
+    "test_resize",
+    "test_deprecated_print_cyclic"
+  ],
+  "PASS_TO_PASS": [
+    "test_josephus",
+    "test_ranking",
+    "test_mul",
+    "test_args",
+    "test_Cycle",
+    "test_printing_cyclic",
+    "test_printing_non_cyclic",
+    "test_permutation_equality",
+    "test_issue_17661",
+    "test_permutation_apply"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/coordinates/tests/test_matrix_utilities.py::test_is_O3",
+    "astropy/coordinates/tests/test_matrix_utilities.py::test_is_rotation"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/coordinates/tests/test_matrix_utilities.py::test_rotation_matrix",
+    "astropy/coordinates/tests/test_matrix_utilities.py::test_angle_axis",
+    "astropy/coordinates/tests/test_matrix_utilities.py::test_matrix_product_deprecation"
+  ]
+}

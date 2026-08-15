@@ -1,0 +1,1 @@
+Proposal makes sense. About the CLA, I don't remember one time where we refused a contribution because of that (should be time to drop it?).

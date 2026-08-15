@@ -1,0 +1,2 @@
+The feature request makes sense but it's still missing tests.
+Sorry for beginner questions, but: as in, you want me to add some unit tests? No problem, but wouldn't a single test be enough? All this change does, after all, is setting Content-Disposition when as_attachment=False, so checking if it works shouldn't require more. I also noticed there's no unit test checking if setting a custom filename works, so i added it to the same one test. What else to add?

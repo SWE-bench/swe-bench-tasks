@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "test_one_matrix"
+  ],
+  "PASS_TO_PASS": [
+    "test_matrix_derivative_by_scalar",
+    "test_matrix_derivative_non_matrix_result",
+    "test_matrix_derivative_trivial_cases",
+    "test_matrix_derivative_with_inverse",
+    "test_matrix_derivative_vectors_and_scalars",
+    "test_matrix_derivatives_of_traces",
+    "test_derivatives_of_complicated_matrix_expr",
+    "test_mixed_deriv_mixed_expressions",
+    "test_derivatives_matrix_norms",
+    "test_derivatives_elementwise_applyfunc"
+  ]
+}

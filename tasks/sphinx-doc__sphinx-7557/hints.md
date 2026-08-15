@@ -1,0 +1,1 @@
+Note: Now, Sphinx uses `inspect.getdoc()` to get inherited docstring. But it seems not supporting decorators. We need to add custom code to do that.

@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "testing/test_stepwise.py::test_xfail_handling"
+  ],
+  "PASS_TO_PASS": [
+    "testing/test_stepwise.py::test_run_without_stepwise",
+    "testing/test_stepwise.py::test_fail_and_continue_with_stepwise",
+    "testing/test_stepwise.py::test_run_with_skip_option",
+    "testing/test_stepwise.py::test_fail_on_errors",
+    "testing/test_stepwise.py::test_change_testfile",
+    "testing/test_stepwise.py::test_stop_on_collection_errors[True]",
+    "testing/test_stepwise.py::test_stop_on_collection_errors[False]"
+  ]
+}

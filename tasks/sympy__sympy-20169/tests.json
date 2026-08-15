@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "test_lens_makers_formula",
+    "test_lens_makers_formula_thick_lens"
+  ],
+  "PASS_TO_PASS": [
+    "test_refraction_angle",
+    "test_fresnel_coefficients",
+    "test_deviation",
+    "test_brewster_angle",
+    "test_critical_angle",
+    "test_mirror_formula",
+    "test_lens_formula",
+    "test_hyperfocal_distance",
+    "test_transverse_magnification"
+  ]
+}

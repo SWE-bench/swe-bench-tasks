@@ -1,0 +1,4 @@
+Would adding an extra parenthesis also work? In that case we can simply adjust the operator precedence table for the Julia printer to have it emit parenthesis for e.g. all binary operators.  I wonder if this is a problem in the Octave printer too?
+
+But I actually think your suggestion is probably better here: extra spaces around the operator could never hurt, right?
+From the Julia side, parentheses everywhere would technically be acceptable, as long as the precedence trick also involved plain numbers, so that `2.^x` and `x.^2` would become `(2).^(x)` and `(x).^(2)`.  But I think this would really harm readability.  On the other hand, spaces everywhere would mostly improve readability.  And as you say, extra spaces never hurt — at least in terms of Julia's ability to parse an expression.  So I agree that spaces are probably better.

@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test_products",
+    "test_helpers_and_coordinate_dependent"
+  ],
+  "PASS_TO_PASS": [
+    "test_point",
+    "test_commutator",
+    "test_differential",
+    "test_lie_derivative",
+    "test_correct_arguments"
+  ]
+}

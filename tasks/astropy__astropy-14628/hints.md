@@ -1,0 +1,2 @@
+Hi, I am interested in signing up for this issue. This would be my first contribution here
+@ninja18 - great! Easiest is to go ahead and make a PR. I assume you are familiar with the astronomy side of it? (see "Additional Context" above)

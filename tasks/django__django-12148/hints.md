@@ -1,0 +1,5 @@
+The implementation is intended to match the catchall middleware. We could try reversing and only if that fails fall back to the current logic.
+I just sent a pull request for a fix for this: ​https://github.com/django/django/pull/2554 This solves all the cases I can think of for including flatpages and running get_absolute_url() on them. By the way, not sure if this is relevant, but: When I was writing the tests for this, I noticed that all the flatpages tests include the flatpages url without a slash, e.g.: url(r'flatpage_root', include('django.contrib.flatpages.urls')), (Note lack of '/' after flatpage_root). This is different than how the documentation recommends including the flatpages, and doesn't make much sense. Not sure what the purpose of this is.
+I left comments for improvement on the PR. Please uncheck "Patch needs improvement" when you update it, thanks.
+#28118 is a duplicate.
+I created another ​PR based on the ​first PR.

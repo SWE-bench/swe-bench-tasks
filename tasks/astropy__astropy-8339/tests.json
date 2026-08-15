@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/stats/tests/test_bayesian_blocks.py::test_fitness_function_results"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/stats/tests/test_bayesian_blocks.py::test_single_change_point",
+    "astropy/stats/tests/test_bayesian_blocks.py::test_duplicate_events",
+    "astropy/stats/tests/test_bayesian_blocks.py::test_measures_fitness_homoscedastic",
+    "astropy/stats/tests/test_bayesian_blocks.py::test_measures_fitness_heteroscedastic",
+    "astropy/stats/tests/test_bayesian_blocks.py::test_regular_events",
+    "astropy/stats/tests/test_bayesian_blocks.py::test_errors"
+  ]
+}

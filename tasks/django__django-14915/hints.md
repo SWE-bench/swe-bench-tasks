@@ -1,0 +1,3 @@
+Thanks for the ticket. Agreed, we could make ModelChoiceIteratorValue hashable by adding: def __hash__(self): return hash(self.value) For now you can use value.value as ​documented in the "Backwards incompatible changes in 3.1" section. Would you like to prepare a patch?
+Replying to Mariusz Felisiak: Thanks for the ticket. Agreed, we could make ModelChoiceIteratorValue hashable by adding: def __hash__(self): return hash(self.value) For now you can use value.value as ​documented in the "Backwards incompatible changes in 3.1" section. Would you like to prepare a patch? Yes, sure.
+Patch: ​https://github.com/django/django/pull/14915

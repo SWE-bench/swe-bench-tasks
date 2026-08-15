@@ -1,0 +1,5 @@
+I'm not sure if the issue can or should be fixed. For the model you gave, an instance will have an id from default=uuid.uuid4, so ​as documented an UPDATE is tried (​code). A fix might try to detect if the primary key came from a default and if so, skip the update.
+A fix might try to detect if the primary key came from a default and if so, skip the update. I think we could use some kind of self._state.adding and self._meta.pk.default heuristics to automatically set force_insert=True on the last table/leaf child. That would break the following scenario though. a = Account(pk='known-uuid-pk') a.title = new_title a.save() # expects an UPDATE here. But I would argue that force_update should be passed in this case. That wouldn't solve the MTI issue described in #29129 but that would do for this case.
+@Tim Graham, should we still work on it?
+Simon's proposal seems fine to me.
+Closed #29129 as a duplicate because the root of the issue is really the primary key with a default and not MTI.

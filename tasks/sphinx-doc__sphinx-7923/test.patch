@@ -1,0 +1,24 @@
+diff --git a/tests/test_parser.py b/tests/test_parser.py
+--- a/tests/test_parser.py
++++ b/tests/test_parser.py
+@@ -50,7 +50,7 @@ def test_RSTParser_prolog_epilog(RSTStateMachine, app):
+     (content, _), _ = RSTStateMachine().run.call_args
+     assert list(content.xitems()) == [('dummy.rst', 0, 'hello Sphinx world'),
+                                       ('dummy.rst', 1, 'Sphinx is a document generator'),
+-                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 2, ''),
+                                       ('<rst_epilog>', 0, 'this is rst_epilog'),
+                                       ('<rst_epilog>', 1, 'good-bye reST!')]
+ 
+diff --git a/tests/test_util_rst.py b/tests/test_util_rst.py
+--- a/tests/test_util_rst.py
++++ b/tests/test_util_rst.py
+@@ -32,7 +32,7 @@ def test_append_epilog(app):
+ 
+     assert list(content.xitems()) == [('dummy.rst', 0, 'hello Sphinx world'),
+                                       ('dummy.rst', 1, 'Sphinx is a document generator'),
+-                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 2, ''),
+                                       ('<rst_epilog>', 0, 'this is rst_epilog'),
+                                       ('<rst_epilog>', 1, 'good-bye reST!')]
+ 

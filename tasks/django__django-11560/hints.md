@@ -1,0 +1,4 @@
+As I mentioned on the PR Extract functions don't explicitly support DurationField; it's not documented nor tested. They happen to work for PostgreSQL because EXTRACT(component FROM ::interval) happens to work but that's just a coincidence. I'm not sure if this ticket should be closed as invalid or repurposed as a feature request to add tested support. We'll have to come with with a way of defining units such as years though, do we want to consider them as 365.25 days?
+Support for DurationField to Extract was added in #27473, so it is a bug (see ​comment).
+​PR
+DurationField is modeled in Python by ​timedelta (see ​documentation), so even with this fix it will always return 0 for ExtractYear, ExtractMonth, or ExtractWeek which is unexpected. We should raise ValueError in all such cases.

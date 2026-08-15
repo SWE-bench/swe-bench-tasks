@@ -1,0 +1,2 @@
+I now have a working patch + test for this, but because it introduces another slightly different way of selecting a template based on the given arguments, I'm holding off on opening a PR, to see if there's merit to refactoring template selection into one place; see #21065 for the details.
+I agree that this should follow upon a resolution of #21065. Three different ways of selecting templates seems like two too many already.

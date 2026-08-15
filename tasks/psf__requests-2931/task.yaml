@@ -1,0 +1,14 @@
+base_commit: 5f7a3a74aab1625c2bb65f643197ee885e3da576
+created_at: '2015-12-16T14:57:00Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+difficulty: 15 min - 1 hour
+environment_setup_commit: bbeb0001cdc657ac8c7fef98e154229bc392db0e
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.psf_1776_requests-2931:latest
+instance_id: psf__requests-2931
+log_parser: parse_log_requests
+repo: psf/requests
+split: test
+version: '2.9'

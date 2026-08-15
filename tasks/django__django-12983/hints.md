@@ -1,0 +1,1 @@
+The current version of the patch converts all underscores to dashes which (as discussed on the PR) isn't an obviously desired change. A discussion is needed to see if there's consensus about that change.

@@ -1,0 +1,12 @@
+diff --git a/tests/cache/tests.py b/tests/cache/tests.py
+--- a/tests/cache/tests.py
++++ b/tests/cache/tests.py
+@@ -1625,6 +1625,8 @@ def test_patch_vary_headers(self):
+             (None, ('Accept-Encoding', 'COOKIE'), 'Accept-Encoding, COOKIE'),
+             ('Cookie,     Accept-Encoding', ('Accept-Encoding', 'cookie'), 'Cookie, Accept-Encoding'),
+             ('Cookie    ,     Accept-Encoding', ('Accept-Encoding', 'cookie'), 'Cookie, Accept-Encoding'),
++            ('*', ('Accept-Language', 'Cookie'), '*'),
++            ('Accept-Language, Cookie', ('*',), '*'),
+         )
+         for initial_vary, newheaders, resulting_vary in headers:
+             with self.subTest(initial_vary=initial_vary, newheaders=newheaders):

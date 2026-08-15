@@ -1,0 +1,1 @@
+Also reproduces with pytest 7.2.

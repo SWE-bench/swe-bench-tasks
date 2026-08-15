@@ -1,0 +1,13 @@
+base_commit: d8c37f43724cd9fb0870f77877b7c4c7e38a19e0
+created_at: '2021-05-13T21:32:41Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: 4346498c85848c53843b810537b83a8f6124c9d3
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pallets_1776_flask-4045:latest
+instance_id: pallets__flask-4045
+log_parser: parse_log_flask
+repo: pallets/flask
+split: test
+version: '2.0'

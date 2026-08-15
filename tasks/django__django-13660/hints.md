@@ -1,0 +1,1 @@
+​PR includes tests and documents the new feature in the release notes (but not in the main docs since it seems more like a bug fix than a new feature to me).

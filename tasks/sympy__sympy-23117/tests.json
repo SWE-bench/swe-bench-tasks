@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_issue_17851"
+  ],
+  "PASS_TO_PASS": [
+    "test_array_negative_indices",
+    "test_issue_18361",
+    "test_issue_20222"
+  ]
+}

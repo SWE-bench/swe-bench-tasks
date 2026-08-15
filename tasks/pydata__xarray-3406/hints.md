@@ -1,0 +1,1 @@
+I agree, this is definitely confusing. We should probably drop these groups automatically, like pandas.

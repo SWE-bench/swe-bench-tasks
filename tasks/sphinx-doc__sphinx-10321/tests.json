@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_ext_autodoc_preserve_defaults.py::test_preserve_defaults"
+  ],
+  "PASS_TO_PASS": []
+}

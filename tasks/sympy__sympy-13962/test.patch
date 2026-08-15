@@ -1,0 +1,12 @@
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -593,6 +593,8 @@ def test_Quaternion_str_printer():
+ 
+ 
+ def test_Quantity_str():
++    assert sstr(second, abbrev=True) == "s"
++    assert sstr(joule, abbrev=True) == "J"
+     assert str(second) == "second"
+     assert str(joule) == "joule"
+ 

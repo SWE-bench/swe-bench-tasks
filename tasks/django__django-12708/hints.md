@@ -1,0 +1,2 @@
+Reproduced on master at 623139b5d1bd006eac78b375bcaf5948e695c3c6.
+I haven't looked under the hood on this yet, but could it be related to the ordering of the operations generated for the mgiration? on first inspection it feels like this and #28862 could be caused by the same/similar underlying problem in how FieldRelatedOptionOperation subclasses ordering is handled in the migration autodetector's migration optimizer.

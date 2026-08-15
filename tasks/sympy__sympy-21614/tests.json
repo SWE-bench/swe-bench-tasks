@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test_Derivative_kind"
+  ],
+  "PASS_TO_PASS": [
+    "test_NumberKind",
+    "test_Add_kind",
+    "test_mul_kind",
+    "test_Symbol_kind",
+    "test_Integral_kind",
+    "test_Matrix_kind"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_deprecation.py::test_reporter_implements",
+    "tests/test_deprecation.py::test_checker_implements",
+    "tests/test_deprecation.py::test_interfaces"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_deprecation.py::test_mapreducemixin"
+  ]
+}

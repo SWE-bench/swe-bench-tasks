@@ -1,0 +1,6 @@
+Thanks for reporting! Parsing expressions in template parameter and argument lists is quite icky, and it looks to me that with the 3.x branch the nature of the errors is slightly different, but still present. I'll try to dig into it as soon as possible.
+Sorry, previous comment was on wrong issue by accident... 
+
+I'm very sympathetic to how difficult C++ is to parse... A possible option that I fully understand you may not want to entertain would be to treat the template parameters verbatim without parsing, by which I mean adding an option to control handling into Sphinx. I guess this would mean no links for classes/types in the arguments, though this is something I personally would be okay with if it allows us to use Sphinx instead of Doxygen :smile: 
+Actually, there is already this verbatim mode for expressions (the ``_parse_expression_fallback`` method), but unfortunately that sometimes introduces additional problems or hides the underlying issue in strange ways :-).
+Ah okay, thanks for explaining that :) If only C++ was easier to parse :smile: 

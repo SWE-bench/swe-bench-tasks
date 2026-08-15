@@ -1,0 +1,1 @@
+​django-developers discussion from the reporter. Shai also ​proposed a similar thing.

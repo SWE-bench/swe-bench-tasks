@@ -1,0 +1,2 @@
+I agree that we should remove for from MultiWidget's <label> but not because "It has not sense" but to improve accessibility when using a screen reader, see also #32338. It should be enough to return an empty string: def id_for_label(self, id_): return ''
+​PR

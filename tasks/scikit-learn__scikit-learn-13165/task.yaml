@@ -1,0 +1,12 @@
+base_commit: 1c8668b0a021832386470ddf740d834e02c66f69
+created_at: '2019-02-14T14:53:40Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 7813f7efb5b2012412888b69e73d76f2df2b50b6
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.scikit-learn_1776_scikit-learn-13165:latest
+instance_id: scikit-learn__scikit-learn-13165
+log_parser: parse_log_scikit
+repo: scikit-learn/scikit-learn
+split: test
+version: '0.21'

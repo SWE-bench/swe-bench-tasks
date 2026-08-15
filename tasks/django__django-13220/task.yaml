@@ -1,0 +1,13 @@
+base_commit: 16218c20606d8cd89c5393970c83da04598a3e04
+created_at: '2020-07-21T19:54:16Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: 65dfb06a1ab56c238cc80f5e1c31f61210c4577d
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.django_1776_django-13220:latest
+instance_id: django__django-13220
+log_parser: parse_log_django
+repo: django/django
+split: test
+version: '3.2'

@@ -1,0 +1,26 @@
+{
+  "FAIL_TO_PASS": [
+    "test_no_compile_when_unneeded (i18n.test_compilation.PoFileTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_locale_paths_pathlib (i18n.test_compilation.PathLibLocaleCompilationTests)",
+    "test_percent_symbol_in_po_file (i18n.test_compilation.PoFileContentsTests)",
+    "test_app_locale_compiled (i18n.test_compilation.AppCompilationTest)",
+    "test_multiple_locales (i18n.test_compilation.MultipleLocaleCompilationTests)",
+    "test_one_locale (i18n.test_compilation.MultipleLocaleCompilationTests)",
+    "test_error_reported_by_msgfmt (i18n.test_compilation.CompilationErrorHandling)",
+    "test_msgfmt_error_including_non_ascii (i18n.test_compilation.CompilationErrorHandling)",
+    "test_bom_rejection (i18n.test_compilation.PoFileTests)",
+    "test_no_write_access (i18n.test_compilation.PoFileTests)",
+    "test_command_help (i18n.test_compilation.ExcludedLocaleCompilationTests)",
+    "test_multiple_locales_excluded (i18n.test_compilation.ExcludedLocaleCompilationTests)",
+    "test_multiple_locales_excluded_with_locale (i18n.test_compilation.ExcludedLocaleCompilationTests)",
+    "test_one_locale_excluded (i18n.test_compilation.ExcludedLocaleCompilationTests)",
+    "test_one_locale_excluded_with_locale (i18n.test_compilation.ExcludedLocaleCompilationTests)",
+    "test_ignores_based_on_pattern (i18n.test_compilation.IgnoreDirectoryCompilationTests)",
+    "test_multiple_locale_dirs_ignored (i18n.test_compilation.IgnoreDirectoryCompilationTests)",
+    "test_one_locale_dir_ignored (i18n.test_compilation.IgnoreDirectoryCompilationTests)",
+    "test_fuzzy_compiling (i18n.test_compilation.FuzzyTranslationTest)",
+    "test_nofuzzy_compiling (i18n.test_compilation.FuzzyTranslationTest)"
+  ]
+}

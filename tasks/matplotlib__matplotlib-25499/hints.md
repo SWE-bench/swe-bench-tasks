@@ -1,0 +1,2 @@
+Do you know if this ever worked?  We changed some colorbar things recently, but not sure what would have caused this to happen.  Thanks
+Not sure. This is the first time I've tried to set bbox_inches to anything other than "tight".

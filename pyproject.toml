@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sb-dockerfile-gen-og"
+name = "swe-bench-original-tasks"
 version = "0.1.0"
 description = "Dockerfile generator for SWE-bench (original Python benchmarks)"
 requires-python = ">=3.10"
@@ -13,10 +13,10 @@ dependencies = [
 ]
 
 [project.scripts]
-sb-dockerfile-gen-og = "sb_dockerfile_gen:main"
+dockerfile-gen = "dockerfile_gen:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+include = ["dockerfile_gen*"]
 
 [tool.setuptools.package-data]
 "sb_dockerfile_gen.data" = ["environments/**/*.yml"]

@@ -1,0 +1,4 @@
+I don't know the history of this. Maybe someone wants to go digging to find out whether this was a reasoned choice by the developers
+I looked at the code, and obviously `n_components` is not a instance variable of the `SpectralClustering` class, and when an instance of `SpectralClustering` class calls fit, `n_components` is not passed into `spectral_clustering` method. So should the fix of this problem be adding a `n_components` instance variable to the `SpectralClustering` class? Or is there any other concern for not doing so? @adrinjalali
+
+If adding a `n_components` instance variable is a reasonable fix, I would like to work on this. Thanks

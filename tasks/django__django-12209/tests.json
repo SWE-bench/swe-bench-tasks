@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "partial(func, *args, **keywords) - new function with partial application"
+  ],
+  "PASS_TO_PASS": []
+}

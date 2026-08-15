@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/manifold/tests/test_isomap.py::test_sparse_input"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/manifold/tests/test_isomap.py::test_isomap_simple_grid",
+    "sklearn/manifold/tests/test_isomap.py::test_isomap_reconstruction_error",
+    "sklearn/manifold/tests/test_isomap.py::test_transform",
+    "sklearn/manifold/tests/test_isomap.py::test_pipeline",
+    "sklearn/manifold/tests/test_isomap.py::test_isomap_clone_bug"
+  ]
+}

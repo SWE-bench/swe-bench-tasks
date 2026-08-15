@@ -1,0 +1,8 @@
+The issue seems like it's because `ufuncify` inserts dummy symbols called `y` and `m` into the generated function signature, but `dump_pyx` emits the string representation of the dummy symbols as variables within the Cython code without making sure that they're unique. The compilation error is because of the resulting name clash.
+
+I think the simplest solution might be to not give the dummy symbols names, which always results in unique variable names, but I'm not sure if the `Dummy`'s default names would create an issue with the generated Cython code (it seems to work fine).
+I think the names are useful for introspection and debugging. There is a dummify feature in lambdify that could be reused here. Although I just tested and `help(f)` doesn't see the correct parameter list for `f = ufuncify(x, x, backend='Cython')` (it just shows `f(...)`). 
+The issue seems like it's because `ufuncify` inserts dummy symbols called `y` and `m` into the generated function signature, but `dump_pyx` emits the string representation of the dummy symbols as variables within the Cython code without making sure that they're unique. The compilation error is because of the resulting name clash.
+
+I think the simplest solution might be to not give the dummy symbols names, which always results in unique variable names, but I'm not sure if the `Dummy`'s default names would create an issue with the generated Cython code (it seems to work fine).
+I think the names are useful for introspection and debugging. There is a dummify feature in lambdify that could be reused here. Although I just tested and `help(f)` doesn't see the correct parameter list for `f = ufuncify(x, x, backend='Cython')` (it just shows `f(...)`). 

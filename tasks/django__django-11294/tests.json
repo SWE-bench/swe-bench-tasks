@@ -1,0 +1,16 @@
+{
+  "FAIL_TO_PASS": [
+    "test_no_len_type (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_value_error (template_tests.filter_tests.test_pluralize.FunctionTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_decimals (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_floats (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_integers (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_lists (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_suffixes (template_tests.filter_tests.test_pluralize.FunctionTests)",
+    "test_no_arguments (template_tests.filter_tests.test_pluralize.PluralizeTests)",
+    "test_singular_and_plural_suffix (template_tests.filter_tests.test_pluralize.PluralizeTests)",
+    "test_suffix (template_tests.filter_tests.test_pluralize.PluralizeTests)"
+  ]
+}

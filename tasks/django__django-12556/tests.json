@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "test_get_random_string_warning (utils_tests.test_crypto.DeprecationTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_get_random_string (utils_tests.test_crypto.DeprecationTests)",
+    "test_constant_time_compare (utils_tests.test_crypto.TestUtilsCryptoMisc)",
+    "test_invalid_algorithm (utils_tests.test_crypto.TestUtilsCryptoMisc)",
+    "test_salted_hmac (utils_tests.test_crypto.TestUtilsCryptoMisc)",
+    "test_default_hmac_alg (utils_tests.test_crypto.TestUtilsCryptoPBKDF2)",
+    "test_public_vectors (utils_tests.test_crypto.TestUtilsCryptoPBKDF2)",
+    "test_regression_vectors (utils_tests.test_crypto.TestUtilsCryptoPBKDF2)"
+  ]
+}

@@ -1,0 +1,2 @@
+Looks like it comes from fbbbd392e6c which is from https://github.com/sympy/sympy/pull/14248. CC @jashan498 
+`_print_MatAdd` should use the same methods as `_print_Add` to determine whether or not to include a plus or minus sign. If it's possible, it could even reuse the same code. 

@@ -1,0 +1,2 @@
+Hi NyanKiyoshi, what a lovely report. Thank you. Clearly :) the expected behaviour is that test_created_object_is_str should pass. It's interesting that the underlying __dict__ values differ, which explains all I guess: Created: {'_state': <django.db.models.base.ModelState object at 0x10730efd0>, 'id': 1, 'my_str_value': <MyChoice.FIRST_CHOICE: 'first'>} Retrieved: {'_state': <django.db.models.base.ModelState object at 0x1072b5eb8>, 'id': 1, 'my_str_value': 'first'} Good catch. Thanks again.
+Sample project with provided models. Run ./manage.py test

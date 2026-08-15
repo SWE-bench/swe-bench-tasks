@@ -1,0 +1,7 @@
+That does look unexpected. Reproduced at cb7860ccedb199cb221c9e084b5104978b246356.
+Closing as a duplicate of #29260 because the issue has nothing to do with MTI and the other ticket has a larger discussion around how it should be solved.
+#31297 was opened and is a duplicate of this. This still occurs in Django 3.0. Reproduced at a6b3938afc0204093b5356ade2be30b461a698c5. It looks like this use-case wasn't picked up as part of #29260. Possibly related to #18305. Simon, re-opening and CC-ing you to ask your opinion. (Thanks!)
+CC'ing myself since I reported #31297. Didn't know about this ticket while creating that one. I'm up for fixing this issue if it is accepted.
+Carlton, I agree that it's its own issue and that it's highly related to #18305. I'd say the fact that save(force_insert=True) doesn't work is a duplicate of #18305 and the fact save() doesn't result in the same optimization as #29260 when a primary key default is defined in MTI is an omission of #29260.
+Cheers Simon. I'm up for fixing this issue if it is accepted. Abhijeet, if you'd like to assign yourself and take a look that would be great. Reach out if you need any input. Thanks.
+Thank you. I'll come up with a patch soon.

@@ -1,0 +1,11 @@
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -272,6 +272,7 @@ def test_unsupported_operations_on_combined_qs(self):
+                 'annotate',
+                 'defer',
+                 'delete',
++                'distinct',
+                 'exclude',
+                 'extra',
+                 'filter',

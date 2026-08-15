@@ -1,0 +1,5 @@
+Agreed, we should include include cached properties (@cached_property). I'm not sure about other descriptors and attributes, not all of them are reasonable. I think we should end there.
+How do you guys suggest the visualization of the @cached_property in the fields table? I thought about something like {field_name} (cached property) in the field column.
+Replying to Ramon Saraiva: I like the idea of indicating that it is a cached property using {field_name} (cached property) in the field column, but currently there is no distinction made for properties vs. fields, so if you were to do that, it would make sense to do the same thing for standard properties - {field_name} (property), which would be helpful, but that may be out of the scope of this issue. I'm not sure how that works. Thanks for taking this on, by the way!
+Replying to Nat S Dunn: Would be straight forward to also add {field_name} (property) to properties. Another way would be adding something to the Description column.
+Replying to Ramon Saraiva: Cool. I'd prefer it in the Fields column like in your original suggestion. The Description column can get pretty busy.

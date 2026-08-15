@@ -1,0 +1,1 @@
+Maybe this could generally be extended to use of __in with non-nullable fields? Since IN translates to OR = for each elements and NULL != NULL I assume it could be done at the __in lookup level even for non-nullable fields.

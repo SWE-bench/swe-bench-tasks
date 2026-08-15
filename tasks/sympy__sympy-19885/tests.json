@@ -1,0 +1,21 @@
+{
+  "FAIL_TO_PASS": [
+    "test_gauss_jordan_solve",
+    "test_issue_19815"
+  ],
+  "PASS_TO_PASS": [
+    "test_issue_17247_expression_blowup_29",
+    "test_issue_17247_expression_blowup_30",
+    "test_issue_17247_expression_blowup_32",
+    "test_LUsolve",
+    "test_QRsolve",
+    "test_errors",
+    "test_cholesky_solve",
+    "test_LDLsolve",
+    "test_lower_triangular_solve",
+    "test_upper_triangular_solve",
+    "test_diagonal_solve",
+    "test_pinv_solve",
+    "test_pinv_rank_deficient"
+  ]
+}

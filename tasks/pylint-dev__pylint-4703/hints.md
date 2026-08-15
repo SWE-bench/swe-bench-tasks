@@ -1,0 +1,1 @@
+Not only this but they can produce very weir errors, ones reported to files that do not have any imports related to the cyclic ones inside, at least with current code from master. I cannot reproduce the problem with v2.6.0 release, but that one has other issues.

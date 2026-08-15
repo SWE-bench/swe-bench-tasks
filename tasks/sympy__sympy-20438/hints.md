@@ -1,0 +1,1 @@
+is_subset doesn't work ProductSet.is_subset(FiniteSet).

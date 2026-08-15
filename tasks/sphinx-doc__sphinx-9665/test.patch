@@ -1,0 +1,11 @@
+diff --git a/tests/test_util_typing.py b/tests/test_util_typing.py
+--- a/tests/test_util_typing.py
++++ b/tests/test_util_typing.py
+@@ -48,6 +48,7 @@ def test_restify():
+     assert restify(Struct) == ":py:class:`struct.Struct`"
+     assert restify(TracebackType) == ":py:class:`types.TracebackType`"
+     assert restify(Any) == ":py:obj:`~typing.Any`"
++    assert restify('str') == "str"
+ 
+ 
+ def test_restify_type_hints_containers():

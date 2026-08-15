@@ -1,0 +1,1 @@
+I'm pretty sure Iris could do without this attribute, as it could just use the return value of `setdefault` [here](https://github.com/SciTools/iris/blob/5b42f47e71fbeb7861a9df59c8bd8c0be9a340e3/lib/iris/plot.py#L1151).  I have verified locally that Iris's tests pass with that change.  But a deprecation period on the attribute would be useful.

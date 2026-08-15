@@ -1,0 +1,1 @@
+Hi @znichollscr, thanks for the report. Indeed it looks like `_coord_names` are not updated properly.

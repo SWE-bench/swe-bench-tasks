@@ -1,0 +1,4 @@
+Isn't a bug, that the template resolver tries to step into ''.<some_builtin_method> here? Maybe the for bit in self.lookups: descent could exit as soon as current drops to an empty string?
+Thanks for the report. foo may exist, the same error is raised for each method call for bultin types, e.g. def myview(request): return render(request, "myview.html", {"foo": "X"}) myview.html: {{foo.count}} Regression in 09341856ed9008875c1cc883dc0c287670131458.
+​https://github.com/django/django/pull/15698
+Hi Mariusz, Just saw the flag Patch needs improvement is checked. How exactly should I improve the patch, besides that I need to add tests (or only tests need to be added)? I'm a first-time Django contributor any help is appreciated! Cheng

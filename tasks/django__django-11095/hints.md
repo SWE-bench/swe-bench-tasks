@@ -1,0 +1,3 @@
+Are you going to offer a patch to show exactly what you have in mind? I'm not immediately convinced that another hook is needed since the cost of duplicating a for loop is not that great.
+If I want to realize a dynamic inlines based on the request or model instance. I need to override get_inline_instances to do it. What I want to do is just set self.inlines to dynamic values according to different person or object. not inline instances, so I advise to add a new hook get_inlines(request, obj=None) to finish such a thing. I've created a new pull request here: ​​https://github.com/django/django/pull/7920.
+I guess it's useful. The patch needs some improvement (tests, some doc fixes such as release notes) as per the PatchReviewChecklist.

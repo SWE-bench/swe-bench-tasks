@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "xarray/tests/test_array_api.py::test_arithmetic",
+    "xarray/tests/test_array_api.py::test_aggregation",
+    "xarray/tests/test_array_api.py::test_indexing",
+    "xarray/tests/test_array_api.py::test_reorganizing_operation"
+  ],
+  "PASS_TO_PASS": []
+}

@@ -1,0 +1,1 @@
+Thanks for the report. This is because child_id is not updated after parent.child.save(). Related to #29497 and #32133.

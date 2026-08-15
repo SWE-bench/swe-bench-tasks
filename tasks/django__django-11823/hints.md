@@ -1,0 +1,4 @@
+OK, yes, this seems legitimate. Current behaviour was deliberately introduced in #5813 (f2f6e70b08b1142055e33e75f58cfe7fbb5d868f). (Looking at tickets for Core+(Cache+system) there are a few on similar topics, though not exactly so.)
+I have an idea of how to solve this but I assume the core developers have a better understanding of why it was done this way in the first place, and what else it'll affect. Is it worth me submitting a patch? Please let me know how I can help.
+Hi Danny. Perhaps a post to the DevelopersMailingList, explaining as clearly as possible what's going on, and your idea, would be the best way to go. That way, you're likely to get the feedback you need. Thanks!
+Thanks. I posted a new topic on that list. ​https://groups.google.com/forum/#!topic/django-developers/BwTZFMpqd6U

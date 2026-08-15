@@ -1,0 +1,5 @@
+Thanks for the report, however test_long_interval_with_tz works for me on the current main branch 🤔
+Whoops, sorry, I haven't properly tested the function as I currently don't have a local Django dev environment. I'm testing this on a shell with my Django project, I think this should be reproducible: >>> from django.utils import timezone >>> from django.utils.timesince import timesince >>> import datetime >>> timesince(timezone.now() - datetime.timedelta(days=31)) Traceback (most recent call last): File "<console>", line 1, in <module> File "/Users/sage/Code/github/wagtail/wagtail/venv/lib/python3.10/site-packages/django/utils/timesince.py", line 103, in timesince remaining_time = (now - pivot).total_seconds() TypeError: can't subtract offset-naive and offset-aware datetimes
+OK, with self.settings(USE_TZ=True) was missing: @requires_tz_support def test_long_interval_with_tz(self): with self.settings(USE_TZ=True): now = timezone.now() d = now - datetime.timedelta(days=40) self.assertEqual(timesince(d), "1\xa0month") Regression in 8d67e16493c903adc9d049141028bc0fff43f8c8.
+Oops, ninja'd! I was adding override_settings to the ticket description.
+​PR

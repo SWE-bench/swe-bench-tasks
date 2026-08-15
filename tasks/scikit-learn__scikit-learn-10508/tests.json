@@ -1,0 +1,26 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/preprocessing/tests/test_label.py::test_label_encoder_errors",
+    "sklearn/preprocessing/tests/test_label.py::test_label_encoder_empty_array"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/preprocessing/tests/test_label.py::test_label_binarizer",
+    "sklearn/preprocessing/tests/test_label.py::test_label_binarizer_unseen_labels",
+    "sklearn/preprocessing/tests/test_label.py::test_label_binarizer_set_label_encoding",
+    "sklearn/preprocessing/tests/test_label.py::test_label_binarizer_errors",
+    "sklearn/preprocessing/tests/test_label.py::test_label_encoder",
+    "sklearn/preprocessing/tests/test_label.py::test_label_encoder_fit_transform",
+    "sklearn/preprocessing/tests/test_label.py::test_sparse_output_multilabel_binarizer",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_empty_sample",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_unknown_class",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_given_classes",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_same_length_sequence",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_non_integer_labels",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_non_unique",
+    "sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_inverse_validation",
+    "sklearn/preprocessing/tests/test_label.py::test_label_binarize_with_class_order",
+    "sklearn/preprocessing/tests/test_label.py::test_invalid_input_label_binarize",
+    "sklearn/preprocessing/tests/test_label.py::test_inverse_binarize_multiclass"
+  ]
+}

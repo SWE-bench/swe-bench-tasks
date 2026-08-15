@@ -1,0 +1,6 @@
+This seems like an oversight. Would it make sense to reinterpret tokens with a timeout less than some small-in-seconds but large-in-days cutoff, such as 3600 * 365, as days instead of seconds?
+We've been discussing using patchy to do something to that effect. With free code access you can easily tell because the prefix is 3 characters in the old scheme and 6 in the other so you could switch off that. If you were to switch off value anything in the 10k (~27*365) - 600m(~19*365*60*60) range should be a safe cutoff.
+Great catch, we missed this. However, I'm not sure what we can do, any heuristic will be clunky, IMO. 1 second, 1 day, 300k seconds, or 300k days are all valid.
+It’s seconds/days since January 2001, so I don’t think it’s clunky... I doubt anyone is running an app with the clock set between 2001 and 2002 for example.
+I think the prefix length might be a better check, it's totally unambiguous
+I think the prefix length might be a better check, it's totally unambiguous Ahh, yes. That's bulletproof, thanks! Regression in 45304e444e0d780ceeb5fc03e6761569dfe17ab2.

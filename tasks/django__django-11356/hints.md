@@ -1,0 +1,4 @@
+IMO it would be unnecessary to add an extra check for None since it covers all options for on_delete explicitly in documentation: The possible values for on_delete are found in django.db.models: ... ​https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.ForeignKey.on_delete
+Thanks for the report. I can imagine that someone may provide custom on_delete behavior, hence I don't think we should validate this attribute with a static list of on_delete behaviors defined by Django. IMO we can raise raise ValueError('on_delete must be callable.') in __init__().
+I agree with adding a check in __init__() and raising ValueError('on_delete must be callable.') . I'm going to submit a patch soon, do you have any suggestion as to where I should write my tests?
+tests/delete looks like a good place for tests.

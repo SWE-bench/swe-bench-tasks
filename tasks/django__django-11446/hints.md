@@ -1,0 +1,3 @@
+Thanks for the report. I'm not sure if we should complicate all default error pages. It is ​documented that by default error views produce a very simple messages and it is also still recommended as good practice to provide custom templates in order to present pretty error pages to the user. You can also ​customize error views. To sum up default error pages are just a fallback, but OK we can accept this as a simple cleanup.
+I'll start working on this ticket. Following @felixxm comment I'll see if a *simple* solution can be applied. My opinion is that Django should use the corresponding format or at least to be consistent with other responses.
+Here's my patch ​PR. It adds html to the response of all default error pages. Any comments?

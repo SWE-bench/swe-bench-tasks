@@ -1,0 +1,1 @@
+Thanks for this report. ORDER BY is not allowed in subqueries, however it should raise a descriptive errror: "ORDER BY not allowed in subqueries of compound statements", even if a subquery is also a combined queryset.

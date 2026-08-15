@@ -1,0 +1,1 @@
+Thanks a lot for the report and the test Jannis, pretty sure this due to a lack of field.copy() 278881e37619278789942513916acafaa88d26f3 if this only happens on query re-evaluation.

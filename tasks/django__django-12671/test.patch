@@ -1,0 +1,23 @@
+diff --git a/tests/user_commands/management/commands/hal.py b/tests/user_commands/management/commands/hal.py
+--- a/tests/user_commands/management/commands/hal.py
++++ b/tests/user_commands/management/commands/hal.py
+@@ -12,6 +12,7 @@ def handle(self, *app_labels, **options):
+         app_labels = set(app_labels)
+ 
+         if options['empty']:
++            self.stdout.write()
+             self.stdout.write("Dave, I can't do that.")
+             return
+ 
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -124,7 +124,7 @@ def test_call_command_option_parsing_non_string_arg(self):
+     def test_calling_a_command_with_only_empty_parameter_should_ends_gracefully(self):
+         out = StringIO()
+         management.call_command('hal', "--empty", stdout=out)
+-        self.assertIn("Dave, I can't do that.\n", out.getvalue())
++        self.assertEqual(out.getvalue(), "\nDave, I can't do that.\n")
+ 
+     def test_calling_command_with_app_labels_and_parameters_should_be_ok(self):
+         out = StringIO()

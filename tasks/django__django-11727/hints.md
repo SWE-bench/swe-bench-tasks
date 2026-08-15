@@ -1,0 +1,5 @@
+​PR
+The options for Save and Save and continue were originally added to ensure correct behaviour when hitting Save New and getting a validation error. See ​0894643e4. They weren't really for direct usage... ... however, maybe it's reasonable. Tentatively Accept to see how the patch turns out, and what others think. This isn't really documented (like much around extending the admin). Not sure where it would go if we were to add something.
+A ​Stackoverflow question suggests several alternatives including overriding the template tag or adding some CSS. I guess I'm okay with the patch (even if undocumented) but it needs a test.
+Replying to Tim Graham: A ​Stackoverflow question suggests several alternatives including overriding the template tag or adding some CSS. I guess I'm okay with the patch (even if undocumented) but it needs a test. The test is the only thing missing? I would like to work on it
+Hey Tim, Is this still available to work, if yes - I would like to add unit tests to it ?

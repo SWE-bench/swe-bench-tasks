@@ -1,0 +1,2 @@
+Thanks for the report. Regression in 10d126198434810529e0220b0c6896ed64ca0e88. Reproduced at 4fe3774c729f3fd5105b3001fe69a70bdca95ac3.
+This problem is also affecting MySQL, the timezone "Etc/GMT-10" is returning "-10" instead of "-10:00". #33037

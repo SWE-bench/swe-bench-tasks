@@ -1,0 +1,2 @@
+Seems related : https://github.com/pytest-dev/pytest/issues/4677
+@tirkarthi Yes, it seems similar, but doesn't apply to the same. In [#4677](https://github.com/pytest-dev/pytest/issues/4677) we want to change absolute paths to relative. Solved #4677 will leave already relative paths unchanged and will not fix this issue. 

@@ -1,0 +1,1 @@
+As you've noted, pickling is pretty fragile.  Do you _need_ to pickle?  

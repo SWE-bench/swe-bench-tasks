@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "testing/logging/test_formatter.py::test_coloredlogformatter_with_width_precision"
+  ],
+  "PASS_TO_PASS": [
+    "testing/logging/test_formatter.py::test_coloredlogformatter",
+    "testing/logging/test_formatter.py::test_multiline_message",
+    "testing/logging/test_formatter.py::test_colored_short_level"
+  ]
+}

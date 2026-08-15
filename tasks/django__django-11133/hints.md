@@ -1,0 +1,3 @@
+I guess HttpResponseBase.make_bytes ​could be adapted to deal with memoryview objects by casting them to bytes. In all cases simply wrapping the memoryview in bytes works as a workaround HttpResponse(bytes(model.binary_field)).
+The fact make_bytes would still use force_bytes if da56e1bac6449daef9aeab8d076d2594d9fd5b44 didn't refactor it and that d680a3f4477056c69629b0421db4bb254b8c69d0 added memoryview support to force_bytes strengthen my assumption that make_bytes should be adjusted as well.
+I'll try to work on this.

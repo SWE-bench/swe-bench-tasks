@@ -1,0 +1,6 @@
+Thanks for the report. Regression in 9e1b6b8a66af4c2197e5b1b41eb9dbb36e4f6502. Reproduced at fbe82f82555bc25dccb476c749ca062f0b522be3.
+Potential fix: diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py index d517d7269b..894d931d50 100644 --- a/django/db/models/fields/related.py +++ b/django/db/models/fields/related.py @@ -582,7 +582,8 @@ class ForeignObject(RelatedField): if self.remote_field.parent_link: kwargs['parent_link'] = self.remote_field.parent_link if isinstance(self.remote_field.model, str): - kwargs['to'] = self.remote_field.model.lower() + app_label, model_name = self.remote_field.model.split('.') + kwargs['to'] = '%s.%s' % (app_label, model_name.lower()) else: kwargs['to'] = self.remote_field.model._meta.label_lower # If swappable is True, then see if we're actually pointing to the target
+That fix looks good to me.
+Wonder if a longer term solution is to use case insensitive identifier for app labels as well.
+Replying to Simon Charette: Wonder if a longer term solution is to use case insensitive identifier for app labels as well. Maybe, I'm afraid that it will create some regressions, since app labels were always 🤔 case sensitive in migrations . This small patch should be fine for backport.
+Agreed, safer to stick to the less intrusive backport for the time being.

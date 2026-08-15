@@ -1,0 +1,1 @@
+I'm always sceptical about new Admin API, but I'm going to Accept this, as I can see the use-case. (+0) I've left ​comments on the first PR. Summary: IMO, we should add only the minimal hook to let folks customise the LogEntry QuerySet, and document that, but not add the initially suggested helper methods and AdminSite flag attributes.

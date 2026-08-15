@@ -1,0 +1,1 @@
+Seems fair yes. (An individual backend could note that this wasn't supported, if that were necessary.)

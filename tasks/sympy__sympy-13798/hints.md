@@ -1,0 +1,1 @@
+Your change sounds good to me. It seems to be restricted only because it's a mapping, but it could be set so that an unknown argument is used as the latex. 

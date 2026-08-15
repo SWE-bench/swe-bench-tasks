@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_line_disable_all",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_scope",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_scope_double",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_scope_function"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_all",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_file",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_file_double",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_line_two",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_line_midle",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_duplicate_code_raw_strings_disable_line_end",
+    "tests/test_similar.py::TestSimilarCodeChecker::test_ignore_imports"
+  ]
+}

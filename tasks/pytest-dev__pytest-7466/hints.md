@@ -1,0 +1,2 @@
+`PY_COLOR` is also pytest specific, so I think if it happens that both are set, we should give preference over `PY_COLOR` over `NO_COLOR`.
+fwiw, I think `NO_COLOR` is ~slightly flawed in that `NO_COLOR=` (empty environment variable) is treated as `NO_COLOR=1`.  this diverges from standard expected posix behaviour where an empty environment variable should be treated as absent

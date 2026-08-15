@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/lint/test_utils.py::test_issue_template_on_fatal_errors"
+  ],
+  "PASS_TO_PASS": [
+    "tests/lint/test_utils.py::test_prepare_crash_report",
+    "tests/lint/test_utils.py::test_get_fatal_error_message"
+  ]
+}

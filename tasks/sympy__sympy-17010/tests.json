@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test_chebyshev",
+    "test_laguerre"
+  ],
+  "PASS_TO_PASS": [
+    "test_jacobi",
+    "test_gegenbauer",
+    "test_legendre",
+    "test_assoc_legendre",
+    "test_hermite"
+  ]
+}

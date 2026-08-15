@@ -1,0 +1,1 @@
+Thanks for the report. It seems reasonable to raise ValueError in mail_admins() and mail_managers() when settings are not in expected formats.

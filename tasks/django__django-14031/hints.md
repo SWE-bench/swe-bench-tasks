@@ -1,0 +1,6 @@
+Thanks for testing out the Django 3.2 beta.
+Regression in 3071660acfbdf4b5c59457c8e9dc345d5e8894c5.
+Thanks, good find. I am on it.
+Hi there, I tested the reported error first on my projects, where I use MTI and then on the example (which is incomplete). Both didn't yield the error or the to_field_value that was described. That is also unlikely, since the to_field_value is correctly based on the remote model. Therefore, I must conclude this issue is invalid. Feel free to reopen it, preferably with a valid example – I have been wrong in the past. Should the problem just be in your projects setup, please feel free to reach out. I am happy to help. Best, Joe
+Unfortunately, previous code was a little bit abstract. Here you can find a correct application – ​https://bitbucket.org/dlis/buggy/. Please, try open buggy.admin.Bar in admin. The application works perfectly on Django 3.1.x but raises the following error on Django 3.2.x: "FieldError at /admin/buggy/bar/add/ Cannot resolve keyword 'foo_ptr' into field. Choices are: bar, id"
+Thanks for the code, that usually really helps. I will review it tomorrow, it's family time in my timezone ;)

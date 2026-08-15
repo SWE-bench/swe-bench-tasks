@@ -1,0 +1,5 @@
+From what I can tell by experiment, Firefox and Chromium treat http and https versions of a site as separate authentication realms, and don't automatically reuse basic credentials on either a redirect or manual browsing between the two. Two http URLs with the same host (localhost) and different port numbers also seem to be treated as independent realms.
+Found something about it in [RFC 7235, section 2.2](https://tools.ietf.org/html/rfc7235#section-2.2).
+> A protection space is defined by the canonical root URI (the scheme and authority components of the effective request URI; see Section 5.5 of [RFC7230]) of the server being accessed, in combination with the realm value if present.
+
+which suggests that both the scheme and port number should be considered (and in theory one should also check the realm, but that doesn't really fit into request's model that basic credentials are supplied unconditionally rather than in response to WWW-Authentication).

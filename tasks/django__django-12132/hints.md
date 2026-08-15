@@ -1,0 +1,2 @@
+Interesting. Currently we have, in HttpRequest.get_host(): # Allow variants of localhost if ALLOWED_HOSTS is empty and DEBUG=True. allowed_hosts = settings.ALLOWED_HOSTS if settings.DEBUG and not allowed_hosts: allowed_hosts = ['localhost', '127.0.0.1', '[::1]'] Can I ask you to post to the DevelopersMailingList to canvas opinion? Assuming no blockers are raised it seems reasonable enough... (Reopen if accepted there.)
+For reference, the conversation chain has been started: ​https://groups.google.com/forum/#!topic/django-developers/xcoAF9Gm_dI

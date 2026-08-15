@@ -1,0 +1,1 @@
+distinct() is not supported but doesn't raise an error yet. As ​​per the documentation, "only LIMIT, OFFSET, COUNT(*), ORDER BY, and specifying columns (i.e. slicing, count(), order_by(), and values()/values_list()) are allowed on the resulting QuerySet.". Follow up to #27995.

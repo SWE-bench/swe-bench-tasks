@@ -1,0 +1,3 @@
+Haven't had a chance to confirm this much but appears that on 1.8-alpha this is consistently an issue, making responses non-cachable with CacheMiddleware. Alternative take would be for HttpResponse to take a more structured approach to caching - rather than simply dumping all attributes to pickle, just store the basics that allow a fresh HttpResponse with correct content, status code and headers to be reconstructed. (Eg. we shouldn't expect ResolverMatch instances to be picklable, but we *should* be constraining what we pickle for responses)
+I've done a fix for this but it might not be the ideal solution. Thoughts? If it's okay, please let me know anything the PR is missing. ​PR
+I've now made the changes discussed and squashed the commits.

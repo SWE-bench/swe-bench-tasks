@@ -1,0 +1,6 @@
+Is there a reason why we cannot just simply deprecate index_together. My understanding is that the models file of the app will get modified from this class Meta: index_together = (('a', 'b')) to this class Meta: indexes = [models.Index(fields=['a', 'b'])] and everything should work fine (or not? Am I missing something?) I need some help to see where RenameIndex comes into picture here.
+I just noticed that I actually never commented here. So, the reason is explained here: https://code.djangoproject.com/ticket/27236#comment:9
+On MySQL (or other DBs) that don't support RENAME INDEX, provide SQL query to look up index name from information_schema by field names and pass in to DROP INDEX. RENAME INDEX is now supported on ​MySQL 5.7+ and ​MariaDB 10.5.2+.
+Hi there, I tried to tackle this change in this ​PR. Feel free to review it! And maybe we'll be able to deprecate index_together in a next major release, as we wanted to do here https://code.djangoproject.com/ticket/27236 a few years back :)
+Integrated the review comments and split the PR into 2 parts: Adding the RenameIndex operation ​https://github.com/django/django/pull/15677 Using the RenameIndex in the autodetector ​https://github.com/django/django/pull/15651
+Integrated review changes into the first PR ​implementing RenameIndex operation.

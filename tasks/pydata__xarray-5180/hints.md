@@ -1,0 +1,3 @@
+Many thanks for the clear report.  I totally agree we should be able to handle this.  It would be great if you could put together a PR with a fix and some added test coverage.
+
+My only suggestion would be to implement your fix at a higher level in the call stack, e.g. by converting the input `calendar` to lowercase within [`xarray.coding.times.decode_cf_datetime`](https://github.com/pydata/xarray/blob/ba47216ec1cd2f170fd85a10f232be7bf3ecc578/xarray/coding/times.py#L208-L257) before using it anywhere else.  I think this may be cleaner since we do similar checks to the one in `_decode_datetime_with_pandas` in other places, e.g. [here](https://github.com/pydata/xarray/blob/ba47216ec1cd2f170fd85a10f232be7bf3ecc578/xarray/coding/times.py#L240-L251).

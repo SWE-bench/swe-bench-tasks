@@ -1,0 +1,1 @@
+Can you report to https://github.com/anntzer/mplcursors/issues?  I'll close here but feel free to open an issue if a Matplotlib bug is identified.  

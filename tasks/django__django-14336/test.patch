@@ -1,0 +1,30 @@
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -7,7 +7,7 @@
+ 
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db import DEFAULT_DB_ALIAS, connection
+-from django.db.models import Count, Exists, F, OuterRef, Q
++from django.db.models import Count, Exists, F, Max, OuterRef, Q
+ from django.db.models.expressions import RawSQL
+ from django.db.models.sql.constants import LOUTER
+ from django.db.models.sql.where import NothingNode, WhereNode
+@@ -1855,6 +1855,17 @@ def test_multiple_columns_with_the_same_name_slice(self):
+             [self.t5, self.t4],
+         )
+ 
++    def test_col_alias_quoted(self):
++        with CaptureQueriesContext(connection) as captured_queries:
++            self.assertEqual(
++                Tag.objects.values('parent').annotate(
++                    tag_per_parent=Count('pk'),
++                ).aggregate(Max('tag_per_parent')),
++                {'tag_per_parent__max': 2},
++            )
++        sql = captured_queries[0]['sql']
++        self.assertIn('AS %s' % connection.ops.quote_name('col1'), sql)
++
+ 
+ class RawQueriesTests(TestCase):
+     @classmethod

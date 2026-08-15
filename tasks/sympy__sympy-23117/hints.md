@@ -1,0 +1,1 @@
+Technically, `Array([], shape=(0,))` works. It is just unable to understand the shape of `[]`.

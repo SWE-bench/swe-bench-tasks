@@ -1,0 +1,11 @@
+diff --git a/tests/admin_scripts/tests.py b/tests/admin_scripts/tests.py
+--- a/tests/admin_scripts/tests.py
++++ b/tests/admin_scripts/tests.py
+@@ -2223,3 +2223,7 @@ def test_runs_django_admin(self):
+         cmd_out, _ = self.run_django_admin(['--version'])
+         mod_out, _ = self.run_test('-m', ['django', '--version'])
+         self.assertEqual(mod_out, cmd_out)
++
++    def test_program_name_in_help(self):
++        out, err = self.run_test('-m', ['django', 'help'])
++        self.assertOutput(out, "Type 'python -m django help <subcommand>' for help on a specific subcommand.")

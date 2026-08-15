@@ -1,0 +1,1 @@
+The initial PR adding this is https://github.com/sphinx-doc/sphinx/pull/8981

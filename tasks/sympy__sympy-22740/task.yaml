@@ -1,0 +1,12 @@
+base_commit: 44588dbb8c7ab833a8acb0cad94e395db82685e5
+created_at: '2021-12-21T19:45:34Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: fd40404e72921b9e52a5f9582246e4a6cd96c431
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.sympy_1776_sympy-22740:latest
+instance_id: sympy__sympy-22740
+log_parser: parse_log_sympy
+repo: sympy/sympy
+split: test
+version: '1.10'

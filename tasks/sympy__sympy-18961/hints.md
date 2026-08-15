@@ -1,0 +1,3 @@
+I don't think that it is necessarily needed because zero padding can be completely done after getting the digits. If it introduces more efficiency of doing this, it can be fine, but I don't think that your given example is different than just padding posteriori.
+
+Though if this makes it more convenient or consistent with ibin, I’m fine with this direction. I also see that it doesn’t necessarily raise errors when the number digits exceed the length of bits, so it should be clarified about this.

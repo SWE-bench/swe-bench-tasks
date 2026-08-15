@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "test_polylog_values"
+  ],
+  "PASS_TO_PASS": [
+    "test_zeta_eval",
+    "test_dirichlet_eta_eval",
+    "test_stieltjes",
+    "test_stieltjes_evalf"
+  ]
+}

@@ -1,0 +1,4 @@
+@das-intensity thanks for this suggestion.
+@hippo91 so I'm quite interested in getting this done (ideally the second option, `--fail-on`), and happy to do the dev myself. I just don't want to get a PR in for this, only to be **then** told it doesn't fit the design of pylint/etc. Do you have any suggestion on how to proceed? Just do it and pray, or are there people I should discuss the specifics with first?
+
+I also like ``fail-on`` better, we already have a ``--error-only`` option so ``--fail-only-on`` would make more sense I think. @hippo91 and I are the most active admins right now, so consider this idea merge-able. Regarding what to do in the code the best thing to do would probably be to refactor the configuration handling to use arparse or click first (😄), because the configuration code in his current state might make it hard to make a simple reviewable patch. But feel free to read the code and come to your own conclusion.

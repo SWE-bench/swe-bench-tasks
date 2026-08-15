@@ -1,0 +1,2 @@
+I don't think that remove_stale_contenttypes should remove content types for nonexistent apps. We don't automatically remove models for nonexistent apps and I don't think we should do this with content types. This can also cause a data loss for a custom content types (not related to real apps). You can start a discussion on DevelopersMailingList if you don't agree.
+Accepted based on ​discussion .

@@ -1,0 +1,1 @@
+Replying to xafer: It is currently possible to customize the violation_error_message of a ValidationError raised by a constraint but not the code. I'd like to add a new violation_error_message parameter to BaseConstraint to allow to easily add one. Agreed, adding violation_error_code sounds like a good idea as we have a similar mechanism for validators.

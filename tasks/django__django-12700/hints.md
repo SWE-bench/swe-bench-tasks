@@ -1,0 +1,1 @@
+Do I need to change both versions? Or just create a single implementation for current master branch?

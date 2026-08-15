@@ -1,0 +1,2 @@
+Sounds like a reasonable request, especially given you were the one who added it in https://github.com/astropy/astropy/pull/11444 . 😸 
+Yeah 😆 . An effective, if somewhat incompletely-implemented solution. 

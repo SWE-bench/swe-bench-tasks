@@ -1,0 +1,3 @@
+Thanks for this ticket, sounds reasonable. We should be consistent and make this change also for other classes e.g. Migration, CheckConstraint, UniqueConstraint, BaseValidator etc. (check basically all __eq__() methods).
+Great! I'll be sure to do those too. I'm very excited to be making my first Django contribution.
+I've added a PR that only has a few of the classes changed, since at a glance there are like 70 classes with __eq__ overwritten, and I'd prefer to get the high value Model change merged (people seem much more likely to compare Model in tests than other classes) and get feedback on the tests I added (whether they're in the right place, and whether I'd need to add them for every False to NotImplemented change).

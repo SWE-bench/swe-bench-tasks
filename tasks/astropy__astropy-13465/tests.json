@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/io/fits/tests/test_diff.py::test_rawdatadiff_diff_with_rtol"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/io/fits/tests/test_diff.py::test_fitsdiff_hdu_name",
+    "astropy/io/fits/tests/test_diff.py::test_fitsdiff_no_hdu_name",
+    "astropy/io/fits/tests/test_diff.py::test_fitsdiff_with_names"
+  ]
+}

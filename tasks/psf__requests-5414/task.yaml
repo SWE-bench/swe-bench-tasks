@@ -1,0 +1,14 @@
+base_commit: 39d0fdd9096f7dceccbc8f82e1eda7dd64717a8e
+created_at: '2020-04-05T16:52:04Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+difficulty: <15 min fix
+environment_setup_commit: a1a6a549a0143d9b32717dbe3d75cd543ae5a4f6
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.psf_1776_requests-5414:latest
+instance_id: psf__requests-5414
+log_parser: parse_log_requests
+repo: psf/requests
+split: test
+version: '2.26'

@@ -1,0 +1,4 @@
+Hello, thank you for the report. We changed the tuple from int to string because we can't be sure that we're capable of getting the version from ``importlib_metadata`` so there is a default ``2.8.2+`` value that would not be castable to an int.
+Okay, but that was a breaking change for plugin developers, and as such I'm not entirely sure why this was released as PATCH version, and not at least MINOR. See: https://semver.org/#what-if-i-inadvertently-alter-the-public-api-in-a-way-that-is-not-compliant-with-the-version-number-change-ie-the-code-incorrectly-introduces-a-major-breaking-change-in-a-patch-release
+
+The `pylint-quotes` plugin seems to be dead (no update for 2 years, opened issues) so I'm wondering if you plan on doing anything to keep it working, or should we rather start looking for an alternative. I've seen the `check-quote-consistency` setting which we may want to try. Can you confirm it's is this the same as what `pylint-quotes` did?

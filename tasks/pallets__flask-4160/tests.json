@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_json.py::test_json_decimal"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_json.py::test_json_as_unicode[True-\"\\\\u2603\"]",
+    "tests/test_json.py::test_json_as_unicode[False-\"\\u2603\"]",
+    "tests/test_json.py::test_json_dump_to_file",
+    "tests/test_json.py::test_jsonify_aware_datetimes[tz0]",
+    "tests/test_json.py::test_jsonify_aware_datetimes[tz1]",
+    "tests/test_json.py::test_jsonify_aware_datetimes[tz2]",
+    "tests/test_json.py::test_html_method"
+  ]
+}

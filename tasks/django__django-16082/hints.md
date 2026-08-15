@@ -1,0 +1,4 @@
+Duplicate of #33397.
+I'm pretty sure the changes committed as part of #33397, while closely related, doesn't actually address this case. I think it's best to handle this as a separate ticket.
+Hasn't this been addressed by ​https://github.com/django/django/pull/15271/files#diff-359ab56295cce36b9597e1d65185f695f271955617b40f43df58ce3fe76fd0c8R492? Removing the marked line will make expressions.tests.ExpressionOperatorTests.test_lefthand_modulo_null fail with a Cannot infer type of '%%' expression involving these types: IntegerField, IntegerField. You must set output_field. Which sounds pretty close to what is described in the issue here. Or what am I missing? :)
+Replying to David Wobrock: Hasn't this been addressed by ​https://github.com/django/django/pull/15271/files#diff-359ab56295cce36b9597e1d65185f695f271955617b40f43df58ce3fe76fd0c8R492? No, this issue is for mixed numeric types, e.g. DecimalField and IntegerField.

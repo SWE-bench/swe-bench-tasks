@@ -1,0 +1,12 @@
+base_commit: 71baf24b6d41da6704433ca9909b5e6d954564b9
+created_at: '2022-01-04T14:01:03Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 4a8f8ada431974f2837260af3ed36299fd382814
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-9475:latest
+instance_id: pytest-dev__pytest-9475
+log_parser: parse_log_pytest
+repo: pytest-dev/pytest
+split: test
+version: '7.1'

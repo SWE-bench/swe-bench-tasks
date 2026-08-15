@@ -1,0 +1,2 @@
+Should the response in this scenario be something like this line? Or would a different response reason make more sense ​https://github.com/django/django/blob/45814af6197cfd8f4dc72ee43b90ecde305a1d5a/django/middleware/csrf.py#L248
+Replying to AdamDonna: Should the response in this scenario be something like this line? Or would a different response reason make more sense ​https://github.com/django/django/blob/45814af6197cfd8f4dc72ee43b90ecde305a1d5a/django/middleware/csrf.py#L248 Yes, we should reject immediately.

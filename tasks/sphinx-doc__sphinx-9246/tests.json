@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_transforms_post_transforms.py::test_missing_reference_conditional_pending_xref"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_transforms_post_transforms.py::test_nitpicky_warning",
+    "tests/test_transforms_post_transforms.py::test_missing_reference"
+  ]
+}

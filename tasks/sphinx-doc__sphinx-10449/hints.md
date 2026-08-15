@@ -1,0 +1,1 @@
+Confirmed also on Python 3.10, Sphinx 4.4.0.

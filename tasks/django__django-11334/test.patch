@@ -1,0 +1,41 @@
+diff --git a/tests/template_tests/test_library.py b/tests/template_tests/test_library.py
+--- a/tests/template_tests/test_library.py
++++ b/tests/template_tests/test_library.py
+@@ -1,3 +1,5 @@
++import functools
++
+ from django.template import Library
+ from django.template.base import Node
+ from django.test import SimpleTestCase
+@@ -61,6 +63,15 @@ def func():
+             return ''
+         self.assertIn('name', self.library.tags)
+ 
++    def test_inclusion_tag_wrapped(self):
++        @self.library.inclusion_tag('template.html')
++        @functools.lru_cache(maxsize=32)
++        def func():
++            return ''
++        func_wrapped = self.library.tags['func'].__wrapped__
++        self.assertIs(func_wrapped, func)
++        self.assertTrue(hasattr(func_wrapped, 'cache_info'))
++
+ 
+ class SimpleTagRegistrationTests(SimpleTestCase):
+ 
+@@ -90,6 +101,15 @@ def test_simple_tag_invalid(self):
+         with self.assertRaisesMessage(ValueError, msg):
+             self.library.simple_tag('invalid')
+ 
++    def test_simple_tag_wrapped(self):
++        @self.library.simple_tag
++        @functools.lru_cache(maxsize=32)
++        def func():
++            return ''
++        func_wrapped = self.library.tags['func'].__wrapped__
++        self.assertIs(func_wrapped, func)
++        self.assertTrue(hasattr(func_wrapped, 'cache_info'))
++
+ 
+ class TagRegistrationTests(SimpleTestCase):
+ 

@@ -1,0 +1,4 @@
+I would suggest to see if we can find a way to do this in the form of a `test`. Registering a dict of `old_names` during runtime unnecessarily impacts performance. We could do something similar to how I recently added a check for non overlapping symbol prefixes.
+> Registering a dict of old_names during runtime unnecessarily impacts performance. 
+
+I completely agree, I think we should probably generate an efficient and pre-checked message store that's why I think it's related to #5607. See https://github.com/PyCQA/flake8/pull/1545 for what I have in mind: There's code generation with a check that it's up to date (I don't expect 10% better performance though 😄 ).

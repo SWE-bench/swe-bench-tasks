@@ -1,0 +1,1 @@
+Hey Chris. I'm a bit Meh about the suggestion here but I'll accept so you can make the PR for review. (If the others like it...) ...part of Django's internal API I'm forever amazed what parts of Django folks out there are using. Perhaps not this. :) Thanks.

@@ -1,0 +1,1 @@
+It seems that `pos` shouldn't be [here](https://github.com/sympy/sympy/blob/master/sympy/matrices/common.py#L89).

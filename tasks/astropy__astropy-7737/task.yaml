@@ -1,0 +1,12 @@
+base_commit: 153e9447ae032d92be74e54272565f6e39c69b3c
+created_at: '2018-08-14T18:13:03Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 848c8fa21332abd66b44efe3cb48b72377fb32cc
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.astropy_1776_astropy-7737:latest
+instance_id: astropy__astropy-7737
+log_parser: parse_log_astropy
+repo: astropy/astropy
+split: test
+version: '1.3'

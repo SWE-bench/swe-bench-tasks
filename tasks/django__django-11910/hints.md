@@ -1,0 +1,1 @@
+Thanks for this ticket. It looks like a regression in dcdd219ee1e062dc6189f382e0298e0adf5d5ddf, because an AlterField operation wasn't generated in such cases before this change (and I don't think we need it).

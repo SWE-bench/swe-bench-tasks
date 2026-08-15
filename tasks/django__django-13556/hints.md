@@ -1,0 +1,1 @@
+I guess we could add a callable guard in transaction.on_commit to make tracing easier like we did in Signal.connect ​https://github.com/django/django/blob/b26ec77deb7c5052163ef8514ec7db70c0a5ea2a/django/dispatch/dispatcher.py#L90

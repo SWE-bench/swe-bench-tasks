@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "test_args"
+  ],
+  "PASS_TO_PASS": [
+    "test_Permutation",
+    "test_josephus",
+    "test_ranking",
+    "test_mul",
+    "test_Cycle",
+    "test_from_sequence",
+    "test_printing_cyclic"
+  ]
+}

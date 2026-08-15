@@ -1,0 +1,3 @@
+This is because SQLite's JSON_EXTRACT returns deserialized values. A simple solution is just to add TypeError ​here, which will also partially "solve" problems with people who use the JSON data type on PostgreSQL. Another option is to wrap the value in JSON_QUOTE... which I think might be the better option. I'm guessing there's also a bug in querying __key on {"key": "\"value\""}, which will return value rather than "value". I think wrapping the value in JSON_QUOTE should fix this as well... but it would break ordering (and maybe some other stuff).
+​PR. I opted to catch TypeError instead. Need opinions on how to proceed.
+I should add that I see this on both Windows and Linux

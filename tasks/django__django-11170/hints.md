@@ -1,0 +1,3 @@
+The issue here is that reading the various debug templates was changed in ​ea542a9 to bypass the template loaders. The template loaders use the encoding specified on the template engine which is utf-8 by default. Later in ​50b8493 an ellipsis was added and this caused things to blow up on Windows as locale.getpreferredencoding(False) is not utf-8. Here is an alternative ​PR that adds tests and a release note for 2.2.1 as this is a regression.
+Upgrading to Release Blocker. Thanks for the report!
+Original ticket that describes the same issue #30303.

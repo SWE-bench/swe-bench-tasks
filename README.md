@@ -1,4 +1,4 @@
-# SWE-bench Dockerfiles
+# SWE-bench task data
 
 Dockerfile generator for the SWE-bench benchmark. This repo is just for the original SWE-bench benchmark and does not contain any data related to the newer benchmarks we released like SWE-bench Multilingual or SWE-bench Multimodal.
 
@@ -6,18 +6,18 @@ Dockerfile generator for the SWE-bench benchmark. This repo is just for the orig
 
 ```bash
 # From HuggingFace dataset
-sb-dockerfile-gen-og SWE-bench/SWE-bench_Verified --output_dir src/dockerfiles
+dockerfile-gen
 
 # From local JSON/JSONL file
-sb-dockerfile-gen-og instances.jsonl --output_dir src/dockerfiles
+dockerfile-gen
 
 # Specific instances
-sb-dockerfile-gen-og SWE-bench/SWE-bench_Verified --instance_ids django__django-12345 --output_dir src/dockerfiles
+dockerfile-gen
 ```
 
 ## Output
 
-Generated Dockerfiles are written to `src/dockerfiles/<instance_id>.Dockerfile`.
+`Dockerfile` and `eval.sh` are regenerated in place under `tasks/<instance_id>/`, from that task's `task.yaml`.
 
 ## Install
 

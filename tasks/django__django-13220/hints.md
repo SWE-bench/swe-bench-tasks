@@ -1,0 +1,2 @@
+I probably wouldn't want to limit the comparison to an error's message but rather to its full set of attributes (message, code, params). While params is always pushed into message when iterating over the errors in an ValidationError, I believe it can be beneficial to know if the params that were put inside are the same.
+​PR

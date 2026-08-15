@@ -1,0 +1,1 @@
+I am working on this issue. I have fixed the problem in the title, but have also realised there is an issue with coth(a+b) as well so I will work that out before sending the pull request.

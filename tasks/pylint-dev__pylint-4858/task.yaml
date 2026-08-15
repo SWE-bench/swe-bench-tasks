@@ -1,0 +1,12 @@
+base_commit: 676f484871a40bd0256e1cc68c28ea748a61acec
+created_at: '2021-08-17T11:08:39Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: bc95cd34071ec2e71de5bca8ff95cc9b88e23814
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pylint-dev_1776_pylint-4858:latest
+instance_id: pylint-dev__pylint-4858
+log_parser: parse_log_pylint
+repo: pylint-dev/pylint
+split: test
+version: '2.10'

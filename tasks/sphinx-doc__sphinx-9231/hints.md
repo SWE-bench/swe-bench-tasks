@@ -1,0 +1,1 @@
+Thank you for letting us know. I just reverted the change of default setting in #9232. It will be released as 4.0.2 soon. And I'll change the directory name in #9231. It will be released as 4.1.0.

@@ -1,0 +1,11 @@
+diff --git a/tests/forms_tests/tests/test_formsets.py b/tests/forms_tests/tests/test_formsets.py
+--- a/tests/forms_tests/tests/test_formsets.py
++++ b/tests/forms_tests/tests/test_formsets.py
+@@ -1480,6 +1480,7 @@ def test_disable_delete_extra_formset_forms(self):
+         self.assertIn("DELETE", formset.forms[0].fields)
+         self.assertNotIn("DELETE", formset.forms[1].fields)
+         self.assertNotIn("DELETE", formset.forms[2].fields)
++        self.assertNotIn("DELETE", formset.empty_form.fields)
+ 
+         formset = ChoiceFormFormset(
+             data={

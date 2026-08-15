@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_function_transformer_future_warning[None-FutureWarning]"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_delegate_to_func",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_np_log",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_kw_arg",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_kw_arg_update",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_kw_arg_reset",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_inverse_transform",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_check_inverse",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_function_transformer_future_warning[True-None]",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_function_transformer_future_warning[False-None]",
+    "sklearn/preprocessing/tests/test_function_transformer.py::test_function_transformer_frame"
+  ]
+}

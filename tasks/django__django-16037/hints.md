@@ -1,0 +1,2 @@
+Thanks for the report. Regression in e5a92d400acb4ca6a8e1375d1ab8121f2c7220be. I will try to reproduce this issue with a simpler models definition.
+I was able to reproduce this issue with: Post.objects.annotate( is_following=Exists( request_user.following.filter(id=OuterRef("user__id")) ), ).annotate(likes=Count("liked_by"))

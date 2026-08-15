@@ -1,0 +1,2 @@
+Introduced by https://github.com/pydata/xarray/commit/c04234d4892641e1da89e47c7164cdcf5e4777a4
+Correction, DataArray.copy(deep=False) is not affected. Is it intentional that the default for deep is True in DataArray and False in Dataset?

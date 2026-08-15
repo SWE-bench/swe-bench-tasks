@@ -1,0 +1,1 @@
+​https://github.com/django/django/pull/10087 I added validation to sqlmigrate

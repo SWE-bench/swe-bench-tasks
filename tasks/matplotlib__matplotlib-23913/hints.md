@@ -1,0 +1,2 @@
+This seems like a reasonable request, you're welcome to submit a PR :-)  Note that the same comment applies to annotations.
+I would also deprecate `draggable()` in favor of the more classic `set_draggable()`, `get_draggable()` (and thus, in the long-term future, `.draggable` could become a property).

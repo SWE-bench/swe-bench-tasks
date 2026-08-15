@@ -1,0 +1,12 @@
+base_commit: 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a
+created_at: '2015-10-23T19:21:03Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 4074fa91452006890a878f0b6a1a25251461cf26
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.django_1776_django-5470:latest
+instance_id: django__django-5470
+log_parser: parse_log_django
+repo: django/django
+split: test
+version: '1.10'

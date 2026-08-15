@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_packages.py::test_can_access_urllib3_attribute",
+    "tests/test_packages.py::test_can_access_idna_attribute",
+    "tests/test_packages.py::test_can_access_chardet_attribute"
+  ],
+  "PASS_TO_PASS": []
+}

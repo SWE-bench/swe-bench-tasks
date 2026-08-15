@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "test_files"
+  ],
+  "PASS_TO_PASS": [
+    "test_raise_statement_regular_expression",
+    "test_implicit_imports_regular_expression",
+    "test_test_suite_defs",
+    "test_test_duplicate_defs",
+    "test_find_self_assignments"
+  ]
+}

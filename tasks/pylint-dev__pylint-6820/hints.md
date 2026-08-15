@@ -1,0 +1,3 @@
+Not sure what the best approach is here. We allow abbreviations of arguments as `argparse` behaves differently on <3.8 (I think, but don't pin me on the version) if you don't allow abbreviations.
+However, `load-plugins` is handled by an `if "load-plugins"` check. So while `argparse` recognises it as the abbreviation of an existing configuration option, it doesn't know how to handle it and our `if` statement doesn't allow catching such abbreviations.
+Should we handle it a little like argparse maybe changing the condition to ``if "load-plugins".startswith(option) and len(option) > 6`` ?

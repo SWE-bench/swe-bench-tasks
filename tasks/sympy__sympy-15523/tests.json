@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_implicit_application"
+  ],
+  "PASS_TO_PASS": [
+    "test_implicit_multiplication",
+    "test_function_exponentiation",
+    "test_symbol_splitting"
+  ]
+}

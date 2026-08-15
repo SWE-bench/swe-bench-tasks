@@ -1,0 +1,12 @@
+diff --git a/lib/matplotlib/tests/test_spines.py b/lib/matplotlib/tests/test_spines.py
+--- a/lib/matplotlib/tests/test_spines.py
++++ b/lib/matplotlib/tests/test_spines.py
+@@ -35,6 +35,8 @@ def set_val(self, val):
+     spines[:].set_val('y')
+     assert all(spine.val == 'y' for spine in spines.values())
+ 
++    with pytest.raises(AttributeError, match='foo'):
++        spines.foo
+     with pytest.raises(KeyError, match='foo'):
+         spines['foo']
+     with pytest.raises(KeyError, match='foo, bar'):

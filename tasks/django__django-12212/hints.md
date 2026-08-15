@@ -1,0 +1,3 @@
+Could you try to put together a test case or minimal steps to reproduce that doesn't involve django-reversion?
+I'm not sure I fully understand how reversion is using the serialization so it would likely take me some time. My idea of a test case to try would be: Create model with FK to another model. Create instance of said model with None value. Serialize said instance, save value. Change field to M2M. Migrate Attempt to restore model from previously serialized data. But I'm not sure when I'll find time to try this out. I also don't know how I would turn this into a unit test either.
+I guess it's probably a legitimate bug, but if someone cannot reproduce it upon investigation, feel free to close as "needsinfo".

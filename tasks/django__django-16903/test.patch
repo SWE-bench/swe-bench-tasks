@@ -1,0 +1,53 @@
+diff --git a/tests/model_inheritance/models.py b/tests/model_inheritance/models.py
+--- a/tests/model_inheritance/models.py
++++ b/tests/model_inheritance/models.py
+@@ -186,3 +186,23 @@ class Child(Parent):
+ 
+ class GrandChild(Child):
+     pass
++
++
++class CommonAncestor(models.Model):
++    id = models.IntegerField(primary_key=True, default=1)
++
++
++class FirstParent(CommonAncestor):
++    first_ancestor = models.OneToOneField(
++        CommonAncestor, models.CASCADE, primary_key=True, parent_link=True
++    )
++
++
++class SecondParent(CommonAncestor):
++    second_ancestor = models.OneToOneField(
++        CommonAncestor, models.CASCADE, primary_key=True, parent_link=True
++    )
++
++
++class CommonChild(FirstParent, SecondParent):
++    pass
+diff --git a/tests/model_inheritance/tests.py b/tests/model_inheritance/tests.py
+--- a/tests/model_inheritance/tests.py
++++ b/tests/model_inheritance/tests.py
+@@ -9,6 +9,7 @@
+ from .models import (
+     Base,
+     Chef,
++    CommonChild,
+     CommonInfo,
+     CustomSupplier,
+     GrandChild,
+@@ -149,6 +150,14 @@ def test_custompk_m2m(self):
+         # accidentally found).
+         self.assertSequenceEqual(s.titles.all(), [])
+ 
++    def test_create_diamond_mti_default_pk(self):
++        # 1 INSERT for each base.
++        with self.assertNumQueries(4):
++            common_child = CommonChild.objects.create()
++        # 3 SELECTs for the parents, 1 UPDATE for the child.
++        with self.assertNumQueries(4):
++            common_child.save()
++
+     def test_update_parent_filtering(self):
+         """
+         Updating a field of a model subclass doesn't issue an UPDATE

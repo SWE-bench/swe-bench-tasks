@@ -1,0 +1,1 @@
+Tentatively accepted, I cannot check this on Windows, but it looks like a regression in 8a902b7ee622ada258d15fb122092c1f02b82698. subprocess.run()'s args parameter accepts path-like objects on Windows since Python 3.8 (see similar issue for dbshell, #31076).

@@ -1,0 +1,24 @@
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -33,7 +33,7 @@ class Article(models.Model):
+     class Meta:
+         ordering = (
+             '-pub_date',
+-            'headline',
++            models.F('headline'),
+             models.F('author__name').asc(),
+             OrderBy(models.F('second_author__name')),
+         )
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -485,7 +485,7 @@ def test_order_by_ptr_field_with_default_ordering_by_expression(self):
+     def test_deprecated_values_annotate(self):
+         msg = (
+             "Article QuerySet won't use Meta.ordering in Django 3.1. Add "
+-            ".order_by('-pub_date', 'headline', OrderBy(F(author__name), "
++            ".order_by('-pub_date', F(headline), OrderBy(F(author__name), "
+             "descending=False), OrderBy(F(second_author__name), "
+             "descending=False)) to retain the current query."
+         )

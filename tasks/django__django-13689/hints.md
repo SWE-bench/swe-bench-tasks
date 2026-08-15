@@ -1,0 +1,5 @@
+For anyone else who ends up here you can Subquery your way out of this, although I've no idea what the performance implications of that are.
+I did some further digging and this only occurs on 3.1, it works fine on 2.0, 2.1, 2.2 and 3.0
+I think this is related to https://code.djangoproject.com/ticket/32007
+To test this, given the implied model above, you can create 3 Fred objects, 2 with one value for bob_id and the third with a different value. When you do the select on that you should see [{"bob_id__is_null": False, "id_count": 3}] But instead you will get [{"bob_id__is_null": False, "id_count": 1}, {"bob_id__is_null": False, "id_count": 2}]
+Regression in df32fd42b84cc6dbba173201f244491b0d154a63 (backported in fdd2b01e8e12857aad2219a46a41bd9051ec8f8d). Reproduced at 4cce1d13cfe9d8e56921c5fa8c61e3034dc8e20c.

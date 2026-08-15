@@ -1,0 +1,4 @@
+So it seems a bugfix would envolve moving the raise from build_filter to add_q. And we would have to propagate the necessity of the raise somehow, in WhereNode or as an additional return param.
+Given build_filter now calls _add_q on the master branch the solution will probably involve adding a new kwarg to disable the check_filterable check instead instead.
+Yeah, that works too (and is easier to implement). Btw the comment in _add_q Add a Q-object to the current filter seems to be misleading, considering the usage in CASE-WHEN...
+Agreed that the comment is misleading, it has been for a while though. The whole interactions between _add_q, add_q, and build_filter could probably be better expressed as add_q, _build_q, and build_filter as only add_q actually append nodes to the current query. The other methods only make sure query.aliases contains Join references to table necessary for the filter conditions.

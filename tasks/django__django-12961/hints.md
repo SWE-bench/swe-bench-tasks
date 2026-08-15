@@ -1,0 +1,3 @@
+Thanks, yes it is a different issue that is strictly related with using expressions in .order_by(). Potential fix should target ​these lines. Would you like to try?
+Replying to felixxm: Thanks, yes it is a different issue that is strictly related with using expressions in .order_by(). Potential fix should target ​these lines. Would you like to try? Ok I'll give it a try this week end, I just need to read django conventions before, as I've never committed on this project
+​PR

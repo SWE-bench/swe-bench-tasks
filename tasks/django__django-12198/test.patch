@@ -1,0 +1,38 @@
+diff --git a/tests/auth_tests/test_auth_backends.py b/tests/auth_tests/test_auth_backends.py
+--- a/tests/auth_tests/test_auth_backends.py
++++ b/tests/auth_tests/test_auth_backends.py
+@@ -13,6 +13,7 @@
+ from django.test import (
+     SimpleTestCase, TestCase, modify_settings, override_settings,
+ )
++from django.views.decorators.debug import sensitive_variables
+ 
+ from .models import (
+     CustomPermissionsUser, CustomUser, CustomUserWithoutIsActiveField,
+@@ -642,6 +643,12 @@ def authenticate(self):
+         pass
+ 
+ 
++class SkippedBackendWithDecoratedMethod:
++    @sensitive_variables()
++    def authenticate(self):
++        pass
++
++
+ class AuthenticateTests(TestCase):
+     @classmethod
+     def setUpTestData(cls):
+@@ -664,6 +671,13 @@ def test_skips_backends_without_arguments(self):
+         """
+         self.assertEqual(authenticate(username='test', password='test'), self.user1)
+ 
++    @override_settings(AUTHENTICATION_BACKENDS=(
++        'auth_tests.test_auth_backends.SkippedBackendWithDecoratedMethod',
++        'django.contrib.auth.backends.ModelBackend',
++    ))
++    def test_skips_backends_with_decorated_method(self):
++        self.assertEqual(authenticate(username='test', password='test'), self.user1)
++
+ 
+ class ImproperlyConfiguredUserModelTest(TestCase):
+     """

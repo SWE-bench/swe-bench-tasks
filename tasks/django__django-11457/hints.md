@@ -1,0 +1,1 @@
+Agreed, we can add types to this exception but I would like to keep it simple, e.g. "Expression contains mixed types: FloatField, IntegerField. You must set output_field to IntegerField." raise FieldError( 'Expression contains mixed types: %s, %s. You must set output_field to %s.' % (output_field.__class__.__name__, source.__class__.__name__, source.__class__.__name__) )

@@ -1,0 +1,15 @@
+base_commit: e6e300e729dd33956e5448d8be9a0b1540b4e53a
+created_at: '2020-06-29T21:51:15Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+- SWE-bench/SWE-bench_Lite
+difficulty: <15 min fix
+environment_setup_commit: 678c1a0745f1cf175c442c719906a1f13e496910
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-7432:latest
+instance_id: pytest-dev__pytest-7432
+log_parser: parse_log_pytest
+repo: pytest-dev/pytest
+split: test
+version: '5.4'

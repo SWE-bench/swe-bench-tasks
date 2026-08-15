@@ -1,0 +1,2 @@
+👋 Thank you for your draft pull request! Do you know that you can use `[ci skip]` or `[skip ci]` in your commit messages to skip running continuous integration tests until you are ready?
+I think this is good for review now. Somewhat limited in scope to just `linspace`, but once the structure of implementing the numpy functions is settled on I'm happy to expand this in subsequent PR(s).

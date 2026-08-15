@@ -1,0 +1,2 @@
+In addition, it is worth to underline that in ​official documentation there is no any notes about raising an error in random tag description.
+Thanks for the report 👍 I think random should behave gracefully.

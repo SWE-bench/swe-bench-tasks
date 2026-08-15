@@ -1,0 +1,2 @@
+@JenniferHemmerich this affinity propagation code is not often updated. If you have time to improve its documentation and fix corner cases like the one you report please send us PR. I'll try to find the time to review the changes. thanks
+Working on this for the wmlds scikit learn sprint (pair programming with @akeshavan)

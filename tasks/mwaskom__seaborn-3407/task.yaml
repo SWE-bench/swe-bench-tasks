@@ -1,0 +1,13 @@
+base_commit: 515286e02be3e4c0ff2ef4addb34a53c4a676ee4
+created_at: '2023-06-27T23:17:29Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: 23860365816440b050e9211e1c395a966de3c403
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.mwaskom_1776_seaborn-3407:latest
+instance_id: mwaskom__seaborn-3407
+log_parser: parse_log_seaborn
+repo: mwaskom/seaborn
+split: test
+version: '0.13'

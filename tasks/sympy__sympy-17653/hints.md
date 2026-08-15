@@ -1,0 +1,2 @@
+If tests pass without the commented line I don't see any problem removing it. Would you mind opening a PR? If you do, would you please also add a regression test (a test which fails using the current code), and then add a commit removing the line which you've commented here.
+If tests pass without the commented line I don't see any problem removing it. Would you mind opening a PR? If you do, would you please also add a regression test (a test which fails using the current code), and then add a commit removing the line which you've commented here.

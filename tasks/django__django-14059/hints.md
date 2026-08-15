@@ -1,0 +1,2 @@
+For what it's worth, I didn't realize there was any attempt to support positional arguments in model instantiation (although it is tested, is it documented anywhere?). May not be worth fixing, in my opinion.
+Hi, From what I understand, *args instanciation is there for performance reasons (see [1]). I'll accept this ticket on the basis that it'd be nice to fix it but only if it doesn't impact performance negatively. Thanks. [1] ​https://github.com/django/django/blob/908c67e719a54b8b612cb7df732126f42350f3fa/django/db/models/base.py#L418-L421

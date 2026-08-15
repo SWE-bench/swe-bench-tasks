@@ -1,0 +1,12 @@
+base_commit: 17a7aca12399311f6252c55db0ece3694c5758b2
+created_at: '2022-05-14T14:58:51Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: de98877e3dc45de8dd441d008f23d88738dc015d
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-23049:latest
+instance_id: matplotlib__matplotlib-23049
+log_parser: parse_log_matplotlib
+repo: matplotlib/matplotlib
+split: test
+version: '3.5'

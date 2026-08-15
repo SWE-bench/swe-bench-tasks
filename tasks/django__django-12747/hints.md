@@ -1,0 +1,1 @@
+I guess we could adapt the code not to include any key if the count is zero in the second case.

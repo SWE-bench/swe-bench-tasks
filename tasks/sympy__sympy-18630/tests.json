@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "test_limits"
+  ],
+  "PASS_TO_PASS": [
+    "test_TupleParametersBase",
+    "test_hyper",
+    "test_expand_func",
+    "test_hyper_rewrite_sum",
+    "test_radius_of_convergence",
+    "test_meijer",
+    "test_meijerg_derivative",
+    "test_meijerg_period",
+    "test_hyper_unpolarify",
+    "test_appellf1",
+    "test_derivative_appellf1"
+  ]
+}

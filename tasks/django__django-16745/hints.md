@@ -1,0 +1,2 @@
+Thanks for the report! As far as I'm aware we should pass min_value to the StepValueValidator. Bug in 3a82b5f655446f0ca89e3b6a92b100aa458f348f.
+Thanks for the report. I think this is a bug. We need to consider min value also with step_size

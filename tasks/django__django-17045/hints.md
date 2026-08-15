@@ -1,0 +1,2 @@
+Seems essential. I can work on it by splitting the routes based on '/' and checking if each part having started with '<' must have ended with '>'.
+Sounds reasonable, this should raise a system check warning, not an error.

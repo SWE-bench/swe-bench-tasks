@@ -1,0 +1,5 @@
+Please give an example valid that's not working. There are ​some tests for negative values.
+Right, this should have been fixed by #27699 which is included in 1.11.x.
+Example cases, can be discussed: parse_duration('-00:01:01') => plus 61 seconds, so it is not -(00:01:01) but (-00):(+01):(+01) parse_duration('00:-01:-01) => None , leading zeros will prevent parsing parse_duration('-01:01') => minus 59 seconds parse_duration('-01:-01') => minus 61 seconds The fix presented would allow the second line to be parsed (which would help with generated durations). And some instructions in the function/documentation/wiki would be useful, to clarify how the minus sign affects in duration.
+The fix from #27699 may not be entirely correct. I agree with your first and third examples. I'd expect a leading minus sign to negate the entire value so they would be minus 61 seconds. I think the second and fourth examples are invalid. I don't think a minus sign after a colon is valid.
+Thanks for the extra details. I agree with Tim that everything but a leading - seems like an invalid value that happened to work because of an inappropriate pattern as ​it was never tested.

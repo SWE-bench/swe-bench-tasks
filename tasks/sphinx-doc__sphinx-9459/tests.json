@@ -1,0 +1,25 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_ext_intersphinx.py::test_missing_reference",
+    "tests/test_ext_intersphinx.py::test_missing_reference_disabled_domain"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_ext_intersphinx.py::test_fetch_inventory_redirection",
+    "tests/test_ext_intersphinx.py::test_missing_reference_pydomain",
+    "tests/test_ext_intersphinx.py::test_missing_reference_stddomain",
+    "tests/test_ext_intersphinx.py::test_missing_reference_cppdomain",
+    "tests/test_ext_intersphinx.py::test_missing_reference_jsdomain",
+    "tests/test_ext_intersphinx.py::test_inventory_not_having_version",
+    "tests/test_ext_intersphinx.py::test_load_mappings_warnings",
+    "tests/test_ext_intersphinx.py::test_load_mappings_fallback",
+    "tests/test_ext_intersphinx.py::TestStripBasicAuth::test_auth_stripped",
+    "tests/test_ext_intersphinx.py::TestStripBasicAuth::test_having_port",
+    "tests/test_ext_intersphinx.py::TestStripBasicAuth::test_no_auth",
+    "tests/test_ext_intersphinx.py::test_getsafeurl_authed",
+    "tests/test_ext_intersphinx.py::test_getsafeurl_authed_having_port",
+    "tests/test_ext_intersphinx.py::test_getsafeurl_unauthed",
+    "tests/test_ext_intersphinx.py::test_inspect_main_noargs",
+    "tests/test_ext_intersphinx.py::test_inspect_main_file",
+    "tests/test_ext_intersphinx.py::test_inspect_main_url"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "test_as_set"
+  ],
+  "PASS_TO_PASS": [
+    "test_contains_basic",
+    "test_issue_6194",
+    "test_issue_10326",
+    "test_binary_symbols"
+  ]
+}

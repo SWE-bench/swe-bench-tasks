@@ -1,0 +1,2 @@
+The default here should be to always dummify, unless dummify is explicitly False https://github.com/sympy/sympy/blob/a78cf1d3efe853f1c360f962c5582b1d3d29ded3/sympy/utilities/lambdify.py?utf8=%E2%9C%93#L742
+Hi, I would like to work on this if possible

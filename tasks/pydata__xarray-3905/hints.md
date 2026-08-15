@@ -1,0 +1,2 @@
+Hmm, that does look pretty bad. We do have some existing heuristics for shortening up NumPy’s repr but perhaps they could use some tweaking:
+https://github.com/pydata/xarray/blob/master/xarray/core/formatting.py#L416

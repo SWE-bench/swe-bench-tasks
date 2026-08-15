@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test_kahane_simplify1"
+  ],
+  "PASS_TO_PASS": [
+    "test_kahane_algorithm",
+    "test_gamma_matrix_class"
+  ]
+}

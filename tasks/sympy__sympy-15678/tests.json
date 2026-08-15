@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_idiff"
+  ],
+  "PASS_TO_PASS": [
+    "test_intersection",
+    "test_convex_hull",
+    "test_centroid"
+  ]
+}

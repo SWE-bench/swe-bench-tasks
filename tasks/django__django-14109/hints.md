@@ -1,0 +1,4 @@
+It looks like a luke-warmish OK on the list, so I guess we should push it forward to review. Thanks Adam.
+Just a vague idea but I personally feel would be good to implement. In order to avoid ellipsis in the name refer ​this comment. We may add a suffix like "_+26" (in case there are 26 other operations, we may get this number from fragments ). This is just a vague representation but I feel if we may implement something like this, it would be a better option. Need some suggestions. I would be happy to submit a PR for this.
+​PR
+In b1cb9238: Refs #31516, Refs #31703 -- Made makemigrations always name initial migrations "initial".

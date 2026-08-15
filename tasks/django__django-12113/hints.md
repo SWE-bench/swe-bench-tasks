@@ -1,0 +1,5 @@
+This is only an issue when setting TEST["NAME"], but not NAME. The following works: DATABASES = { 'default': { 'ENGINE': 'django.db.backends.sqlite3', 'NAME': 'django_tests_default.sqlite3', }, 'other': { 'ENGINE': 'django.db.backends.sqlite3', 'NAME': 'django_tests_other.sqlite3', } }
+Reproduced at 0dd2308cf6f559a4f4b50edd7c005c7cf025d1aa.
+Created ​PR
+Hey, I am able to replicate this bug and was able to fix it as well with the help of ​https://github.com/django/django/pull/11678, but the point I am stuck at is how to test it, I am not able to manipulate the cls variable so the next option that is left is create a file like test_sqlite and pass it as a parameter in runtests, should I be doing that?
+I think we should add tests/backends/sqlite/test_creation.py with regressions tests for test_db_signature(), you can take a look at tests/backends/base/test_creation.py with similar tests.

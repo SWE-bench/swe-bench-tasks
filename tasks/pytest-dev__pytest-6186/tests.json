@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "testing/deprecated_test.py::test_warn_about_imminent_junit_family_default_change[None]"
+  ],
+  "PASS_TO_PASS": [
+    "testing/deprecated_test.py::test_terminal_reporter_writer_attr",
+    "testing/deprecated_test.py::test_resultlog_is_deprecated",
+    "testing/deprecated_test.py::test_external_plugins_integrated[pytest_capturelog]",
+    "testing/deprecated_test.py::test_external_plugins_integrated[pytest_catchlog]",
+    "testing/deprecated_test.py::test_external_plugins_integrated[pytest_faulthandler]",
+    "testing/deprecated_test.py::test_warn_about_imminent_junit_family_default_change[legacy]",
+    "testing/deprecated_test.py::test_warn_about_imminent_junit_family_default_change[xunit2]"
+  ]
+}

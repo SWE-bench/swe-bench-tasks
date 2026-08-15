@@ -1,0 +1,3 @@
+Oops, sounds like we should put the regex back in that was there for `LooseVersion` - definitely don't want to go back to `pkg_resources`...
+Huh I don't understand why I couldn't reproduce this before. Well I guess we know why that regexp was there before!
+@mhvk - will you open a PR to restore the regexp?

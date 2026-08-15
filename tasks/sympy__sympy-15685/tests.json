@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "test_print_unit_base"
+  ],
+  "PASS_TO_PASS": [
+    "test_definition",
+    "test_error_definition",
+    "test_str_repr",
+    "test_extend",
+    "test_dim"
+  ]
+}

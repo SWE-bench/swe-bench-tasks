@@ -1,0 +1,1 @@
+Thanks for this ticket, as far as I'm aware zh-Hant-HK is a valid language tag (see ​Language Subtag Registry), we should probably add zh-Hant-HK and others to fallbacks: zh-hans: zh-Hans-CN, zh-Hans-HK, zh-Hans-MO, zh-Hans-SG, zh-Hans-TW, zh-hant: zh-Hant-CN, zh-Hant-HK, zh-Hant-MO, zh-Hant-SG, zh-Hant-TW. What do you think Claude?

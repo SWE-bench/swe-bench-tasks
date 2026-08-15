@@ -1,0 +1,24 @@
+diff --git a/tests/urlpatterns_reverse/tests.py b/tests/urlpatterns_reverse/tests.py
+--- a/tests/urlpatterns_reverse/tests.py
++++ b/tests/urlpatterns_reverse/tests.py
+@@ -1,6 +1,7 @@
+ """
+ Unit tests for reverse URL lookups.
+ """
++import pickle
+ import sys
+ import threading
+ 
+@@ -1167,6 +1168,12 @@ def test_repr_functools_partial(self):
+                     f"route='{name}/')",
+                 )
+ 
++    @override_settings(ROOT_URLCONF='urlpatterns.path_urls')
++    def test_pickling(self):
++        msg = 'Cannot pickle ResolverMatch.'
++        with self.assertRaisesMessage(pickle.PicklingError, msg):
++            pickle.dumps(resolve('/users/'))
++
+ 
+ @override_settings(ROOT_URLCONF='urlpatterns_reverse.erroneous_urls')
+ class ErroneousViewTests(SimpleTestCase):

@@ -1,0 +1,20 @@
+{
+  "FAIL_TO_PASS": [
+    "test_lookup_decimal_larger_than_max_digits (model_fields.test_decimalfield.DecimalFieldTests.test_lookup_decimal_larger_than_max_digits)",
+    "Really big values can be used in a filter statement."
+  ],
+  "PASS_TO_PASS": [
+    "test_default (model_fields.test_decimalfield.DecimalFieldTests.test_default)",
+    "Should be able to filter decimal fields using strings (#8023).",
+    "test_get_prep_value (model_fields.test_decimalfield.DecimalFieldTests.test_get_prep_value)",
+    "test_invalid_value (model_fields.test_decimalfield.DecimalFieldTests.test_invalid_value)",
+    "test_max_decimal_places_validation (model_fields.test_decimalfield.DecimalFieldTests.test_max_decimal_places_validation)",
+    "test_max_digits_validation (model_fields.test_decimalfield.DecimalFieldTests.test_max_digits_validation)",
+    "test_max_whole_digits_validation (model_fields.test_decimalfield.DecimalFieldTests.test_max_whole_digits_validation)",
+    "Trailing zeros in the fractional part aren't truncated.",
+    "test_save_inf_invalid (model_fields.test_decimalfield.DecimalFieldTests.test_save_inf_invalid)",
+    "test_save_nan_invalid (model_fields.test_decimalfield.DecimalFieldTests.test_save_nan_invalid)",
+    "Ensure decimals don't go through a corrupting float conversion during",
+    "test_to_python (model_fields.test_decimalfield.DecimalFieldTests.test_to_python)"
+  ]
+}

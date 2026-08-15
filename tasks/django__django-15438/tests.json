@@ -1,0 +1,16 @@
+{
+  "FAIL_TO_PASS": [
+    "test_media (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_render_options (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_build_attrs (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_build_attrs_no_custom_class (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_build_attrs_not_required_field (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_build_attrs_required_field (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_get_url (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "test_render_options_fk_as_pk (admin_widgets.test_autocomplete_widget.AutocompleteMixinTests)",
+    "Empty option isn't present if the field isn't required.",
+    "Empty option is present if the field isn't required."
+  ]
+}

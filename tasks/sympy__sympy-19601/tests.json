@@ -1,0 +1,29 @@
+{
+  "FAIL_TO_PASS": [
+    "test_collect_pr19431"
+  ],
+  "PASS_TO_PASS": [
+    "test_radsimp",
+    "test_radsimp_issue_3214",
+    "test_collect_1",
+    "test_collect_2",
+    "test_collect_3",
+    "test_collect_4",
+    "test_collect_5",
+    "test_collect_D",
+    "test_collect_func",
+    "test_collect_order",
+    "test_rcollect",
+    "test_collect_D_0",
+    "test_collect_Wild",
+    "test_collect_const",
+    "test_issue_13143",
+    "test_issue_6097",
+    "test_fraction_expand",
+    "test_fraction",
+    "test_issue_5615",
+    "test_issue_5933",
+    "test_issue_14608",
+    "test_collect_abs"
+  ]
+}

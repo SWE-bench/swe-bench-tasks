@@ -1,0 +1,13 @@
+diff --git a/tests/admin_widgets/test_autocomplete_widget.py b/tests/admin_widgets/test_autocomplete_widget.py
+--- a/tests/admin_widgets/test_autocomplete_widget.py
++++ b/tests/admin_widgets/test_autocomplete_widget.py
+@@ -72,7 +72,8 @@ def test_build_attrs(self):
+             'data-app-label': 'admin_widgets',
+             'data-field-name': 'band',
+             'data-model-name': 'album',
+-            'data-placeholder': ''
++            'data-placeholder': '',
++            'lang': 'en',
+         })
+ 
+     def test_build_attrs_no_custom_class(self):

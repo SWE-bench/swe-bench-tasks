@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_func.py::test_functionality[func_noerror_cycle]"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_func.py::test_functionality[func_w0401_disabled_in_func.py]",
+    "tests/test_func.py::test_functionality[func_i0022.py]",
+    "tests/test_func.py::test_functionality[func_w0401.py]",
+    "tests/test_func.py::test_functionality[func_w0801.py]",
+    "tests/test_func.py::test_functionality[func_w0401_package]",
+    "tests/test_func.py::test_functionality[func_w0401_disabled.py]",
+    "tests/test_func.py::test_functionality[func_i0014.py]",
+    "tests/test_func.py::test_functionality[func_i0013.py]",
+    "tests/test_func.py::test_functionality[func_i0020.py]",
+    "tests/test_func.py::test_functionality[func_i0011.py]",
+    "tests/test_func.py::test_functionality[func_i0012.py]"
+  ]
+}

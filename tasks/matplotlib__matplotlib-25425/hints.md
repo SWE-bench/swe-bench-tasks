@@ -1,0 +1,2 @@
+Good point! Either seems to make sense to me.
+I am attempting to do this and choose the second way suggested. What should I do with the get_size() method? I'm guessing I should just leave it the same as it is probably being used in other code right now.

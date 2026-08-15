@@ -1,0 +1,14 @@
+base_commit: a9ba9d5d3fe9d5ac15fbdb06127f97d381148dd0
+created_at: '2022-12-06T03:42:05Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+difficulty: 15 min - 1 hour
+environment_setup_commit: 73909bcb408886a22e2b84581d6b9e6d9907c813
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-24637:latest
+instance_id: matplotlib__matplotlib-24637
+log_parser: parse_log_matplotlib
+repo: matplotlib/matplotlib
+split: test
+version: '3.6'

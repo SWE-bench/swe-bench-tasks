@@ -1,0 +1,1 @@
+Please do submit a PR. `check_is_fitted` is relatively new, and we may have missed places.

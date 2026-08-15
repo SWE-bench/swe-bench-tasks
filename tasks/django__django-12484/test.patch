@@ -1,0 +1,14 @@
+diff --git a/tests/auth_tests/test_checks.py b/tests/auth_tests/test_checks.py
+--- a/tests/auth_tests/test_checks.py
++++ b/tests/auth_tests/test_checks.py
+@@ -49,6 +49,10 @@ class CustomUserBadRequiredFields(AbstractBaseUser):
+             checks.Error(
+                 "The field named as the 'USERNAME_FIELD' for a custom user model "
+                 "must not be included in 'REQUIRED_FIELDS'.",
++                hint=(
++                    "The 'USERNAME_FIELD' is currently set to 'username', you "
++                    "should remove 'username' from the 'REQUIRED_FIELDS'."
++                ),
+                 obj=CustomUserBadRequiredFields,
+                 id='auth.E002',
+             ),

@@ -1,0 +1,1 @@
+Please push your patch as a ​Django pull request.

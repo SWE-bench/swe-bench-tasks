@@ -1,0 +1,8 @@
+Jan thanks for this report, however I cannot reproduce this issue. Everything works when I will use your messages in ​messages_tests.test_cookie.CookieTests.test_legacy_encode_decode.
+We might need the original cookie as seen by the browser. Can you send it to security@… (for the lack of a better "trusted" address, we will handle the data with care).
+What confuses me here is that according to the traceback the signature was valid and it then failed in ​https://github.com/django/django/blob/b6475d7d7940f3ce575e0b0f2d83e517f899b4cf/django/core/signing.py#L195 -- but if the signature was valid in the first place the data should have been base64 encoded. The contents of the cookie seem to suggest otherwise.
+I sent the contents of the cookie to security@
+Thanks, I think I understand what is going on. Out of pure luck we created test messages that properly decode from base64. They then fail json decoding and fall back to the old mechanism. I think we need to add binascii.Error to ​https://github.com/django/django/commit/2d6179c819010f6a9d00835d5893c4593c0b85a0#diff-6c5e944e6869d04c50af2ee02dd85c621177547eb7771d11066f452788d483f4R185
+Hi Jan, I have attached a diff that should fix your issue. Do you think you could apply that single change to your Django codebase and retry?
+Regression in 2d6179c819010f6a9d00835d5893c4593c0b85a0.
+Replying to Florian Apolloner: Hi Jan, I have attached a diff that should fix your issue. Do you think you could apply that single change to your Django codebase and retry? Works like expected with the patch applied, great!

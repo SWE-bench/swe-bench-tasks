@@ -1,0 +1,2 @@
+
+This is because the colorbar is listening to the "changed" event on `images[0].callbacksSM`, but that event is triggered when the image is directly manipulated (`im.set_clim`, etc.), but here they are not because it's the underlying *norm object* which is shared (and hence the "update" callback never fires because the clims on the image change directly via the norm object!).

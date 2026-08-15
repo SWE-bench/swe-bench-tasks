@@ -1,0 +1,18 @@
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -413,6 +413,14 @@ def test_serialize_enum_flags(self):
+             "(2, migrations.test_writer.IntFlagEnum['B'])], "
+             "default=migrations.test_writer.IntFlagEnum['A'])",
+         )
++        self.assertSerializedResultEqual(
++            IntFlagEnum.A | IntFlagEnum.B,
++            (
++                "migrations.test_writer.IntFlagEnum['A'] | "
++                "migrations.test_writer.IntFlagEnum['B']",
++                {"import migrations.test_writer"},
++            ),
++        )
+ 
+     def test_serialize_choices(self):
+         class TextChoices(models.TextChoices):

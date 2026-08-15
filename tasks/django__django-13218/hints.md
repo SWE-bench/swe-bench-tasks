@@ -1,0 +1,10 @@
+Proposed fix in ​https://github.com/django/django/pull/11141 (branch ​https://github.com/benjyw/django/tree/ticket_30300)/
+Hi Benjy. Thanks for the report — and the test case in the PR! Unless something comes up in review, this seems reasonable to me. I'm going to call it a new feature, since this behaviour will never have worked I think. ... (implicit or otherwise) I don't quite follow the or otherwise there?
+What's the use case? When makemigrations generates the first migration, it adds an __init__.py file. There was some concern about encouraging namespace packages in ticket:23919#comment:102.
+The "or otherwise" refers to namespace packages being either implicit (lacking an __init__.py) or explicit (an __init__.py containing an old-style namespace package incantation).
+Re the use case: It seems unnecessary to insist on an empty __init__.py just to preserve a (stale) check for __file__, when they are otherwise not required in Python 3. And #29091 implies that this should be allowed. Context is: We've just finished migrating our codebase to all-python 3, and nuked all our __init__py files. We are now upgrading to Django 2.1, and noticing the various places where they're still de-facto required by Django. This particular case seemed unnecessary and easy to fix.
+We had a similar issue with test discovery. One of our developers read an article that __init__.py files are not required on Python3 and started removing them. Everything seemingly worked but some tests were not discovered and did not run in CI (which made it difficult to spot). I think Django should not required them if technically possible or at least it should be made clear in the documentation (sorry if I overlooked it).
+Friendly nudge?
+​PR
+In 3cd3bebe: Fixed #30300 -- Allowed migrations to be loaded from directories without init.py file.
+I raised this issue ​on the mailing list as there was a thread that concluded that Django shouldn't promote use of implicit namespace packages.

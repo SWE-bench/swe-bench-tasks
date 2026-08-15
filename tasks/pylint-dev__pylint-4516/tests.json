@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/lint/unittest_expand_modules.py::test__is_in_ignore_list_re_match",
+    "tests/lint/unittest_expand_modules.py::test__is_in_ignore_list_re_nomatch",
+    "tests/lint/unittest_expand_modules.py::test_expand_modules[files_or_modules0-expected0]",
+    "tests/lint/unittest_expand_modules.py::test_expand_modules[files_or_modules1-expected1]"
+  ],
+  "PASS_TO_PASS": []
+}

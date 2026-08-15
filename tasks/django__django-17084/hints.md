@@ -1,0 +1,1 @@
+Hello! Could you please provide a minimal Django test project with models to reproduce this issue? Or a regression test that would pass on Django 4.1 but fail in 4.2? Thank you!

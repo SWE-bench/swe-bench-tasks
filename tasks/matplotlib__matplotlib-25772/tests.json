@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "lib/matplotlib/tests/test_backends_interactive.py::test_qt_missing"
+  ],
+  "PASS_TO_PASS": [
+    "lib/matplotlib/tests/test_backends_interactive.py::test_lazy_auto_backend_selection"
+  ]
+}

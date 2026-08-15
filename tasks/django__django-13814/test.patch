@@ -1,0 +1,19 @@
+diff --git a/tests/template_backends/test_django.py b/tests/template_backends/test_django.py
+--- a/tests/template_backends/test_django.py
++++ b/tests/template_backends/test_django.py
+@@ -104,13 +104,14 @@ def test_templatetag_discovery_import_error(self):
+             InvalidTemplateLibrary,
+             "ImportError raised when trying to load "
+             "'template_backends.apps.importerror.templatetags.broken_tags'"
+-        ):
++        ) as cm:
+             DjangoTemplates({
+                 'DIRS': [],
+                 'APP_DIRS': False,
+                 'NAME': 'django',
+                 'OPTIONS': {},
+             })
++        self.assertIsInstance(cm.exception.__cause__, ImportError)
+ 
+     def test_builtins_discovery(self):
+         engine = DjangoTemplates({

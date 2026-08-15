@@ -1,0 +1,27 @@
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -572,6 +572,23 @@ def test_alter_field_rename_field(self):
+             ],
+         )
+ 
++    def test_swapping_fields_names(self):
++        self.assertDoesNotOptimize(
++            [
++                migrations.CreateModel(
++                    'MyModel',
++                    [
++                        ('field_a', models.IntegerField()),
++                        ('field_b', models.IntegerField()),
++                    ],
++                ),
++                migrations.RunPython(migrations.RunPython.noop),
++                migrations.RenameField('MyModel', 'field_a', 'field_c'),
++                migrations.RenameField('MyModel', 'field_b', 'field_a'),
++                migrations.RenameField('MyModel', 'field_c', 'field_b'),
++            ],
++        )
++
+     def test_create_model_remove_field(self):
+         """
+         RemoveField should optimize into CreateModel.

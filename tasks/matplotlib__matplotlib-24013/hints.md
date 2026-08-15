@@ -1,0 +1,1 @@
+I agree with renaming all the `tri/foo.py` modules to `tri/_foo.py` (`tri/__init__.py` already reexports everything anyways).  I'm not sure it's possible to have a proper deprecation for `from matplotlib.tri.tripcolor import tripcolor` (without ridiculous hacks)?

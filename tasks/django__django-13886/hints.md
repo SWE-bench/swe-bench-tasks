@@ -1,0 +1,3 @@
+Tests.
+Mariusz, When I try to run the tests that you added to the ticket, I get ValueError('Index.fields must be a list or tuple.') it means currently, models.Index doesn't support models.F('height') / (models.F('weight__abs') + models.Value(5)) and Lower('missing_field').desc() as index fields. Should we add support for these kinds of fields to models.Index?
+Sorry Hasan, I should mark this ticket as "someday", it's a follow up to #26167. It will be valid after merging ​PR.

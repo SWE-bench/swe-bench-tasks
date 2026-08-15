@@ -1,0 +1,20 @@
+{
+  "FAIL_TO_PASS": [
+    "test_selectdate_required_placeholder (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)"
+  ],
+  "PASS_TO_PASS": [
+    "test_custom_months (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_format_value (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_l10n (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_render_datetime (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_render_empty (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_render_invalid_date (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_render_none (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_render_string (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_selectdate_empty_label (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_selectdate_required (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_value_from_datadict (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_value_omitted_from_data (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)",
+    "test_years_rendered_without_separator (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest)"
+  ]
+}

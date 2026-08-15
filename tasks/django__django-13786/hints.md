@@ -1,0 +1,1 @@
+Makes sense, I guess we should take AlterModelOptions.ALTER_OPTION_KEYS in consideration here like AlterModelOptions.state_forwards does ​https://github.com/django/django/blob/991dce4fc5b656e04af08a595181bd576f2bd857/django/db/migrations/operations/models.py#L675-L677

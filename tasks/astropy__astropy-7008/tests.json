@@ -1,0 +1,15 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/constants/tests/test_prior_version.py::test_context_manager"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/constants/tests/test_prior_version.py::test_c",
+    "astropy/constants/tests/test_prior_version.py::test_h",
+    "astropy/constants/tests/test_prior_version.py::test_e",
+    "astropy/constants/tests/test_prior_version.py::test_g0",
+    "astropy/constants/tests/test_prior_version.py::test_b_wien",
+    "astropy/constants/tests/test_prior_version.py::test_unit",
+    "astropy/constants/tests/test_prior_version.py::test_copy",
+    "astropy/constants/tests/test_prior_version.py::test_view"
+  ]
+}

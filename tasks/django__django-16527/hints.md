@@ -1,0 +1,3 @@
+Thanks for the report. It was previously reported in #5650 and #3817, and #3817 was closed but only with a fix for "Save and add another" (see 825f0beda804e48e9197fcf3b0d909f9f548aa47). I rewrite this for my project: "show_save_as_new": not is_popup and has_add_permission # This line that I put!!! and has_change_permission and change and save_as, Do we need to check both? Checking only has_add_permission should be enough.
+Replying to Neesham: Yes, because "Save as New" is a save too (current object).
+Oh, yes! Sorry and tanks ;-)

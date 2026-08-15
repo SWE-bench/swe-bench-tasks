@@ -1,0 +1,7 @@
+Thanks for the report! Would you like to prepare a patch? If not, you can assign it me as 4.0.2 will be issued on Tuesday.
+I have had a quick look but I got a bit lost. Aggregate.default generates a Coalesce internally so it seems a little lower level. If you have the capacity that would be appreciated.
+Replying to Adam Johnson: If you have the capacity that would be appreciated. Always, that's my job 😉
+Just to note - the title isn't quite accurate. The crash happens whether or not the aggregate uses the annotated field.
+This issue should be fixed by: django/db/models/aggregates.py diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py index 8c4eae7906..e4c81547c1 100644 a b class Aggregate(Func): 6565 if hasattr(default, 'resolve_expression'): 6666 default = default.resolve_expression(query, allow_joins, reuse, summarize) 6767 c.default = None # Reset the default argument before wrapping. 68 return Coalesce(c, default, output_field=c._output_field_or_none) 68 coalesce = Coalesce(c, default, output_field=c._output_field_or_none) 69 coalesce.is_summary = True 70 return coalesce 6971 7072 @property 7173 def default_alias(self): I will prepare a proper patch in the evening.
+I can confirm that change fixes my test project.
+Thanks to both of you!

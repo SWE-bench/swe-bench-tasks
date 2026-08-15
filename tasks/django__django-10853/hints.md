@@ -1,0 +1,1 @@
+It looks like the supports_over_clause feature flag is only checked by connection.ops.window_frame_rows_start_end which is not exercised when no frame expressions are exercised. Window.as_sql should simply check supports_over_clause and raise NotSupported if it isn't.

@@ -1,0 +1,1 @@
+Oops. The labels of dark red messages are wrong. They should be "ERROR:" instead of "WARNING:". This must be a bug. Thank you for reporting.

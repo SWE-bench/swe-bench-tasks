@@ -1,0 +1,17 @@
+diff --git a/tests/admin_widgets/test_autocomplete_widget.py b/tests/admin_widgets/test_autocomplete_widget.py
+--- a/tests/admin_widgets/test_autocomplete_widget.py
++++ b/tests/admin_widgets/test_autocomplete_widget.py
+@@ -166,6 +166,13 @@ def test_media(self):
+         )
+         languages = (
+             ("de", "de"),
++            # Subsequent language codes are used when the language code is not
++            # supported.
++            ("de-at", "de"),
++            ("de-ch-1901", "de"),
++            ("en-latn-us", "en"),
++            ("nl-nl-x-informal", "nl"),
++            ("zh-hans-HK", "zh-CN"),
+             # Language with code 00 does not exist.
+             ("00", None),
+             # Language files are case sensitive.

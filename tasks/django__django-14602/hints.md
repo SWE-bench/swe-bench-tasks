@@ -1,0 +1,3 @@
+Here, for example, is one which parses into a datetime.time but I wouldn't really expect it to, and whilst the input is nonsense, doesn't cause an error like ValueError: second must be in 0..59 which would match my expectations: >>> from django.utils.dateparse import parse_time >>> parse_time('4:18:101') datetime.time(4, 18, 10) # captured data was {'hour': '4', 'minute': '18', 'second': '10', 'microsecond': None}
+IMO the main issue is that $ is missing.
+Replying to Mariusz Felisiak: IMO the main issue is that $ is missing. I came to the same conclusion: ​https://github.com/django/django/pull/14582#discussion_r664075337

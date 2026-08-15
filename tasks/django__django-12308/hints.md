@@ -1,0 +1,2 @@
+​PR
+The proposed patch is problematic as the first version coupled contrib.postgres with .admin and the current one is based off the type name which is brittle and doesn't account for inheritance. It might be worth waiting for #12990 to land before proceeding here as the patch will be able to simply rely of django.db.models.JSONField instance checks from that point.

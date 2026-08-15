@@ -1,0 +1,5 @@
+Indeed the code in fit_predict and the one in predict are not exactly consistent. This should be fixed but we would need to check the math to choose the correct variant, add a test and remove the other one.
+I don't think the math is wrong or inconsistent.  I think it's a matter of `fit_predict` returning the fit from the last of `n_iter` iterations, when it should be returning the fit from the _best_ of the iterations.  That is, the last call to `self._e_step()` (base.py:263) should be moved to just before the return, after `self._set_parameters(best_params)` restores the best solution.
+Seems good indeed. When looking quickly you can miss the fact that `_e_step` uses the parameters even if not passed as arguments because they are attributes of the estimator. That's what happened to me :)
+
+ Would you submit a PR ?

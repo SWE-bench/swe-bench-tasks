@@ -1,0 +1,69 @@
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -264,7 +264,8 @@ def test_new_object_create(self):
+ 
+     def test_object_create_with_aggregate(self):
+         # Aggregates are not allowed when inserting new data
+-        with self.assertRaisesMessage(FieldError, 'Aggregate functions are not allowed in this query'):
++        msg = 'Aggregate functions are not allowed in this query (num_employees=Max(Value(1))).'
++        with self.assertRaisesMessage(FieldError, msg):
+             Company.objects.create(
+                 name='Company', num_employees=Max(Value(1)), num_chairs=1,
+                 ceo=Employee.objects.create(firstname="Just", lastname="Doit", salary=30),
+diff --git a/tests/expressions_window/tests.py b/tests/expressions_window/tests.py
+--- a/tests/expressions_window/tests.py
++++ b/tests/expressions_window/tests.py
+@@ -670,7 +670,12 @@ def test_distinct_window_function(self):
+ 
+     def test_fail_update(self):
+         """Window expressions can't be used in an UPDATE statement."""
+-        msg = 'Window expressions are not allowed in this query'
++        msg = (
++            'Window expressions are not allowed in this query (salary=<Window: '
++            'Max(Col(expressions_window_employee, expressions_window.Employee.salary)) '
++            'OVER (PARTITION BY Col(expressions_window_employee, '
++            'expressions_window.Employee.department))>).'
++        )
+         with self.assertRaisesMessage(FieldError, msg):
+             Employee.objects.filter(department='Management').update(
+                 salary=Window(expression=Max('salary'), partition_by='department'),
+@@ -678,7 +683,10 @@ def test_fail_update(self):
+ 
+     def test_fail_insert(self):
+         """Window expressions can't be used in an INSERT statement."""
+-        msg = 'Window expressions are not allowed in this query'
++        msg = (
++            'Window expressions are not allowed in this query (salary=<Window: '
++            'Sum(Value(10000), order_by=OrderBy(F(pk), descending=False)) OVER ()'
++        )
+         with self.assertRaisesMessage(FieldError, msg):
+             Employee.objects.create(
+                 name='Jameson', department='Management', hire_date=datetime.date(2007, 7, 1),
+diff --git a/tests/update/tests.py b/tests/update/tests.py
+--- a/tests/update/tests.py
++++ b/tests/update/tests.py
+@@ -165,7 +165,11 @@ def test_update_annotated_queryset(self):
+         self.assertEqual(qs.update(another_value=F('alias')), 3)
+         # Update where aggregation annotation is used in update parameters
+         qs = DataPoint.objects.annotate(max=Max('value'))
+-        with self.assertRaisesMessage(FieldError, 'Aggregate functions are not allowed in this query'):
++        msg = (
++            'Aggregate functions are not allowed in this query '
++            '(another_value=Max(Col(update_datapoint, update.DataPoint.value))).'
++        )
++        with self.assertRaisesMessage(FieldError, msg):
+             qs.update(another_value=F('max'))
+ 
+     def test_update_annotated_multi_table_queryset(self):
+@@ -185,5 +189,9 @@ def test_update_annotated_multi_table_queryset(self):
+         # self.assertEqual(updated, 1)
+         # Update where aggregation annotation is used in update parameters
+         qs = RelatedPoint.objects.annotate(max=Max('data__value'))
+-        with self.assertRaisesMessage(FieldError, 'Aggregate functions are not allowed in this query'):
++        msg = (
++            'Aggregate functions are not allowed in this query '
++            '(name=Max(Col(update_datapoint, update.DataPoint.value))).'
++        )
++        with self.assertRaisesMessage(FieldError, msg):
+             qs.update(name=F('max'))

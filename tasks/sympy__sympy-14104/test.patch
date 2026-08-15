@@ -1,0 +1,15 @@
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -4869,6 +4869,11 @@ def test_deltas():
+ u("""\
+  (1)    \n\
+ δ    (x)\
++""")
++    assert xpretty(x*DiracDelta(x, 1), use_unicode=True) == \
++u("""\
++   (1)    \n\
++x⋅δ    (x)\
+ """)
+ 
+ 

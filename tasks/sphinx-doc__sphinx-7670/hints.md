@@ -1,0 +1,2 @@
+Instead of reinventing the wheel regarding name mangling I try to to follow (in spirit) the Itanium ABI, but it looks like the standard is not yet clear on some details (itanium-cxx-abi/cxx-abi#24).
+@mpusz, do you happen to have seen mangled names with constraints? I can't get GCC to produce any so far.

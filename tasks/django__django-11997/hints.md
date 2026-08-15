@@ -1,0 +1,3 @@
+I don't think it's an issue, this behavior is consistent with builtin round() and -0 exists in floating-point arithmetic. You can start a discussion on the DevelopersMailingList if you believe that this behavior should be changed. We can re-open the ticket if we reach a consensus on a mailing list.
+Re-opening following a discussion on the django-developers mailing list.
+​https://github.com/django/django/pull/11997

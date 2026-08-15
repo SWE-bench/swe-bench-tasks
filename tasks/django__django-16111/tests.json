@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "test_microseconds (db_functions.datetime.test_now.NowTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_basic (db_functions.datetime.test_now.NowTests)"
+  ]
+}

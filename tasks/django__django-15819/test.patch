@@ -1,0 +1,30 @@
+diff --git a/tests/inspectdb/models.py b/tests/inspectdb/models.py
+--- a/tests/inspectdb/models.py
++++ b/tests/inspectdb/models.py
+@@ -9,6 +9,7 @@ class People(models.Model):
+ 
+ class Message(models.Model):
+     from_field = models.ForeignKey(People, models.CASCADE, db_column="from_id")
++    author = models.ForeignKey(People, models.CASCADE, related_name="message_authors")
+ 
+ 
+ class PeopleData(models.Model):
+diff --git a/tests/inspectdb/tests.py b/tests/inspectdb/tests.py
+--- a/tests/inspectdb/tests.py
++++ b/tests/inspectdb/tests.py
+@@ -433,6 +433,15 @@ def test_introspection_errors(self):
+         # The error message depends on the backend
+         self.assertIn("# The error was:", output)
+ 
++    def test_same_relations(self):
++        out = StringIO()
++        call_command("inspectdb", "inspectdb_message", stdout=out)
++        self.assertIn(
++            "author = models.ForeignKey('InspectdbPeople', models.DO_NOTHING, "
++            "related_name='inspectdbmessage_author_set')",
++            out.getvalue(),
++        )
++
+ 
+ class InspectDBTransactionalTests(TransactionTestCase):
+     available_apps = ["inspectdb"]

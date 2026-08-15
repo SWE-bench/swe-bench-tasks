@@ -1,0 +1,1 @@
+Good catch.  This was broken in https://github.com/matplotlib/matplotlib/pull/13409; on master this is fixed by https://github.com/matplotlib/matplotlib/pull/13593, which is too big to backport, but I can just extract https://github.com/matplotlib/matplotlib/commit/160de568e1f6d3e5e1bd10192f049815bf778dea#diff-cdfe9e4fdad4085b0a74c1dbe0def08dR16 which is enough.

@@ -1,0 +1,1 @@
+@amueller You mean something like `make_blobs(n_samples=[50,30,20])` for example? I am working on this.

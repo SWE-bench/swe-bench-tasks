@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test_solve_poly_system"
+  ],
+  "PASS_TO_PASS": [
+    "test_solve_biquadratic",
+    "test_solve_triangulated"
+  ]
+}

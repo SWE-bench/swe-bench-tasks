@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "test_axes_alignment",
+    "test_singularity",
+    "test_sinc"
+  ],
+  "PASS_TO_PASS": []
+}

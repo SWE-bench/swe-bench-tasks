@@ -1,0 +1,1 @@
+Off-topic: As far as I'm aware it's easier to follow the expected output in assertions instead of a series of function calls, e.g. self.assertEqual(output, "<p>Hello World!</p><br/>beta & me<br/><script>Hi!</script>")

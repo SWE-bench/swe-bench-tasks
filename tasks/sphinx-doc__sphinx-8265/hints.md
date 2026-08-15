@@ -1,0 +1,1 @@
+Thank you for reporting. This is related to https://github.com/sphinx-doc/sphinx/issues/7498.

@@ -1,0 +1,1 @@
+I assume that setting `location` should override `orientation`? Since `orientation` has a default non-None value. Or should one change the default value to None to be able to detect which value was set?

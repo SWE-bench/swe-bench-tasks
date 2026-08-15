@@ -1,0 +1,3 @@
+See also #10128 which is maybe not exactly the same need but related in the sense that there is currently no easy way to get uncertainties in a specific format (variance, std).
+Very much from the left field, but in coordinate representations, we deal with this by insisting every representation can be transformed to/from cartesian, and then have a `represent_as` method that by default goes through cartesian. A similar scheme (probably going through variance) might well be possible here.
+It sounds like the `represent_as` method via variance would be reasonable, I'll see if I can spend some time coding something up (but if someone else wants to have a go, don't let me stop you).

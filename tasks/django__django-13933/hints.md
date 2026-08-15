@@ -1,0 +1,4 @@
+This message has been the same literally forever b2b6fc8e3c78671c8b6af2709358c3213c84d119. ​Given that ChoiceField passes the value when raising the error, if you set ​error_messages you should be able to get the result you want.
+Replying to Carlton Gibson: This message has been the same literally forever b2b6fc8e3c78671c8b6af2709358c3213c84d119. ​Given that ChoiceField passes the value when raising the error, if you set ​error_messages you should be able to get the result you want. That is ChoiceField. ModelChoiceField ​does not pass the value to the validation error. So, when the invalid value error is raised, you can't display the offending value even if you override the defaults.
+OK, if you want to look at submitting a PR we can see if any objections come up in review. Thanks.
+PR: ​https://github.com/django/django/pull/13933

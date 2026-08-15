@@ -1,0 +1,1 @@
+@oscarbenjamin since the functionality of `posify` is to only add a new assumption `positive=True` when `positive` is not defined, the other assumptions should be retained.

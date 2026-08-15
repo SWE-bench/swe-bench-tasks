@@ -1,0 +1,1 @@
+You can multiply a Point on the right by a scalar but not on the left. I think this would be a matter of defining `__rmul__` for Point.

@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "test_periodicity_check",
+    "test_decompogen"
+  ],
+  "PASS_TO_PASS": [
+    "test_continuous_domain",
+    "test_not_empty_in",
+    "test_lcim",
+    "test_AccumBounds",
+    "test_AccumBounds_mul",
+    "test_AccumBounds_div",
+    "test_AccumBounds_func",
+    "test_AccumBounds_pow",
+    "test_comparison_AccumBounds",
+    "test_decompogen_poly"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "test_invalid_samesite (responses.test_cookie.SetCookieTests)",
+    "test_samesite (responses.test_cookie.SetCookieTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_default (responses.test_cookie.DeleteCookieTests)",
+    "test_delete_cookie_secure_prefix (responses.test_cookie.DeleteCookieTests)",
+    "set_cookie() accepts an aware datetime as expiration time.",
+    "Setting a cookie after deletion clears the expiry date.",
+    "Cookie will expire when a distant expiration time is provided.",
+    "test_httponly_cookie (responses.test_cookie.SetCookieTests)",
+    "Cookie will expire if max_age is provided.",
+    "Cookie will expire when a near expiration time is provided.",
+    "HttpResponse.set_cookie() works with unicode data."
+  ]
+}

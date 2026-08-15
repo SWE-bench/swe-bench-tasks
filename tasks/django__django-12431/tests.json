@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "test_file_response_closing (builtin_server.tests.WSGIFileWrapperTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_compressed_response (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_buffer_response (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_buffer_unnamed_attachment (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_disk_as_attachment (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_disk_response (responses.test_fileresponse.FileResponseTests)",
+    "test_file_from_named_pipe_response (responses.test_fileresponse.FileResponseTests)",
+    "test_unicode_attachment (responses.test_fileresponse.FileResponseTests)",
+    "test_chunked_data (builtin_server.tests.ServerHandlerChunksProperly)",
+    "test_file_wrapper_no_sendfile (builtin_server.tests.WSGIFileWrapperTests)",
+    "test_file_wrapper_uses_sendfile (builtin_server.tests.WSGIFileWrapperTests)"
+  ]
+}

@@ -1,0 +1,3 @@
+simple patch to handle FK to non pk field.
+it seems I cannot reproduce outside of my own code...
+I will check it!

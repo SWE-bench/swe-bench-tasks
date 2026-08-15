@@ -1,0 +1,21 @@
+{
+  "FAIL_TO_PASS": [
+    "test_ndim_array_initiation"
+  ],
+  "PASS_TO_PASS": [
+    "test_reshape",
+    "test_iterator",
+    "test_sparse",
+    "test_calculation",
+    "test_ndim_array_converting",
+    "test_converting_functions",
+    "test_equality",
+    "test_arithmetic",
+    "test_higher_dimenions",
+    "test_rebuild_immutable_arrays",
+    "test_slices",
+    "test_diff_and_applyfunc",
+    "test_op_priority",
+    "test_symbolic_indexing"
+  ]
+}

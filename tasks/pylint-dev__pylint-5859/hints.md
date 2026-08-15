@@ -1,0 +1,1 @@
+Did a little investigation, this is we're actually converting this option in a regular expression pattern (thereby making it awfully similar to the `notes-rgx` option). Since `?` is a special character in regex this doesn't get picked up. Using `\?\?\?` in either `notes` or `notes-rgx` should work.

@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "test_supports_json_field_operational_error (backends.sqlite.test_features.FeaturesTests)"
+  ],
+  "PASS_TO_PASS": []
+}

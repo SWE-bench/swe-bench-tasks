@@ -1,0 +1,16 @@
+{
+  "FAIL_TO_PASS": [
+    "test_orientnew_respects_input_indices",
+    "test_orientnew_respects_input_latexs",
+    "test_orientnew_respects_input_variables"
+  ],
+  "PASS_TO_PASS": [
+    "test_coordinate_vars",
+    "test_ang_vel",
+    "test_dcm",
+    "test_orientnew_respects_parent_class",
+    "test_issue_10348",
+    "test_issue_11503",
+    "test_partial_velocity"
+  ]
+}

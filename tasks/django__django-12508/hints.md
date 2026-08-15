@@ -1,0 +1,10 @@
+This seems reasonable, at first glance at least. The trick will be to pass the command to each of the backend clients correctly, but there's no reason that's not possible right? Accepting on that basis. A PR is very welcome.
+It should be easy to implement since we don’t need to use database-specific backend Something like that: from django.db import connection if command: cursor = connection.cursor() cursor.execute(command) # show `cursor.fetchall()` result
+any progress on this one? Is the previously suggested approach good enough? If so, I'd love to give a try?
+No progress AKAIK. Maybe it would be easier to call database-specific CLI tool with right parameters than run cursor. Pros: No need to care about printing results (user could execute SELECT) Could run commands that are unique for the CLI (e.g. \dt to show tables in psql) Cons: Each backend would need its own command to run (but we already have dbshell, so we know name of binary; just need a parameter to execute a query). Each backend would show results in its own format, so you cannot e. g. save result as cab file) Another completely different approach would be to pass all command line arguments provided to dbshell, e.g. after “—“ divider to database CLI app. For example: ./manage.py dbshell — -c “select * from auth_user”
+I don't think opening a cursor is the right way. My mental model of dbshell is that it always passes through to the underlying tool, which can have subtle implications on even what SQL/commands are accepted. I am actually most in favour of passing all arguments through after a -- divider as that is the most flexible.
+​https://github.com/django/django/pull/10186
+"Ready for checkin" is set by a patch reviewer. And the patch isn't ready for review without tests and documentation.
+So the PR is closed due to missing Tests and Documentation. Does anybody care that I take this? I could make a PR based on the original one and add tests and docs
+Absolutely, feel free to work on issues obviously stalled. Just credit original patch writers if appropriate.
+​PR

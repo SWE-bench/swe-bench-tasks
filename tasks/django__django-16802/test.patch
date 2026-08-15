@@ -1,0 +1,12 @@
+diff --git a/tests/template_tests/filter_tests/test_random.py b/tests/template_tests/filter_tests/test_random.py
+--- a/tests/template_tests/filter_tests/test_random.py
++++ b/tests/template_tests/filter_tests/test_random.py
+@@ -24,3 +24,8 @@ def test_random02(self):
+             "random02", {"a": ["a&b", "a&b"], "b": [mark_safe("a&b"), mark_safe("a&b")]}
+         )
+         self.assertEqual(output, "a&b a&b")
++
++    @setup({"empty_list": "{{ list|random }}"})
++    def test_empty_list(self):
++        output = self.engine.render_to_string("empty_list", {"list": []})
++        self.assertEqual(output, "")

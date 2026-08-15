@@ -1,0 +1,27 @@
+diff --git a/tests/forms_tests/field_tests/test_durationfield.py b/tests/forms_tests/field_tests/test_durationfield.py
+--- a/tests/forms_tests/field_tests/test_durationfield.py
++++ b/tests/forms_tests/field_tests/test_durationfield.py
+@@ -30,6 +30,8 @@ def test_durationfield_clean(self):
+         msg = 'Enter a valid duration.'
+         with self.assertRaisesMessage(ValidationError, msg):
+             f.clean('not_a_time')
++        with self.assertRaisesMessage(ValidationError, msg):
++            DurationField().clean('P3(3D')
+ 
+     def test_durationfield_clean_not_required(self):
+         f = DurationField(required=False)
+diff --git a/tests/utils_tests/test_dateparse.py b/tests/utils_tests/test_dateparse.py
+--- a/tests/utils_tests/test_dateparse.py
++++ b/tests/utils_tests/test_dateparse.py
+@@ -161,6 +161,11 @@ def test_iso_8601(self):
+             ('-PT0.000005S', timedelta(microseconds=-5)),
+             ('-PT0,000005S', timedelta(microseconds=-5)),
+             ('-P4DT1H', timedelta(days=-4, hours=-1)),
++            # Invalid separators for decimal fractions.
++            ('P3(3D', None),
++            ('PT3)3H', None),
++            ('PT3|3M', None),
++            ('PT3/3S', None),
+         )
+         for source, expected in test_values:
+             with self.subTest(source=source):

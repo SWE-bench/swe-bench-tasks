@@ -1,0 +1,2 @@
+Thanks for the report!
+After reconsideration I think a GenericForeignKey is out of scope for the original feature, see #28991. Moreover according to docs: Due to the way GenericForeignKey is implemented, you cannot use such fields directly with filters (filter() and exclude(), for example) via the database API. Because a GenericForeignKey isn’t a normal field object, these examples will not work: ... so I would add a note to EmptyFieldListFilter that it's not supported. I've also found that it crashes with GenericRelation but we can fix it easily.

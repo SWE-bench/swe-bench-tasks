@@ -1,0 +1,12 @@
+base_commit: e87d65b77711bbf289e14dfa0581fb842247f1c2
+created_at: '2021-06-09T15:22:24Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 4f1e2d37b662079e830c9672400fabc19b44a376
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pydata_1776_xarray-5455:latest
+instance_id: pydata__xarray-5455
+log_parser: parse_log_xarray
+repo: pydata/xarray
+split: test
+version: '0.18'

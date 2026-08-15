@@ -1,0 +1,1 @@
+Thanks for reporting. I believe it's because the parser assumes that every template parameter that starts with ``typename`` must be a type parameter. Your example clearly illustrates this is not always the case.

@@ -1,0 +1,12 @@
+base_commit: 873d9f6fdababb96f0763f538e85921f7d332b70
+created_at: '2022-05-30T11:32:56Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 571b55328d401a6e1d50e37407df56586065a7be
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.sphinx-doc_1776_sphinx-10492:latest
+instance_id: sphinx-doc__sphinx-10492
+log_parser: parse_log_sphinx
+repo: sphinx-doc/sphinx
+split: test
+version: '5.1'

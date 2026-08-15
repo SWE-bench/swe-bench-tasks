@@ -1,0 +1,12 @@
+diff --git a/sympy/parsing/tests/test_implicit_multiplication_application.py b/sympy/parsing/tests/test_implicit_multiplication_application.py
+--- a/sympy/parsing/tests/test_implicit_multiplication_application.py
++++ b/sympy/parsing/tests/test_implicit_multiplication_application.py
+@@ -61,7 +61,7 @@ def test_implicit_application():
+     for case in cases:
+         implicit = parse_expr(case, transformations=transformations2)
+         normal = parse_expr(cases[case], transformations=transformations)
+-        assert(implicit == normal)
++        assert(implicit == normal), (implicit, normal)
+ 
+     multiplication = ['x y', 'x sin x', '2x']
+     for case in multiplication:

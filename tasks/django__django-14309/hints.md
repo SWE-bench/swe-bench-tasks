@@ -1,0 +1,3 @@
+Note, in Django 3.1 the code in the previous tests will raise a TypeError, the following test case achieves the same and passes in Django 3.1, main and (from what I understand) Django 3.2.1 class TestEmptyQExistsCombination(TestCase): def test_combine(self): q = Q() & Q(Exists(Book.objects.all())) self.assertFalse(q.children[0].negated) def test_combine_negated(self): q = Q() & Q(~Exists(Book.objects.all())) self.assertTrue(q.children[0].negated)
+This can be fixed by #32632 (see comment).
+​PR

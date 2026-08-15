@@ -1,0 +1,43 @@
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -227,6 +227,22 @@ def test_count_intersection(self):
+         qs2 = Number.objects.filter(num__lte=5)
+         self.assertEqual(qs1.intersection(qs2).count(), 1)
+ 
++    def test_get_union(self):
++        qs = Number.objects.filter(num=2)
++        self.assertEqual(qs.union(qs).get().num, 2)
++
++    @skipUnlessDBFeature('supports_select_difference')
++    def test_get_difference(self):
++        qs1 = Number.objects.all()
++        qs2 = Number.objects.exclude(num=2)
++        self.assertEqual(qs1.difference(qs2).get().num, 2)
++
++    @skipUnlessDBFeature('supports_select_intersection')
++    def test_get_intersection(self):
++        qs1 = Number.objects.all()
++        qs2 = Number.objects.filter(num=2)
++        self.assertEqual(qs1.intersection(qs2).get().num, 2)
++
+     @skipUnlessDBFeature('supports_slicing_ordering_in_compound')
+     def test_ordering_subqueries(self):
+         qs1 = Number.objects.order_by('num')[:2]
+@@ -325,3 +341,16 @@ def test_unsupported_operations_on_combined_qs(self):
+                         msg % (operation, combinator),
+                     ):
+                         getattr(getattr(qs, combinator)(qs), operation)()
++
++    def test_get_with_filters_unsupported_on_combined_qs(self):
++        qs = Number.objects.all()
++        msg = 'Calling QuerySet.get(...) with filters after %s() is not supported.'
++        combinators = ['union']
++        if connection.features.supports_select_difference:
++            combinators.append('difference')
++        if connection.features.supports_select_intersection:
++            combinators.append('intersection')
++        for combinator in combinators:
++            with self.subTest(combinator=combinator):
++                with self.assertRaisesMessage(NotSupportedError, msg % combinator):
++                    getattr(qs, combinator)(qs).get(num=2)

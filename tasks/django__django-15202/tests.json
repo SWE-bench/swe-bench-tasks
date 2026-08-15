@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "test_urlfield_clean_invalid (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_clean_not_required (forms_tests.field_tests.test_urlfield.URLFieldTest)"
+  ],
+  "PASS_TO_PASS": [
+    "test_urlfield_clean (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_clean_required (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_strip_on_none_value (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_unable_to_set_strip_kwarg (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_widget (forms_tests.field_tests.test_urlfield.URLFieldTest)",
+    "test_urlfield_widget_max_min_length (forms_tests.field_tests.test_urlfield.URLFieldTest)"
+  ]
+}

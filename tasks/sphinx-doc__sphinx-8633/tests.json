@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_ext_autodoc_events.py::test_process_docstring_for_nondatadescriptor"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_ext_autodoc_events.py::test_process_docstring",
+    "tests/test_ext_autodoc_events.py::test_cut_lines",
+    "tests/test_ext_autodoc_events.py::test_between",
+    "tests/test_ext_autodoc_events.py::test_between_exclude",
+    "tests/test_ext_autodoc_events.py::test_skip_module_member"
+  ]
+}

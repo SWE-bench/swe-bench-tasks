@@ -1,0 +1,2 @@
+Thanks for this report, IMO we should add the samesite argument to delete_cookie() and preserve it for deleted cookies (see related #30862).
+​PR

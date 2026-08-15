@@ -1,0 +1,12 @@
+base_commit: 43477edc91a8f49de1e9d96117f9cc6d087e71d9
+created_at: '2013-10-08T00:23:48Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 4bceb312f1b99d36a25f2985b5606e98b6f0d8cd
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.psf_1776_requests-1657:latest
+instance_id: psf__requests-1657
+log_parser: parse_log_requests
+repo: psf/requests
+split: test
+version: '2.0'

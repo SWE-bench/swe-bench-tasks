@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/utils/tests/test_estimator_checks.py::test_check_estimator"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/utils/tests/test_estimator_checks.py::test_check_estimator_clones",
+    "sklearn/utils/tests/test_estimator_checks.py::test_check_estimators_unfitted",
+    "sklearn/utils/tests/test_estimator_checks.py::test_check_no_attributes_set_in_init",
+    "sklearn/utils/tests/test_estimator_checks.py::test_check_estimator_pairwise"
+  ]
+}

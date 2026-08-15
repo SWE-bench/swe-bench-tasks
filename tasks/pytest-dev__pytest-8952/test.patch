@@ -1,0 +1,33 @@
+diff --git a/testing/test_nose.py b/testing/test_nose.py
+--- a/testing/test_nose.py
++++ b/testing/test_nose.py
+@@ -335,7 +335,7 @@ def test_failing():
+         """
+     )
+     result = pytester.runpytest(p)
+-    result.assert_outcomes(skipped=1)
++    result.assert_outcomes(skipped=1, warnings=1)
+ 
+ 
+ def test_SkipTest_in_test(pytester: Pytester) -> None:
+diff --git a/testing/test_pytester.py b/testing/test_pytester.py
+--- a/testing/test_pytester.py
++++ b/testing/test_pytester.py
+@@ -847,3 +847,17 @@ def test_testdir_makefile_ext_empty_string_makes_file(testdir) -> None:
+     """For backwards compat #8192"""
+     p1 = testdir.makefile("", "")
+     assert "test_testdir_makefile" in str(p1)
++
++
++@pytest.mark.filterwarnings("default")
++def test_pytester_assert_outcomes_warnings(pytester: Pytester) -> None:
++    pytester.makepyfile(
++        """
++        import warnings
++
++        def test_with_warning():
++            warnings.warn(UserWarning("some custom warning"))
++        """
++    )
++    result = pytester.runpytest()
++    result.assert_outcomes(passed=1, warnings=1)

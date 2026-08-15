@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "test_MatrixNormal"
+  ],
+  "PASS_TO_PASS": [
+    "test_MatrixPSpace",
+    "test_MatrixGamma",
+    "test_Wishart",
+    "test_MatrixStudentT"
+  ]
+}

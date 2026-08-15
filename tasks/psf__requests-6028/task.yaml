@@ -1,0 +1,14 @@
+base_commit: 0192aac24123735b3eaf9b08df46429bb770c283
+created_at: '2022-01-04T15:32:52Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+difficulty: 15 min - 1 hour
+environment_setup_commit: 0192aac24123735b3eaf9b08df46429bb770c283
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.psf_1776_requests-6028:latest
+instance_id: psf__requests-6028
+log_parser: parse_log_requests
+repo: psf/requests
+split: test
+version: '2.27'

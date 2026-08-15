@@ -1,0 +1,12 @@
+base_commit: a0ef6a0e22038a36c3646ea96f61fdc6d7ab7e5c
+created_at: '2018-07-22T17:15:08Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 4fc35a9c3efdc9154efce28cb23cb84f8834517e
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.django_1776_django-10213:latest
+instance_id: django__django-10213
+log_parser: parse_log_django
+repo: django/django
+split: test
+version: '2.2'

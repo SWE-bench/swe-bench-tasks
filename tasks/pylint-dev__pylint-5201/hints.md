@@ -1,0 +1,1 @@
+Thank you for opening the issue, this seems like a sensible thing to do.

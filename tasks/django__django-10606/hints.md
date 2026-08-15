@@ -1,0 +1,4 @@
+I can't reproduce the crash on a ManyToManyField with limit_choices_to. Could you give more details?
+Apologies for my lack of response on this, have been traveling. I'm going to be working on adding tests for my fix ASAP but here's a minimal example of how to trigger: Demo of how to trigger bug: ​https://github.com/mgrdcm/django-bug-reverse-related/blob/master/rrbug/rrapp/admin.py#L11-L15
+Test case added: ​https://github.com/django/django/pull/10606/commits/da4785e82c9586c6f2ab41a0e9e5bc3eeeb8fd1c
+Tim says "test should very the correct results of the Filter rather than just checking that an exception isn't raised."

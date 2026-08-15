@@ -1,0 +1,3 @@
+@ericpre @timhoffm any suggestions here?  Thanks!
+I would lean toward having something along the line of `selector.set_props` and `selector.set_handle_props` for all selectors. Should it be done as part as part of #20585, where there is a discussion about renaming corresponding parameters? 
+Well, since that's merged, it'll have to be a new PR, but yes, I expect it should be some `.set_*` methods, and not accessing the child artists directly.

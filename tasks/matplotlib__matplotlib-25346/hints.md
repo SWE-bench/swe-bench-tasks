@@ -1,0 +1,1 @@
+I think this is fundamentally a bug in get_tightbbox?  

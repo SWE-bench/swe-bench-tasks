@@ -1,0 +1,29 @@
+diff --git a/tests/roots/test-domain-py-xref-warning/conf.py b/tests/roots/test-domain-py-xref-warning/conf.py
+new file mode 100644
+diff --git a/tests/roots/test-domain-py-xref-warning/index.rst b/tests/roots/test-domain-py-xref-warning/index.rst
+new file mode 100644
+--- /dev/null
++++ b/tests/roots/test-domain-py-xref-warning/index.rst
+@@ -0,0 +1,7 @@
++test-domain-py-xref-warning
++===========================
++
++.. _existing-label:
++
++:ref:`no-label`
++:ref:`existing-label`
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -859,3 +859,11 @@ def test_noindexentry(app):
+     assert_node(doctree, (addnodes.index, desc, addnodes.index, desc))
+     assert_node(doctree[0], addnodes.index, entries=[('single', 'f (built-in class)', 'f', '', None)])
+     assert_node(doctree[2], addnodes.index, entries=[])
++
++
++@pytest.mark.sphinx('dummy', testroot='domain-py-xref-warning')
++def test_warn_missing_reference(app, status, warning):
++    app.build()
++    assert 'index.rst:6: WARNING: undefined label: no-label' in warning.getvalue()
++    assert ('index.rst:6: WARNING: Failed to create a cross reference. A title or caption not found: existing-label'
++            in warning.getvalue())

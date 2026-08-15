@@ -1,0 +1,1 @@
+So, this has never been wrapped in a transaction. See ​https://github.com/django/django/commit/7bc0878922 where it was added. Happy to accept as a New Feature to investigate adding that. (I can't immediately see any obvious blockers.)

@@ -1,0 +1,13 @@
+base_commit: 29e336bd9bf87eaef8e2683196ee1975f1ad4088
+created_at: '2019-08-03T14:15:04Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: c2f762460f4c42547de906d53ea498dd499ea837
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5692:latest
+instance_id: pytest-dev__pytest-5692
+log_parser: parse_log_pytest
+repo: pytest-dev/pytest
+split: test
+version: '5.0'

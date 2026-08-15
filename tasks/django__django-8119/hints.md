@@ -1,0 +1,2 @@
+This would also probably allow extra(where) to be removed as discussed on ​https://groups.google.com/forum/#!topic/django-developers/FojuU0syO8Y , if expressions with 0 column references are allowed.
+As noted on the pull request, there are some problems that can't be solved in time for the 1.9 freeze.

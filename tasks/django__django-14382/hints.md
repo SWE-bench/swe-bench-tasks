@@ -1,0 +1,2 @@
+OK, yes, this seems a case we could handle. I didn't look into exactly why but it works for startproject: $ django-admin startproject ticket32734 testing/ Thanks for the report. Do you fancy making a PR?
+I didn't look into exactly why but it works for startproject This is the relevant piece of code: if app_or_project == 'app': self.validate_name(os.path.basename(target), 'directory') The changes were made here: ​https://github.com/django/django/pull/11270/files

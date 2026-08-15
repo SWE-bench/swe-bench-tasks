@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "test_Beam"
+  ],
+  "PASS_TO_PASS": [
+    "test_insufficient_bconditions",
+    "test_statically_indeterminate",
+    "test_beam_units",
+    "test_variable_moment",
+    "test_composite_beam",
+    "test_point_cflexure",
+    "test_remove_load",
+    "test_apply_support",
+    "test_max_bmoment",
+    "test_max_deflection",
+    "test_Beam3D"
+  ]
+}

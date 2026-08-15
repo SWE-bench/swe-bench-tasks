@@ -1,0 +1,1 @@
+It is tested with `astropy/io/fits/tests/test_checksum.py:test_ascii_table_data` but indeed the operation is not inplace and it does not fail. Using 'D' is probably better, but since #5362 (I had vague memory about something like this ^^, see also #5353) anyway 'D' and 'E' are read as double, so I think there is not difference on Astropy side.

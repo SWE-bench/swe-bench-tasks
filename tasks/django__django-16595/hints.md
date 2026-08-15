@@ -1,0 +1,3 @@
+Your analysis is correct Laurent, the reduction of multiple AlterField against the same model is simply not implemented today hence why you're running into this behaviour. Given you're already half way there ​I would encourage you to submit a PR that adds these changes and ​an optimizer regression test to cover them if you'd like to see this issue fixed in future versions of Django.
+Thanks Simon, I submitted a PR.
+​PR

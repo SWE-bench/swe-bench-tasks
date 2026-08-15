@@ -1,0 +1,6 @@
+Based on code inspection, I confirm that this bug exists. Possible fix: django.core.management.setup_environ could do something along the lines of: from django.conf import settings from django.core.management.base import set_script_prefix from django.utils.encoding import force_unicode set_script_prefix(u'/' if settings.FORCE_SCRIPT_NAME is None else force_unicode(settings.FORCE_SCRIPT_NAME))
+If it is not possible to figure out the value of script_prefix in all cases (like in manage.py) why not just store its value in a settings variable? Then reverse could just prepend this value to all paths deduced from urlconf.
+Would it make sense to call set_script_prefix() in ManagementUtility's execute() method, ​once settings have been configured?
+django.setup() seems to be a natural place for it.
+I thought so initially, but this issue is limited to management commands, that's why I wonder about ManagementUtility.execute(). Once the right location for this is confirmed, the fix should be trivial.
+I imagine it would also affect standalone scripts that invoke django.setup() but don't use ManagementUtility.

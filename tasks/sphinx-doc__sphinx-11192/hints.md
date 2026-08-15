@@ -1,0 +1,1 @@
+im also hitting this and can confirm that downgrading to 6.0.1 resolves

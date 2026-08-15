@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_legend_Poly3dCollection"
+  ],
+  "PASS_TO_PASS": [
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_legend_plot[png]",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_legend_bar[png]",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_fancy[png]",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_linecollection_scaled_dashes",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_handlerline3d",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_contour_legend_elements",
+    "lib/mpl_toolkits/mplot3d/tests/test_legend3d.py::test_contourf_legend_elements"
+  ]
+}

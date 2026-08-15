@@ -1,0 +1,25 @@
+diff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py
+--- a/sympy/core/tests/test_arit.py
++++ b/sympy/core/tests/test_arit.py
+@@ -3,7 +3,7 @@
+         oo, zoo, Integer, sign, im, nan, Dummy, factorial, comp, floor
+ )
+ from sympy.core.compatibility import long, range
+-from sympy.core.evaluate import distribute
++from sympy.core.parameters import distribute
+ from sympy.core.expr import unchanged
+ from sympy.utilities.iterables import cartes
+ from sympy.utilities.pytest import XFAIL, raises
+diff --git a/sympy/core/tests/test_evaluate.py b/sympy/core/tests/test_parameters.py
+similarity index 98%
+rename from sympy/core/tests/test_evaluate.py
+rename to sympy/core/tests/test_parameters.py
+--- a/sympy/core/tests/test_evaluate.py
++++ b/sympy/core/tests/test_parameters.py
+@@ -1,5 +1,5 @@
+ from sympy.abc import x, y
+-from sympy.core.evaluate import evaluate
++from sympy.core.parameters import evaluate
+ from sympy.core import Mul, Add, Pow, S
+ from sympy import sqrt, oo
+ 

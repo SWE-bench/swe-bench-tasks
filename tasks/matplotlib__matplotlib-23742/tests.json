@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "lib/matplotlib/tests/test_backend_webagg.py::test_webagg_core_no_toolbar"
+  ],
+  "PASS_TO_PASS": [
+    "lib/matplotlib/tests/test_backend_webagg.py::test_webagg_fallback[webagg]",
+    "lib/matplotlib/tests/test_backend_webagg.py::test_webagg_fallback[nbagg]"
+  ]
+}

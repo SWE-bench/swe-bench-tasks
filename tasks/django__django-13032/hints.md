@@ -1,0 +1,4 @@
+However, the error message that is generated is a bit odd, it has a full stop on a new line ... Newline is from OperationalError so there is not much we can do, but I agree that we should remove a period. ... and shows warnings.warn( It's a line where warning is raised, I don't think there is much we can do.
+Hello, I'm new to contributing to open source and I feel this would be a good ticket for me to try. May I claim it?
+Replying to David Chorpash: Hello, I'm new to contributing to open source and I feel this would be a good ticket for me to try. May I claim it? Absolutely, go for it :-)
+Replying to David Smith: Replying to David Chorpash: Hello, I'm new to contributing to open source and I feel this would be a good ticket for me to try. May I claim it? Absolutely, go for it :-) Thank you! I will provide a patch removing the period as soon as I can. Judging by the comments, that's the only part of this ticket I should expect to make adjustments to.

@@ -1,0 +1,2 @@
+Thanks for the report! Would you like to prepare a patch? (a regression test is required.) Regression in aa4acc164d1247c0de515c959f7b09648b57dc42. Reproduced at dc8bb35e39388d41b1f38b6c5d0181224e075f16.
+I could do that, Mariusz. Do you have any suggestions regarding where to put the regression test, though? I checked before filing the issue and was a bit lost in the plentora of tests. Would it fit with the migration autodetector tests at ​https://github.com/django/django/blob/main/tests/migrations/test_autodetector.py ?

@@ -1,0 +1,3 @@
+Sounds good. Would you like to provide a patch?
+Replying to Mariusz Felisiak: Sounds good. Would you like to provide a patch? I don't have the time to do a proper patch (with doc changes and additional tests). But I marked it as "Easy pickings" to entice others that are trying to get into contribution to Django ;-)
+I'd like to work on this as my first contribution to Django :) I will provide a patch as soon as possible.

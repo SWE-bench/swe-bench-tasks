@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "test_negative_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_float_dunder_method (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_infinity (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_inputs (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_low_decimal_precision (template_tests.filter_tests.test_floatformat.FunctionTests)",
+    "test_floatformat01 (template_tests.filter_tests.test_floatformat.FloatformatTests)",
+    "test_floatformat02 (template_tests.filter_tests.test_floatformat.FloatformatTests)"
+  ]
+}

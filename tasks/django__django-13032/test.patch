@@ -1,0 +1,14 @@
+diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
+--- a/tests/migrations/test_commands.py
++++ b/tests/migrations/test_commands.py
+@@ -1566,8 +1566,9 @@ def test_makemigrations_inconsistent_history_db_failure(self):
+             side_effect=OperationalError('could not connect to server'),
+         ):
+             with self.temporary_migration_module():
+-                with self.assertWarnsMessage(RuntimeWarning, msg):
++                with self.assertWarns(RuntimeWarning) as cm:
+                     call_command('makemigrations', verbosity=0)
++                self.assertEqual(str(cm.warning), msg)
+ 
+     @mock.patch('builtins.input', return_value='1')
+     @mock.patch('django.db.migrations.questioner.sys.stdin', mock.MagicMock(encoding=sys.getdefaultencoding()))

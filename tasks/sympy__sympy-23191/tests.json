@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_issue_23058"
+  ],
+  "PASS_TO_PASS": [
+    "test_str_printing",
+    "test_pretty_print_unicode_v",
+    "test_latex_printing"
+  ]
+}

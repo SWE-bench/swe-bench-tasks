@@ -1,0 +1,200 @@
+diff --git a/examples/event_handling/cursor_demo.py b/examples/event_handling/cursor_demo.py
+--- a/examples/event_handling/cursor_demo.py
++++ b/examples/event_handling/cursor_demo.py
+@@ -28,6 +28,8 @@
+ import matplotlib.pyplot as plt
+ import numpy as np
+ 
++from matplotlib.backend_bases import MouseEvent
++
+ 
+ class Cursor:
+     """
+@@ -71,6 +73,11 @@ def on_mouse_move(self, event):
+ cursor = Cursor(ax)
+ fig.canvas.mpl_connect('motion_notify_event', cursor.on_mouse_move)
+ 
++# Simulate a mouse move to (0.5, 0.5), needed for online docs
++t = ax.transData
++MouseEvent(
++    "motion_notify_event", ax.figure.canvas, *t.transform((0.5, 0.5))
++)._process()
+ 
+ # %%
+ # Faster redrawing using blitting
+@@ -85,6 +92,7 @@ def on_mouse_move(self, event):
+ # created whenever the figure changes. This is achieved by connecting to the
+ # ``'draw_event'``.
+ 
++
+ class BlittedCursor:
+     """
+     A cross-hair cursor using blitting for faster redraw.
+@@ -152,6 +160,11 @@ def on_mouse_move(self, event):
+ blitted_cursor = BlittedCursor(ax)
+ fig.canvas.mpl_connect('motion_notify_event', blitted_cursor.on_mouse_move)
+ 
++# Simulate a mouse move to (0.5, 0.5), needed for online docs
++t = ax.transData
++MouseEvent(
++    "motion_notify_event", ax.figure.canvas, *t.transform((0.5, 0.5))
++)._process()
+ 
+ # %%
+ # Snapping to data points
+@@ -165,6 +178,7 @@ def on_mouse_move(self, event):
+ # the lag due to many redraws. Of course, blitting could still be added on top
+ # for additional speedup.
+ 
++
+ class SnappingCursor:
+     """
+     A cross-hair cursor that snaps to the data point of a line, which is
+@@ -218,4 +232,11 @@ def on_mouse_move(self, event):
+ line, = ax.plot(x, y, 'o')
+ snap_cursor = SnappingCursor(ax, line)
+ fig.canvas.mpl_connect('motion_notify_event', snap_cursor.on_mouse_move)
++
++# Simulate a mouse move to (0.5, 0.5), needed for online docs
++t = ax.transData
++MouseEvent(
++    "motion_notify_event", ax.figure.canvas, *t.transform((0.5, 0.5))
++)._process()
++
+ plt.show()
+diff --git a/examples/widgets/annotated_cursor.py b/examples/widgets/annotated_cursor.py
+--- a/examples/widgets/annotated_cursor.py
++++ b/examples/widgets/annotated_cursor.py
+@@ -24,6 +24,8 @@
+ import numpy as np
+ import matplotlib.pyplot as plt
+ 
++from matplotlib.backend_bases import MouseEvent
++
+ 
+ class AnnotatedCursor(Cursor):
+     """
+@@ -312,6 +314,12 @@ def _update(self):
+     color='red',
+     linewidth=2)
+ 
++# Simulate a mouse move to (-2, 10), needed for online docs
++t = ax.transData
++MouseEvent(
++    "motion_notify_event", ax.figure.canvas, *t.transform((-2, 10))
++)._process()
++
+ plt.show()
+ 
+ # %%
+@@ -339,4 +347,10 @@ def _update(self):
+     useblit=True,
+     color='red', linewidth=2)
+ 
++# Simulate a mouse move to (-2, 10), needed for online docs
++t = ax.transData
++MouseEvent(
++    "motion_notify_event", ax.figure.canvas, *t.transform((-2, 10))
++)._process()
++
+ plt.show()
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -1953,8 +1953,8 @@ def __init__(self, ax, horizOn=True, vertOn=True, useblit=False,
+                  **lineprops):
+         super().__init__(ax)
+ 
+-        self.connect_event('motion_notify_event', self._onmove)
+-        self.connect_event('draw_event', self._clear)
++        self.connect_event('motion_notify_event', self.onmove)
++        self.connect_event('draw_event', self.clear)
+ 
+         self.visible = True
+         self.horizOn = horizOn
+@@ -1967,29 +1967,16 @@ def __init__(self, ax, horizOn=True, vertOn=True, useblit=False,
+         self.linev = ax.axvline(ax.get_xbound()[0], visible=False, **lineprops)
+ 
+         self.background = None
+-        self._needclear = False
+-
+-    needclear = _api.deprecate_privatize_attribute("3.7")
++        self.needclear = False
+ 
+-    @_api.deprecated('3.7')
+     def clear(self, event):
+-        """Internal event handler to clear the cursor."""
+-        self._clear(event)
+-        if self.ignore(event):
+-            return
+-        self.linev.set_visible(False)
+-        self.lineh.set_visible(False)
+-
+-    def _clear(self, event):
+         """Internal event handler to clear the cursor."""
+         if self.ignore(event):
+             return
+         if self.useblit:
+             self.background = self.canvas.copy_from_bbox(self.ax.bbox)
+ 
+-    onmove = _api.deprecate_privatize_attribute('3.7')
+-
+-    def _onmove(self, event):
++    def onmove(self, event):
+         """Internal event handler to draw the cursor when the mouse moves."""
+         if self.ignore(event):
+             return
+@@ -1999,11 +1986,11 @@ def _onmove(self, event):
+             self.linev.set_visible(False)
+             self.lineh.set_visible(False)
+ 
+-            if self._needclear:
++            if self.needclear:
+                 self.canvas.draw()
+-                self._needclear = False
++                self.needclear = False
+             return
+-        self._needclear = True
++        self.needclear = True
+ 
+         self.linev.set_xdata((event.xdata, event.xdata))
+         self.linev.set_visible(self.visible and self.vertOn)
+@@ -2106,8 +2093,8 @@ def connect(self):
+         """Connect events."""
+         for canvas, info in self._canvas_infos.items():
+             info["cids"] = [
+-                canvas.mpl_connect('motion_notify_event', self._onmove),
+-                canvas.mpl_connect('draw_event', self._clear),
++                canvas.mpl_connect('motion_notify_event', self.onmove),
++                canvas.mpl_connect('draw_event', self.clear),
+             ]
+ 
+     def disconnect(self):
+@@ -2117,16 +2104,7 @@ def disconnect(self):
+                 canvas.mpl_disconnect(cid)
+             info["cids"].clear()
+ 
+-    @_api.deprecated('3.7')
+     def clear(self, event):
+-        """Clear the cursor."""
+-        if self.ignore(event):
+-            return
+-        self._clear(event)
+-        for line in self.vlines + self.hlines:
+-            line.set_visible(False)
+-
+-    def _clear(self, event):
+         """Clear the cursor."""
+         if self.ignore(event):
+             return
+@@ -2134,9 +2112,7 @@ def _clear(self, event):
+             for canvas, info in self._canvas_infos.items():
+                 info["background"] = canvas.copy_from_bbox(canvas.figure.bbox)
+ 
+-    onmove = _api.deprecate_privatize_attribute('3.7')
+-
+-    def _onmove(self, event):
++    def onmove(self, event):
+         if (self.ignore(event)
+                 or event.inaxes not in self.axes
+                 or not event.canvas.widgetlock.available(self)):

@@ -1,0 +1,4 @@
+This seems to have improved; "back" or "h" both work reasonably well.
+Uh, no?  To me the same issue remains?
+It took me a while to understand the issue. The main point seems to be that after messing around with zooming and linear/log changes you *can* press "home" and you will be back at the original view for linear scale. But when you *then* press the "l" key *again*, the view is distorted. 
+This issue has been marked "inactive" because it has been 365 days since the last comment. If this issue is still present in recent Matplotlib releases, or the feature request is still wanted, please leave a comment and this label will be removed. If there are no updates in another 30 days, this issue will be automatically closed, but you are free to re-open or create a new issue if needed. We value issue reports, and this procedure is meant to help us resurface and prioritize issues that have not been addressed yet, not make them disappear.  Thanks for your help!

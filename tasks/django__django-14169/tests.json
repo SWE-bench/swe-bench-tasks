@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "test_get_test_db_clone_settings_name (backends.sqlite.test_creation.TestDbSignatureTests)"
+  ],
+  "PASS_TO_PASS": [
+    "test_custom_test_name (backends.sqlite.test_creation.TestDbSignatureTests)"
+  ]
+}

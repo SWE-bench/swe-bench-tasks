@@ -1,0 +1,1 @@
+Thanks for this report. Agreed, we should raise a helpful message because it is currently unsupported (see also a ticket #28333 to support this feature). ​PR

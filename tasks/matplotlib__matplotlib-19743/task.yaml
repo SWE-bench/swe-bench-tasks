@@ -1,0 +1,12 @@
+base_commit: 5793ebb2201bf778f08ac1d4cd0b8dd674c96053
+created_at: '2021-03-19T05:13:17Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 28289122be81e0bc0a6ee0c4c5b7343a46ce2e4e
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-19743:latest
+instance_id: matplotlib__matplotlib-19743
+log_parser: parse_log_matplotlib
+repo: matplotlib/matplotlib
+split: test
+version: '3.3'

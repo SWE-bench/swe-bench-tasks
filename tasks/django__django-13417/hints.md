@@ -1,0 +1,4 @@
+Thanks for this report, however QuerySet.ordered works for me, see ​tests.
+Replying to felixxm: Thanks for this report, however QuerySet.ordered works for me, see ​tests. Thanks for your answer but I've just checked again as it is in my example and ordered still returns True if an annotation is applied. As said earlier, my model has a default ordering in the Meta class, the one in your unit test doesn't have. If I modify the Annotation model to add a default ordering, the test doesn't pass anymore. It can be the intended behavior but it just sounds misleading to me (having an ordered property sets to True while the results will not be ordered).
+Thanks for clarification, Meta.ordering doesn't affect GROUP BY queries after 0ddb4ebf7bfcc4730c80a772dd146a49ef6895f6 (which was deprecated in 1b1f64ee5a78cc217fead52cbae23114502cf564). We should adjust QuerySet.ordered.
+Regression test.

@@ -1,0 +1,1 @@
+All tests passed in CI, PR is ​https://github.com/django/django/pull/15277 Force pushing a revised commit which includes a test case that errors without the change, for regression purposes.

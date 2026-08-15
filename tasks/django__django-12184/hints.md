@@ -1,0 +1,2 @@
+Tracked regression in 76b993a117b61c41584e95149a67d8a1e9f49dd1.
+It seems to work if you remove the extra parentheses: re_path(r'^module/(?P<format>html|json|xml)?/?$', views.modules, name='modules'), It seems Django is getting confused by the nested groups.

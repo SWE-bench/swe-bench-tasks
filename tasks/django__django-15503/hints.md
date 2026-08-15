@@ -1,0 +1,3 @@
+Duplicate of #30566, see comment.
+Not a duplicate of #30566 This is django's models.JSONField() not postgres extension JSONField It works as expected on Postgresql, the bug is on SQLite #30566 goes directly against comments for https://code.djangoproject.com/ticket/29504 If different behavior is expected on SQLite (or postgres if majority of backend has SQLite's behavior) it should be documented
+I reproduce this issue on SQLite, MySQL, and Oracle. has_key, has_keys, and has_any_keys lookups uses compile_json_path() on SQLite, MySQL, and Oracle which uses array paths for integers. We shouldn't use array paths for these lookups.

@@ -1,0 +1,2 @@
+Hey! I'm going to work on it.
+OK, this seems reasonable to at least look at fixing. Is ​https://github.com/django/django/pull/15573 related? (It looks like it, but there's no ticket assigned yet, and no tests.)

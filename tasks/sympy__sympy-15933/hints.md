@@ -1,0 +1,1 @@
+It seems that if the number of qubits is one, the argument `nqubits` on [this line](https://github.com/sympy/sympy/blob/master/sympy/physics/quantum/qubit.py#L544) will be interpreted as an extra qubit. There should be only `IntQubit(i)` with no `nqubits` argument in case `nqubits == 1`.

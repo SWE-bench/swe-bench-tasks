@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/feature_selection/tests/test_variance_threshold.py::test_zero_variance_floating_point_error"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/feature_selection/tests/test_variance_threshold.py::test_zero_variance",
+    "sklearn/feature_selection/tests/test_variance_threshold.py::test_variance_threshold"
+  ]
+}

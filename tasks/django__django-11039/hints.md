@@ -1,0 +1,3 @@
+I marked the ticket as easy picking because I included the above guidelines but feel free to uncheck it if you deem it inappropriate. Super. We don't have enough Easy Pickings tickets for the demand, so this kind of thing is great. (IMO 🙂)
+Hey, I'm working on this ticket, I would like you to know as this is my first ticket it may take little longer to complete :). Here is a ​| link to the working branch You may feel free to post references or elaborate more on the topic.
+Hi Parth. No problem. If you need help please reach out to e.g. ​django-core-mentorship citing this issue, and where you've got to/got stuck. Welcome aboard, and have fun! ✨

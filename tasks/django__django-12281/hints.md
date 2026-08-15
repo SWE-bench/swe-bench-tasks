@@ -1,0 +1,2 @@
+Agreed, we can add names of duplicated actions to this message.
+Hey! I am new to django contribution and I want to solve this issue. I want to know that error message of duplicates should write after the error of unique name in the same function ?

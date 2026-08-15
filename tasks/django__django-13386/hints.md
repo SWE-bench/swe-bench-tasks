@@ -1,0 +1,2 @@
+Agreed, we should also mention this in ​docs, e.g.: max_age should be an integer number of seconds, ... Replying to Matt Johnson: Do we only convert floats where the decimal part is 0? Or do we round or truncate? If we can't successfully convert to an int, do we throw an exception, or just pass in the original value? I would simply call int(max_age) without catching exceptions.
++1 to calling int()

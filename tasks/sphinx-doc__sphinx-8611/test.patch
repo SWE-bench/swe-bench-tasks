@@ -1,0 +1,27 @@
+diff --git a/tests/test_ext_autodoc_events.py b/tests/test_ext_autodoc_events.py
+--- a/tests/test_ext_autodoc_events.py
++++ b/tests/test_ext_autodoc_events.py
+@@ -34,6 +34,23 @@ def on_process_docstring(app, what, name, obj, options, lines):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_process_docstring_for_nondatadescriptor(app):
++    def on_process_docstring(app, what, name, obj, options, lines):
++        raise
++
++    app.connect('autodoc-process-docstring', on_process_docstring)
++
++    actual = do_autodoc(app, 'attribute', 'target.AttCls.a1')
++    assert list(actual) == [
++        '',
++        '.. py:attribute:: AttCls.a1',
++        '   :module: target',
++        '   :value: hello world',
++        '',
++    ]
++
++
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_cut_lines(app):
+     app.connect('autodoc-process-docstring',

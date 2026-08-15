@@ -1,0 +1,1 @@
+Makes sense to me to use `saferepr` for this, as it displays the raw `param` of the fixture. Probably with a shorter `maxsize` than the default as well, 240 is too long.

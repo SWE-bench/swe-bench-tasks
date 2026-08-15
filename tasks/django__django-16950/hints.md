@@ -1,0 +1,8 @@
+I made a toy project containing all the code to reproduce the error and zipped it.
+Thanks for the detailed report. I was able to reproduce this issue. It looks that formsets' validation mutates the main object, because new_object.id is not empty before the ​all_valid() call: >>> new_object.id e13fd82c-c3fc-42dc-ac12-577a4412ba51 >>> all_valid(formsets) True >>> new_object.id None Reproduced at ead37dfb580136cc27dbd487a1f1ad90c9235d15.
+Looks like it's not directly related to formsets' validation but instantiating formset's forms. (Pdb) new_object.id UUID('06048350-3ad9-45f5-bca3-d08d795d7231') (Pdb) formsets[0].forms [<SubThingForm bound=True, valid=Unknown, fields=(name;thing;id;DELETE)>] (Pdb) new_object.id (Pdb) (Pdb) new_object.id UUID('652863a7-ccc8-4a18-9390-6fb77aa4bafa') (Pdb) formsets[0]._construct_form(0) <SubThingForm bound=True, valid=Unknown, fields=(name;thing;id;DELETE)> (Pdb) new_object.id (Pdb)
+The below code set id value None when formsets is_valid calling. so need to stop set id value None when that field is not model's pk as UUIDField. if self.instance._state.adding: if kwargs.get("to_field") is not None: to_field = self.instance._meta.get_field(kwargs["to_field"]) else: to_field = self.instance._meta.pk if to_field.has_default(): setattr(self.instance, to_field.attname, None)
+Check PR for this issue. ​https://github.com/django/django/pull/15983
+​PR
+Any update about this issue? Added PR related to this issue. This issue still exists in the latest version of Django.
+Resetting the PR flags to ensure the new PR gets picked up in the review queue.

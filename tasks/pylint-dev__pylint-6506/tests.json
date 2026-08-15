@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/config/test_config.py::test_unknown_option_name",
+    "tests/config/test_config.py::test_unknown_short_option_name"
+  ],
+  "PASS_TO_PASS": [
+    "tests/config/test_config.py::test_can_read_toml_env_variable",
+    "tests/config/test_config.py::test_unknown_message_id",
+    "tests/config/test_config.py::test_unknown_confidence",
+    "tests/config/test_config.py::test_unknown_yes_no",
+    "tests/config/test_config.py::test_unknown_py_version",
+    "tests/config/test_config.py::test_short_verbose"
+  ]
+}

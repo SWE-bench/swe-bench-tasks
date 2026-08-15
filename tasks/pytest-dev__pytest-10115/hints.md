@@ -1,0 +1,1 @@
+I think we can just use the unix code, but use `os.replace` instead of `os.rename` -- if I'm reading the history correctly `atomicwrites` was before python had os.replace (3.3+)

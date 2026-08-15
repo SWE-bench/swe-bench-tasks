@@ -1,0 +1,3 @@
+I was able to reduce your problem expression to `(cos(a - b) + cos(a + b))/(sin(b/2)*cos(b/2))`, which SymPy incorrectly simplifies to `8*cos(a)*cos(b)/sin(2*b)`.
+Thanks @ethankward!  That's true even though it correctly simplifies the numerator and denominator separately, and then correctly simplifies that ratio.  It gets the same wrong answer with the equivalent expression `(2*cos(a)*cos(b))/(sin(b/2)*cos(b/2))`, but actually gets the right answer with the inequivalent expression `(cos(a - b) + cos(a + b))/(sin(b)*cos(b))`.
+Specifically something goes wrong in `simplify.fu.TRmorrie`.

@@ -1,0 +1,12 @@
+diff --git a/sympy/matrices/expressions/tests/test_matexpr.py b/sympy/matrices/expressions/tests/test_matexpr.py
+--- a/sympy/matrices/expressions/tests/test_matexpr.py
++++ b/sympy/matrices/expressions/tests/test_matexpr.py
+@@ -127,7 +127,7 @@ def test_ZeroMatrix():
+     assert Z*A.T == ZeroMatrix(n, n)
+     assert A - A == ZeroMatrix(*A.shape)
+ 
+-    assert not Z
++    assert Z
+ 
+     assert transpose(Z) == ZeroMatrix(m, n)
+     assert Z.conjugate() == Z

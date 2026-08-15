@@ -1,0 +1,16 @@
+{
+  "FAIL_TO_PASS": [
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_precomputed_kernel"
+  ],
+  "PASS_TO_PASS": [
+    "sklearn/tests/test_kernel_approximation.py::test_additive_chi2_sampler",
+    "sklearn/tests/test_kernel_approximation.py::test_skewed_chi2_sampler",
+    "sklearn/tests/test_kernel_approximation.py::test_rbf_sampler",
+    "sklearn/tests/test_kernel_approximation.py::test_input_validation",
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_approximation",
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_default_parameters",
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_singular_kernel",
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_poly_kernel_params",
+    "sklearn/tests/test_kernel_approximation.py::test_nystroem_callable"
+  ]
+}

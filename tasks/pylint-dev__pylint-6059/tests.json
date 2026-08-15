@@ -1,0 +1,8 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/checkers/unittest_base_checker.py::test_base_checker_ordering"
+  ],
+  "PASS_TO_PASS": [
+    "tests/checkers/unittest_base_checker.py::test_base_checker_doc"
+  ]
+}

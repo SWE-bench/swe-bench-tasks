@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "test_command_option_inline_function_call (shell.tests.ShellCommandTestCase)",
+    "test_stdin_read_inline_function_call (shell.tests.ShellCommandTestCase)"
+  ],
+  "PASS_TO_PASS": [
+    "test_command_option (shell.tests.ShellCommandTestCase)",
+    "test_command_option_globals (shell.tests.ShellCommandTestCase)",
+    "test_shell_with_bpython_not_installed (shell.tests.ShellCommandTestCase)",
+    "test_shell_with_ipython_not_installed (shell.tests.ShellCommandTestCase)",
+    "test_stdin_read (shell.tests.ShellCommandTestCase)",
+    "test_stdin_read_globals (shell.tests.ShellCommandTestCase)"
+  ]
+}

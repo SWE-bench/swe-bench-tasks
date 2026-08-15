@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test_non_zero_exit_status_when_path_to_db_is_path (dbshell.test_sqlite.SqliteDbshellCommandTestCase.test_non_zero_exit_status_when_path_to_db_is_path)"
+  ],
+  "PASS_TO_PASS": [
+    "test_parameters (dbshell.test_sqlite.SqliteDbshellCommandTestCase.test_parameters)",
+    "test_path_name (dbshell.test_sqlite.SqliteDbshellCommandTestCase.test_path_name)"
+  ]
+}

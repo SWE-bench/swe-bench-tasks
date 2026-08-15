@@ -1,0 +1,13 @@
+diff --git a/astropy/io/votable/tests/vo_test.py b/astropy/io/votable/tests/vo_test.py
+--- a/astropy/io/votable/tests/vo_test.py
++++ b/astropy/io/votable/tests/vo_test.py
+@@ -596,6 +596,9 @@ def test_repr(self):
+         # Resource
+         assert repr(self.votable.resources) == "[</>]"
+ 
++        # Table
++        assert repr(self.table).startswith("<VOTable")
++
+ 
+ class TestThroughTableData(TestParse):
+     def setup_class(self):

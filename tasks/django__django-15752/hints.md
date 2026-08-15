@@ -1,0 +1,1 @@
+Hello all, I've opened a PR for this ​https://github.com/django/django/pull/15752, this is my first contribution so go easy on me :). Appreciate any feedback on the code change and also on whether I've followed correct procedure. Thanks.

@@ -1,0 +1,1 @@
+hmmm yes, this ~kinda makes sense as `bytes` objects are sequences of integers -- we should maybe just omit the "contains more items" messaging for bytes objects?

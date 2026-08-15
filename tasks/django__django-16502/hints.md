@@ -1,0 +1,3 @@
+Also this comment now seems incorrect: ​https://github.com/django/django/blob/5d3b322dce452dd75e8602ced9f0d02f9d6a5837/django/middleware/http.py#L15-L19 ...in that the body won't be empty as far as middleware is concerned for HEAD requests. The spec says entity tag validators can still be set for HEAD requests: ​https://tools.ietf.org/html/rfc7232#section-2.4
+Looks like another impetus for switching runserver to use another web server when feasible (#21978).
+​PR #29343 was a duplicate.

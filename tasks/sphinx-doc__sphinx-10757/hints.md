@@ -1,0 +1,2 @@
+Sorry I just found out that Sphinx resolves `raw` directives while reading sources so an error will be displayed before the `linkcheck` builder is even used.
+On second thought it could still be useful to check for redirections.

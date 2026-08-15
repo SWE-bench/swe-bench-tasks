@@ -1,0 +1,20 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_input_units",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_exceptions_and_warnings",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_dimensionless"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_evaluate[temperature0]",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_evaluate[temperature1]",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_weins_law",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_sefanboltzman_law",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_return_units",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_overflow",
+    "astropy/modeling/tests/test_physical_models.py::test_blackbody_array_temperature",
+    "astropy/modeling/tests/test_physical_models.py::test_NFW_evaluate[mass0]",
+    "astropy/modeling/tests/test_physical_models.py::test_NFW_evaluate[mass1]",
+    "astropy/modeling/tests/test_physical_models.py::test_NFW_circular_velocity",
+    "astropy/modeling/tests/test_physical_models.py::test_NFW_exceptions_and_warnings_and_misc"
+  ]
+}

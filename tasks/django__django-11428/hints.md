@@ -1,0 +1,2 @@
+Thanks for the report. Regression in c8720e7696ca41f3262d5369365cc1bd72a216ca. Reproduced at df46b329e0900e9e4dc1d60816c1dce6dfc1094e.
+Regression test.

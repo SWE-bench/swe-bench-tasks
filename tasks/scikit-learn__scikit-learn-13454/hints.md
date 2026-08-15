@@ -1,0 +1,2 @@
+Just out of curiosity. First timer here! Are you looking for a fix just on writing up an error message similar to the more recently updated error messages in other parts of the same file? 
+Hi, I'd like to take this one up. This is my first time contributing. Will make the change and submit a PR.

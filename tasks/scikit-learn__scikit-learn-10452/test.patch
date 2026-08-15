@@ -1,0 +1,45 @@
+diff --git a/sklearn/preprocessing/tests/test_data.py b/sklearn/preprocessing/tests/test_data.py
+--- a/sklearn/preprocessing/tests/test_data.py
++++ b/sklearn/preprocessing/tests/test_data.py
+@@ -7,10 +7,12 @@
+ 
+ import warnings
+ import re
++
+ import numpy as np
+ import numpy.linalg as la
+ from scipy import sparse, stats
+ from distutils.version import LooseVersion
++import pytest
+ 
+ from sklearn.utils import gen_batches
+ 
+@@ -155,6 +157,28 @@ def test_polynomial_feature_names():
+                        feature_names)
+ 
+ 
++@pytest.mark.parametrize(['deg', 'include_bias', 'interaction_only', 'dtype'],
++                         [(1, True, False, int),
++                          (2, True, False, int),
++                          (2, True, False, np.float32),
++                          (2, True, False, np.float64),
++                          (3, False, False, np.float64),
++                          (3, False, True, np.float64)])
++def test_polynomial_features_sparse_X(deg, include_bias, interaction_only,
++                                      dtype):
++    rng = np.random.RandomState(0)
++    X = rng.randint(0, 2, (100, 2))
++    X_sparse = sparse.csr_matrix(X)
++
++    est = PolynomialFeatures(deg, include_bias=include_bias)
++    Xt_sparse = est.fit_transform(X_sparse.astype(dtype))
++    Xt_dense = est.fit_transform(X.astype(dtype))
++
++    assert isinstance(Xt_sparse, sparse.csc_matrix)
++    assert Xt_sparse.dtype == Xt_dense.dtype
++    assert_array_almost_equal(Xt_sparse.A, Xt_dense)
++
++
+ def test_standard_scaler_1d():
+     # Test scaling of dataset along single axis
+     for X in [X_1row, X_1col, X_list_1row, X_list_1row]:

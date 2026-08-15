@@ -1,0 +1,1 @@
+Thank you for reporting. At present, the parser for python signature does not support expression syntax. I'll try to support them from now on.

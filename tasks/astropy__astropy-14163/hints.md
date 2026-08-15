@@ -1,0 +1,5 @@
+Hmm, there certainly is precedent for `np.array_equal` to just return `False` for comparisons of strings and integers., and similarly something like `1*u.m == 1*u.s` returns `False`. So, yes, I guess. It would mean making it a `dispatched_function` and having a `try/except NotImplementedError` around `_quantities2arrays`. My tendency would be not to backport this, as it is a bit of an API change too.
+Ok, sounds good, I'll open a PR with your design. Do you think we should do the same with `numpy.array_equiv()`? There is the same behavior with that function as well.
+Yes, I agree `np.array_equiv` should behave similarly. Thanks for checking how the functions actually behave!
+No problem! Since I am developing a duck `Quantity` with my [named_arrays](https://github.com/Kankelborg-Group/named_arrays) package I get to explore every corner case in gory detail.
+Excellent! You'll almost certainly find other problems -- but it will be good for everyone!

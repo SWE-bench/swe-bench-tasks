@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_default",
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_mixin[mixin0]",
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_mixin[mixin1]",
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_mixin[mixin2]",
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_local"
+  ],
+  "PASS_TO_PASS": [
+    "astropy/table/tests/test_jsviewer.py::test_write_jsviewer_overwrite"
+  ]
+}

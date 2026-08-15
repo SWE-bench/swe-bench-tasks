@@ -1,0 +1,13 @@
+diff --git a/tests/test_ext_autodoc_events.py b/tests/test_ext_autodoc_events.py
+--- a/tests/test_ext_autodoc_events.py
++++ b/tests/test_ext_autodoc_events.py
+@@ -28,7 +28,8 @@ def on_process_docstring(app, what, name, obj, options, lines):
+         '.. py:function:: func()',
+         '   :module: target.process_docstring',
+         '',
+-        '   my docstring'
++        '   my docstring',
++        '',
+     ]
+ 
+ 

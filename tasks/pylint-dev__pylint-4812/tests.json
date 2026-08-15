@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_config.py::test_can_read_env_variable"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_config.py::test_can_read_ini",
+    "tests/test_config.py::test_can_read_setup_cfg",
+    "tests/test_config.py::test_can_read_toml",
+    "tests/test_config.py::test_can_read_toml_rich_types"
+  ]
+}

@@ -1,0 +1,4 @@
+Patch
+It doesn't work in Django 3.1 so I would not call it a regression. Can you send PR via GitHub?
+Looks fine. The one change I'd make is that I'd change modspec.name.split(".")[-1] == "__main__" to modspec.name == "__main__" or modspec.name.endswith(".__main__") to avoid dumb corner cases like a module named foo.my__main__ (which is how ​runpy.py itself deals with it).
+It doesn't work in Django 3.1 so I would not call it a regression. Can you send PR via GitHub? I put manage.py under some package like foo/bar/manage.py and run it like -m foo.bar.manage runserver .... This used to run perfectly on 3.1.

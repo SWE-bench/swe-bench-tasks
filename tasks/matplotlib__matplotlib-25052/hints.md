@@ -1,0 +1,1 @@
+Thanks for reporting this! The table module is quite scarcely maintained, but this should be possible to fix. I guess supporting both the doc and the existing behavior is the way to go.

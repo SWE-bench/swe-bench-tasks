@@ -1,0 +1,14 @@
+base_commit: 93d4c9ea1de24eb391cb2b3561b6703fd46374df
+created_at: '2022-10-03T05:09:14Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Verified
+difficulty: <15 min fix
+environment_setup_commit: 0fbdb9784da915fce5dcc1fe82bac9b4785749e5
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.django_1776_django-16145:latest
+instance_id: django__django-16145
+log_parser: parse_log_django
+repo: django/django
+split: test
+version: '4.2'

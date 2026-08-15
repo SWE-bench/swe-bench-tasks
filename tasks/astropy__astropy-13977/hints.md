@@ -1,0 +1,5 @@
+@byrdie - I think you are right that really one should return `NotImplemented`. In general, the idea is indeed that one only works on classes that are recognized, while in the implementation that we have (which I wrote...) essentially everything that has a `unit` attribute is treated as a `Quantity`. I think it is a good idea to make a PR to change this. The only example that perhaps will fail (but should continue to work) is of `Quantity` interacting with a `Column`. 
+
+So, basically it could be as simple as something equivalent to `if not all(isinstance(io, (Quantity, ndarray, Column) for io in *(inputs+out)): return NotImplemented` -- though done in a way that does not slow down the common case where inputs are OK -- say with a `try/except`.
+
+p.s. If you define an `__array__` method that allows your data to be coerced to `ndarray`, I think the current code would work. But I agree with your point about not even trying -- which makes that the wrong solution.

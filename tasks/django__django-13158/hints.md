@@ -1,0 +1,1 @@
+Thanks for the report. QuerySet.none() doesn't work properly on combined querysets, it returns all results instead of an empty queryset.

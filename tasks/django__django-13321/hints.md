@@ -1,0 +1,4 @@
+I tried to run clearsessions, but that didn't help. The only workaround was to delete all rows in the django_session table.
+Thanks for this report, however I cannot reproduce this issue. Can you provide a sample project? Support for user sessions created by older versions of Django remains until Django 4.0. See similar tickets #31864, #31592, and #31274, this can be a duplicate of one of them.
+Thanks for the response. It does look similar to the other issues you posted. I don't have a reproducible instance at present. The only way I can think to reproduce would be to start up a 3.0 site, login, wait for the session to expire, then upgrade to 3.1. These are the steps that would have happened on the environment where I encountered the issue.
+Thanks I was able to reproduce this issue with an invalid session data. Regression in d4fff711d4c97356bd6ba1273d2a5e349326eb5f.

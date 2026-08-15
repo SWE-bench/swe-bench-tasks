@@ -1,0 +1,2 @@
+Also facing an issue similar to this.
+The other side of this issue is that you can also get a silently wrong cross-reference where a warning should have been issued instead: in some module, make a class, and then make one of these cross-references in non-module scope.

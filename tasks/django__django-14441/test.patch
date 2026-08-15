@@ -1,0 +1,14 @@
+diff --git a/tests/files/tests.py b/tests/files/tests.py
+--- a/tests/files/tests.py
++++ b/tests/files/tests.py
+@@ -369,6 +369,10 @@ def test_valid_image(self):
+                 size = images.get_image_dimensions(fh)
+                 self.assertEqual(size, (None, None))
+ 
++    def test_missing_file(self):
++        size = images.get_image_dimensions('missing.png')
++        self.assertEqual(size, (None, None))
++
+     @unittest.skipUnless(HAS_WEBP, 'WEBP not installed')
+     def test_webp(self):
+         img_path = os.path.join(os.path.dirname(__file__), 'test.webp')

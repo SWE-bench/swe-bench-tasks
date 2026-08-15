@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test_nsolve_denominator"
+  ],
+  "PASS_TO_PASS": [
+    "test_nsolve",
+    "test_issue_6408",
+    "test_increased_dps"
+  ]
+}

@@ -1,0 +1,7 @@
+Reproduced on PostgreSQL, Django 3.0.7. Not sure, should this work or produce an error.
+I would expect this to fail with a ValueError. aggregate() supplies an annotation, and a Query’s annotations are keyed on aliases. Supporting this would take a massive rewrite, it seems to me.
+​PR
+Unassigning myself because the attached patch was too restrictive.
+Is this the same as https://code.djangoproject.com/ticket/31880 (which was fixed by ​https://github.com/django/django/pull/13431 )?
+Replying to Herbert Poul: Is this the same as https://code.djangoproject.com/ticket/31880 (which was fixed by ​https://github.com/django/django/pull/13431 )? No it is not a duplicate, see comment.
+Model.objects.annotate(foo=F('column')).aggregate(foo=Sum(F('foo'))) So in the example above, where both annotated and aggregated kwargs are named foo, the output should actually contain just the last one, right? The first annotated foo column can just be renamed and then removed from the final result (to avoid confusion). [Edit] Note that current resulting query might not contain some significant changes within firstly called annotate method as query.annotations dictionary's value is just overridden with the new value for key foo [Edit2] And then there's an issue about referencing the previous defined foo :( (the one that would have been randomly renamed)

@@ -1,0 +1,1 @@
+Thanks for the report! Lowercased AUTH_USER_MODEL = 'accounts.user' is crucial to reproduce this issue. Regression in 43289707809c814a70f0db38ca4f82f35f43dbfd.

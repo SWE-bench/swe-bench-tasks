@@ -1,0 +1,6 @@
+Could you please try ​bisecting to find the commit where the behavior changed?
+It is commit b89c2a5d9eb70ca36629ef657c98e3371e9a5c4f.
+Thanks! I'm not sure what can be done to fix this. Any ideas?
+Nothing apart from going back to the previous masking of TypeError... I think that these two behaviours go against each other...
+It might be possible to allow sensitive_variables to preserve the signature of whatever it decorates. Here's code that works until @sensitive_variables is added: import inspect from django.views.decorators.debug import sensitive_variables class Backend(object): @sensitive_variables def authenticate(self, username=None, password=None): print(username) inspect.getcallargs(Backend().authenticate, username='foo', password='bar')
+What about something like this: def sensitive_variables(*variables): def decorator(func): @functools.wraps(func) def sensitive_variables_wrapper(*func_args, **func_kwargs): ... # Keep the original function for inspection in `authenticate` sensitive_variables_wrapper.sensitive_variables_func = func return sensitive_variables_wrapper return decorator Function authenticate would then check the sensitive_variables_func first.

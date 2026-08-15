@@ -1,0 +1,7 @@
+Tentatively accepted for investigation. It's not about the first middleware because if you have only one it gets HttpResponse, but if you have at least two then then the first in a chain gets coroutine. Andrew, Can you take a look?
+I think it's a bug in SecurityMiddleware : its __init__ does not call super().__init__(). This causes MiddlewareMixin._async_check() to not be called during init and the _is_coroutine magic attribute to be missing despite the async_capable=True declaration.
+Hi Kevin. That's a good spot! :) Would you fancy taking on a quick PR for this? (It's on my list if not but...) Thanks
+Hi ! Yeah I can do a PR for that :) I see that the cache-related middlewares have the same issue, would you prefer a common PR with all middlewares fixed or should I make a separate PR for the cache ? The 3 cache middlewares (UpdateCacheMiddleware, FetchFromCacheMiddleware, CacheMiddleware) will probably need to be changed together since they are related by inheritance.
+Hi Kevin. would you prefer a common PR with all middlewares fixed or should I make a separate PR for the cache ? It’s a single issue no, a single PR, should be fine. (We can maybe do three commits if that seems better, but it’s a single issue no? :) I didn’t dig in yet, so you’re ahead of me but, if you can narrow down the issue in a test case (or three...) then that’s the main thing I’d think. Thanks for the input! Super. 👌
+​PR
+Nice catch - can't believe I didn't see this during testing. I agree with the diagnosis of the problem, too, I'll go take a look at the PR.

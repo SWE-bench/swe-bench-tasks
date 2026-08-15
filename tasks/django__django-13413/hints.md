@@ -1,0 +1,3 @@
+Thanks, we could probably use field.flatchoices, e.g. diff --git a/django/contrib/admin/filters.py b/django/contrib/admin/filters.py index 3e02cd89d7..9fdf038085 100644 --- a/django/contrib/admin/filters.py +++ b/django/contrib/admin/filters.py @@ -244,10 +244,7 @@ class BooleanFieldListFilter(FieldListFilter): return [self.lookup_kwarg, self.lookup_kwarg2] def choices(self, changelist): - for lookup, title in ( - (None, _('All')), - ('1', _('Yes')), - ('0', _('No'))): + for lookup, title in ((None, _('All')), *self.field.flatchoices): yield { 'selected': self.lookup_val == lookup and not self.lookup_val2, 'query_string': changelist.get_query_string({self.lookup_kwarg: lookup}, [self.lookup_kwarg2]),
+​PR
+May i work on this issue?
