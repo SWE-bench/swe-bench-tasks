@@ -1,7 +1,6 @@
 {
   "FAIL_TO_PASS": [
-    "test_mod",
-    "test_mod_inverse"
+    "test_mod"
   ],
   "PASS_TO_PASS": [
     "test_integers_cache",
@@ -32,7 +31,6 @@
     "test_powers",
     "test_integer_nthroot_overflow",
     "test_isqrt",
-    "test_powers_Rational",
     "test_powers_Float",
     "test_abs1",
     "test_accept_int",
