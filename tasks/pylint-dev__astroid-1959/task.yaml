@@ -1,0 +1,12 @@
+base_commit: 49691cc04f2d38b174787280f7ed38f818c828bd
+created_at: '2023-01-10T12:07:01Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 0c9ab0fe56703fa83c73e514a1020d398d23fa7f
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pylint-dev_1776_astroid-1959:latest
+instance_id: pylint-dev__astroid-1959
+log_parser: parse_log_astroid
+repo: pylint-dev/astroid
+split: dev
+version: '2.14'

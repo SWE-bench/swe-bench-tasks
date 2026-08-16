@@ -1,0 +1,98 @@
+#!/bin/bash
+set -uxo pipefail
+source /opt/miniconda3/bin/activate
+conda activate testbed
+cd /testbed
+git config --global --add safe.directory /testbed
+cd /testbed
+git status
+git show
+git -c core.fileMode=false diff 6d8ef0bfcec983e5f8bd8a2e359ff318fe9fcf65
+source /opt/miniconda3/bin/activate
+conda activate testbed
+python -m pip install -e .
+git checkout 6d8ef0bfcec983e5f8bd8a2e359ff318fe9fcf65 pydicom/tests/test_valuerep.py
+git apply -v - <<'EOF_114329324912'
+diff --git a/pydicom/tests/test_valuerep.py b/pydicom/tests/test_valuerep.py
+--- a/pydicom/tests/test_valuerep.py
++++ b/pydicom/tests/test_valuerep.py
+@@ -90,7 +90,6 @@ def test_pickling(self):
+ 
+ class TestDS(object):
+     """Unit tests for DS values"""
+-
+     def test_empty_value(self):
+         assert DS(None) is None
+         assert '' == DS('')
+@@ -106,7 +105,6 @@ def test_float_values(self):
+ 
+ class TestDSfloat(object):
+     """Unit tests for pickling DSfloat"""
+-
+     def test_pickling(self):
+         # Check that a pickled DSFloat is read back properly
+         x = pydicom.valuerep.DSfloat(9.0)
+@@ -116,10 +114,25 @@ def test_pickling(self):
+         assert x.real == x2.real
+         assert x.original_string == x2.original_string
+ 
++    def test_str(self):
++        """Test DSfloat.__str__()."""
++        val = pydicom.valuerep.DSfloat(1.1)
++        assert '1.1' == str(val)
++
++        val = pydicom.valuerep.DSfloat('1.1')
++        assert '1.1' == str(val)
++
++    def test_repr(self):
++        """Test DSfloat.__repr__()."""
++        val = pydicom.valuerep.DSfloat(1.1)
++        assert '"1.1"' == repr(val)
++
++        val = pydicom.valuerep.DSfloat('1.1')
++        assert '"1.1"' == repr(val)
++
+ 
+ class TestDSdecimal(object):
+     """Unit tests for pickling DSdecimal"""
+-
+     def test_pickling(self):
+         # Check that a pickled DSdecimal is read back properly
+         # DSdecimal actually prefers original_string when
+@@ -142,7 +155,6 @@ def test_float_value(self):
+ 
+ class TestIS(object):
+     """Unit tests for IS"""
+-
+     def test_empty_value(self):
+         assert IS(None) is None
+         assert '' == IS('')
+@@ -182,6 +194,22 @@ def test_overflow(self):
+             pydicom.valuerep.IS(3103050000)
+         config.enforce_valid_values = original_flag
+ 
++    def test_str(self):
++        """Test IS.__str__()."""
++        val = pydicom.valuerep.IS(1)
++        assert '1' == str(val)
++
++        val = pydicom.valuerep.IS('1')
++        assert '1' == str(val)
++
++    def test_repr(self):
++        """Test IS.__repr__()."""
++        val = pydicom.valuerep.IS(1)
++        assert '"1"' == repr(val)
++
++        val = pydicom.valuerep.IS('1')
++        assert '"1"' == repr(val)
++
+ 
+ class TestBadValueRead(object):
+     """Unit tests for handling a bad value for a VR
+
+EOF_114329324912
+: '>>>>> Start Test Output'
+pytest -rA pydicom/tests/test_valuerep.py
+: '>>>>> End Test Output'
+git checkout 6d8ef0bfcec983e5f8bd8a2e359ff318fe9fcf65 pydicom/tests/test_valuerep.py

@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_utils.py::InferenceUtil::test_not_exclusive_walrus_multiple",
+    "tests/test_utils.py::InferenceUtil::test_not_exclusive_walrus_operator",
+    "tests/test_utils.py::InferenceUtil::test_not_exclusive_walrus_operator_nested"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_utils.py::InferenceUtil::test_if",
+    "tests/test_utils.py::InferenceUtil::test_not_exclusive",
+    "tests/test_utils.py::InferenceUtil::test_try_except",
+    "tests/test_utils.py::InferenceUtil::test_unpack_infer_empty_tuple",
+    "tests/test_utils.py::InferenceUtil::test_unpack_infer_uninferable_nodes"
+  ]
+}

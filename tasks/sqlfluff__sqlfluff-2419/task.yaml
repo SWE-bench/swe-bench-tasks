@@ -1,0 +1,13 @@
+base_commit: f1dba0e1dd764ae72d67c3d5e1471cf14d3db030
+created_at: '2022-01-22T12:21:52Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: a5c4eae4e3e419fe95460c9afd9cf39a35a470c4
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.sqlfluff_1776_sqlfluff-2419:latest
+instance_id: sqlfluff__sqlfluff-2419
+log_parser: parse_log_sqlfluff
+repo: sqlfluff/sqlfluff
+split: dev
+version: '0.8'

@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "pydicom/tests/test_config.py::TestDebug::test_default",
+    "pydicom/tests/test_config.py::TestDebug::test_debug_on_handler_null",
+    "pydicom/tests/test_config.py::TestDebug::test_debug_off_handler_null",
+    "pydicom/tests/test_config.py::TestDebug::test_debug_on_handler_stream",
+    "pydicom/tests/test_config.py::TestDebug::test_debug_off_handler_stream"
+  ],
+  "PASS_TO_PASS": []
+}

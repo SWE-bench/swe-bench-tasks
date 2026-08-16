@@ -1,0 +1,12 @@
+diff --git a/astroid/builder.py b/astroid/builder.py
+--- a/astroid/builder.py
++++ b/astroid/builder.py
+@@ -67,7 +67,7 @@ def _can_assign_attr(node, attrname):
+     else:
+         if slots and attrname not in {slot.value for slot in slots}:
+             return False
+-    return True
++    return node.qname() != "builtins.object"
+ 
+ 
+ class AstroidBuilder(raw_building.InspectBuilder):

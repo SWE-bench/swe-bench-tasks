@@ -1,0 +1,33 @@
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -189,7 +189,7 @@ def _lex_templated_file(
+                 getattr(elem, "indent_val", 0)
+                 for elem in cast(Tuple[BaseSegment, ...], tokens)
+             )
+-            if indent_balance != 0:
++            if indent_balance != 0:  # pragma: no cover
+                 linter_logger.debug(
+                     "Indent balance test failed for %r. Template indents will not be "
+                     "linted for this file.",
+@@ -207,7 +207,7 @@ def _lex_templated_file(
+                 if token.indent_val != 0:
+                     # Don't allow it if we're not linting templating block indents.
+                     if not templating_blocks_indent:
+-                        continue
++                        continue  # pragma: no cover
+             new_tokens.append(token)
+ 
+         # Return new buffer
+diff --git a/src/sqlfluff/core/templaters/slicers/tracer.py b/src/sqlfluff/core/templaters/slicers/tracer.py
+--- a/src/sqlfluff/core/templaters/slicers/tracer.py
++++ b/src/sqlfluff/core/templaters/slicers/tracer.py
+@@ -524,7 +524,7 @@ def extract_block_type(tag_name, block_subtype):
+         # a block, but its behavior is basically syntactic sugar for
+         # {{ open("somefile).read() }}. Thus, treat it as templated code.
+         # It's a similar situation with {% import %} and {% from ... import %}.
+-        if tag_name in ["include", "import", "from"]:
++        if tag_name in ["include", "import", "from", "do"]:
+             block_type = "templated"
+         elif tag_name.startswith("end"):
+             block_type = "block_end"

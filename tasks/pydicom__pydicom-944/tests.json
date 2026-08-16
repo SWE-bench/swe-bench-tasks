@@ -1,0 +1,22 @@
+{
+  "FAIL_TO_PASS": [
+    "pydicom/tests/test_values.py::TestConvertText::test_value_ending_with_padding"
+  ],
+  "PASS_TO_PASS": [
+    "pydicom/tests/test_values.py::TestConvertTag::test_big_endian",
+    "pydicom/tests/test_values.py::TestConvertTag::test_little_endian",
+    "pydicom/tests/test_values.py::TestConvertTag::test_offset",
+    "pydicom/tests/test_values.py::TestConvertAE::test_strip_blanks",
+    "pydicom/tests/test_values.py::TestConvertText::test_single_value",
+    "pydicom/tests/test_values.py::TestConvertText::test_multi_value",
+    "pydicom/tests/test_values.py::TestConvertText::test_single_value_with_backslash",
+    "pydicom/tests/test_values.py::TestConvertText::test_single_value_with_delimiters",
+    "pydicom/tests/test_values.py::TestConvertAT::test_big_endian",
+    "pydicom/tests/test_values.py::TestConvertAT::test_little_endian",
+    "pydicom/tests/test_values.py::TestConvertAT::test_empty_bytestring",
+    "pydicom/tests/test_values.py::TestConvertDA::test_big_endian",
+    "pydicom/tests/test_values.py::TestConvertDA::test_little_endian",
+    "pydicom/tests/test_values.py::TestConvertDA::test_empty_bytestring",
+    "pydicom/tests/test_values.py::TestConvertValue::test_convert_value_raises"
+  ]
+}

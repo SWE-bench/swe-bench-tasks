@@ -1,0 +1,2 @@
+For reference, a possibly similar issue came up in dcmjs: https://github.com/dcmjs-org/dcmjs/issues/175
+I had a quick look, and the problem seems to be that the length is not taken from the original string, but from the string representation, which in this case adds a leading zero... This check has been introduced in pydicom 2.2.0.

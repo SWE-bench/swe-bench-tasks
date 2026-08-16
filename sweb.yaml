@@ -3,4 +3,5 @@ datasets:
 - SWE-bench/SWE-bench_Lite
 - SWE-bench/SWE-bench_Verified
 splits:
+- dev
 - test

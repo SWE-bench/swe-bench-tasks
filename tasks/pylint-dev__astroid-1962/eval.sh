@@ -1,0 +1,70 @@
+#!/bin/bash
+set -uxo pipefail
+source /opt/miniconda3/bin/activate
+conda activate testbed
+cd /testbed
+git config --global --add safe.directory /testbed
+cd /testbed
+git status
+git show
+git -c core.fileMode=false diff fe058bff95745371df5796286d33677c21137847
+source /opt/miniconda3/bin/activate
+conda activate testbed
+python -m pip install -e .
+git checkout fe058bff95745371df5796286d33677c21137847 tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py
+git apply -v - <<'EOF_114329324912'
+diff --git a/tests/testdata/python3/data/fake_module_with_broken_getattr.py b/tests/testdata/python3/data/fake_module_with_broken_getattr.py
+new file mode 100644
+--- /dev/null
++++ b/tests/testdata/python3/data/fake_module_with_broken_getattr.py
+@@ -0,0 +1,7 @@
++class Broken:
++
++    def __getattr__(self, name):
++        raise Exception("boom")
++
++
++broken = Broken()
+diff --git a/tests/unittest_raw_building.py b/tests/unittest_raw_building.py
+--- a/tests/unittest_raw_building.py
++++ b/tests/unittest_raw_building.py
+@@ -1,3 +1,9 @@
++"""
++'tests.testdata.python3.data.fake_module_with_warnings' and
++'tests.testdata.python3.data.fake_module_with_warnings' are fake modules
++to simulate issues in unittest below
++"""
++
+ # Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+ # For details: https://github.com/PyCQA/astroid/blob/main/LICENSE
+ # Copyright (c) https://github.com/PyCQA/astroid/blob/main/CONTRIBUTORS.txt
+@@ -8,7 +14,7 @@
+ import _io
+ import pytest
+ 
+-# A fake module to simulate pandas in unittest below
++import tests.testdata.python3.data.fake_module_with_broken_getattr as fm_getattr
+ import tests.testdata.python3.data.fake_module_with_warnings as fm
+ from astroid.builder import AstroidBuilder
+ from astroid.const import IS_PYPY
+@@ -102,6 +108,14 @@ def test_build_function_deepinspect_deprecation(self) -> None:
+         # This should not raise an exception
+         AstroidBuilder().module_build(m, "test")
+ 
++    def test_module_object_with_broken_getattr(self) -> None:
++        # Tests https://github.com/PyCQA/astroid/issues/1958
++        # When astroid deep inspection of modules raises
++        # errors when using hasattr().
++
++        # This should not raise an exception
++        AstroidBuilder().inspect_build(fm_getattr, "test")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+
+EOF_114329324912
+: '>>>>> Start Test Output'
+pytest -rA tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py
+: '>>>>> End Test Output'
+git checkout fe058bff95745371df5796286d33677c21137847 tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py

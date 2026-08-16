@@ -1,0 +1,16 @@
+diff --git a/tests/unittest_brain_builtin.py b/tests/unittest_brain_builtin.py
+--- a/tests/unittest_brain_builtin.py
++++ b/tests/unittest_brain_builtin.py
+@@ -103,6 +103,12 @@ def test_string_format(self, format_string: str) -> None:
+             """
+             "My name is {fname}, I'm {age}".format(fsname = "Daniel", age = 12)
+             """,
++            """
++            "My unicode character is {:c}".format(None)
++            """,
++            """
++            "My hex format is {:4x}".format('1')
++            """,
+         ],
+     )
+     def test_string_format_uninferable(self, format_string: str) -> None:

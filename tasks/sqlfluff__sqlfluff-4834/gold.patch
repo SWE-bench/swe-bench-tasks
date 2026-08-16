@@ -1,0 +1,29 @@
+diff --git a/src/sqlfluff/rules/layout/LT12.py b/src/sqlfluff/rules/layout/LT12.py
+--- a/src/sqlfluff/rules/layout/LT12.py
++++ b/src/sqlfluff/rules/layout/LT12.py
+@@ -124,6 +124,10 @@ def _eval(self, context: RuleContext) -> Optional[LintResult]:
+         # We only care about the final segment of the parse tree.
+         parent_stack, segment = get_last_segment(FunctionalContext(context).segment)
+         self.logger.debug("Found last segment as: %s", segment)
++        if not segment:
++            # NOTE: Edge case. If the file is totally empty, we won't find a final
++            # segment. In this case return without error.
++            return None
+ 
+         trailing_newlines = Segments(*get_trailing_newlines(context.segment))
+         trailing_literal_newlines = trailing_newlines
+diff --git a/src/sqlfluff/utils/reflow/sequence.py b/src/sqlfluff/utils/reflow/sequence.py
+--- a/src/sqlfluff/utils/reflow/sequence.py
++++ b/src/sqlfluff/utils/reflow/sequence.py
+@@ -104,7 +104,10 @@ def get_raw(self) -> str:
+ 
+     @staticmethod
+     def _validate_reflow_sequence(elements: ReflowSequenceType):
+-        assert elements, "ReflowSequence has empty elements."
++        # An empty set of elements _is_ allowed as an edge case.
++        if not elements:
++            # Return early if so
++            return None
+         # Check odds and evens
+         OddType = elements[0].__class__
+         EvenType = ReflowPoint if OddType is ReflowBlock else ReflowBlock

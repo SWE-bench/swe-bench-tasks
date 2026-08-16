@@ -1,0 +1,41 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_singlediode.py::test_bishop88_pdSeries_len_one[newton]"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/test_singlediode.py::test_method_spr_e20_327[brentq]",
+    "pvlib/tests/test_singlediode.py::test_method_spr_e20_327[newton]",
+    "pvlib/tests/test_singlediode.py::test_newton_fs_495[brentq]",
+    "pvlib/tests/test_singlediode.py::test_newton_fs_495[newton]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[1-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[1-brentq]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[1-newton]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[2-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[2-brentq]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_precision[2-newton]",
+    "pvlib/tests/test_singlediode.py::test_singlediode_lambert_negative_voc",
+    "pvlib/tests/test_singlediode.py::test_ivcurve_pnts_precision[1-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_ivcurve_pnts_precision[2-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[1-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[1-brentq]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[1-newton]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[2-lambertw]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[2-brentq]",
+    "pvlib/tests/test_singlediode.py::test_v_from_i_i_from_v_precision[2-newton]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_recombination_loss[newton-1000-25-expected0-tol0]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_recombination_loss[newton-888-55-expected1-tol1]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_recombination_loss[brentq-1000-25-expected0-tol0]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_recombination_loss[brentq-888-55-expected1-tol1]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_breakdown[newton-brk_params0-recomb_params0-1000-25-expected0-tol0]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_breakdown[newton-brk_params1-recomb_params1-888-55-expected1-tol1]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_breakdown[brentq-brk_params0-recomb_params0-1000-25-expected0-tol0]",
+    "pvlib/tests/test_singlediode.py::test_pvsyst_breakdown[brentq-brk_params1-recomb_params1-888-55-expected1-tol1]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_kwargs_transfer[newton-method_kwargs0]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_kwargs_transfer[brentq-method_kwargs1]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_kwargs_fails[newton-method_kwargs0]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_kwargs_fails[brentq-method_kwargs1]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_full_output_kwarg[newton]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_full_output_kwarg[brentq]",
+    "pvlib/tests/test_singlediode.py::test_bishop88_pdSeries_len_one[brentq]"
+  ]
+}

@@ -1,0 +1,89 @@
+diff --git a/pvlib/iotools/crn.py b/pvlib/iotools/crn.py
+--- a/pvlib/iotools/crn.py
++++ b/pvlib/iotools/crn.py
+@@ -2,6 +2,7 @@
+ """
+ 
+ import pandas as pd
++import numpy as np
+ 
+ 
+ HEADERS = [
+@@ -107,13 +108,24 @@ def read_crn(filename, map_variables=True):
+     """
+ 
+     # read in data
++    # TODO: instead of parsing as strings and then post-processing, switch to
++    # pd.read_fwf(..., dtype=dict(zip(HEADERS, DTYPES)), skip_blank_lines=True)
++    # when our minimum pandas >= 1.2.0 (skip_blank_lines bug for <1.2.0).
++    # As a workaround, parse all values as strings, then drop NaN, then cast
++    # to the appropriate dtypes, and mask "sentinal" NaN (e.g. -9999.0)
+     data = pd.read_fwf(filename, header=None, names=HEADERS, widths=WIDTHS,
+-                       na_values=NAN_DICT)
+-    # Remove rows with all nans
++                       dtype=str)
++
++    # drop empty (bad) lines
+     data = data.dropna(axis=0, how='all')
+-    # set dtypes here because dtype kwarg not supported in read_fwf until 0.20
++
++    # can't set dtypes in read_fwf because int cols can't contain NaN, so
++    # do it here instead
+     data = data.astype(dict(zip(HEADERS, DTYPES)))
+ 
++    # finally, replace -999 values with NaN
++    data = data.replace(NAN_DICT, value=np.nan)
++
+     # set index
+     # UTC_TIME does not have leading 0s, so must zfill(4) to comply
+     # with %H%M format
+diff --git a/pvlib/solarposition.py b/pvlib/solarposition.py
+--- a/pvlib/solarposition.py
++++ b/pvlib/solarposition.py
+@@ -22,6 +22,7 @@
+ import pandas as pd
+ import scipy.optimize as so
+ import warnings
++import datetime
+ 
+ from pvlib import atmosphere
+ from pvlib.tools import datetime_to_djd, djd_to_datetime
+@@ -574,9 +575,10 @@ def sun_rise_set_transit_ephem(times, latitude, longitude,
+     trans = []
+     for thetime in times:
+         thetime = thetime.to_pydatetime()
+-        # pyephem drops timezone when converting to its internal datetime
+-        # format, so handle timezone explicitly here
+-        obs.date = ephem.Date(thetime - thetime.utcoffset())
++        # older versions of pyephem ignore timezone when converting to its
++        # internal datetime format, so convert to UTC here to support
++        # all versions.  GH #1449
++        obs.date = ephem.Date(thetime.astimezone(datetime.timezone.utc))
+         sunrise.append(_ephem_to_timezone(rising(sun), tzinfo))
+         sunset.append(_ephem_to_timezone(setting(sun), tzinfo))
+         trans.append(_ephem_to_timezone(transit(sun), tzinfo))
+diff --git a/pvlib/tracking.py b/pvlib/tracking.py
+--- a/pvlib/tracking.py
++++ b/pvlib/tracking.py
+@@ -510,6 +510,9 @@ def singleaxis(apparent_zenith, apparent_azimuth,
+ 
+     # Calculate surface_tilt
+     dotproduct = (panel_norm_earth * projected_normal).sum(axis=1)
++    # for edge cases like axis_tilt=90, numpy's SIMD can produce values like
++    # dotproduct = (1 + 2e-16). Clip off the excess so that arccos works:
++    dotproduct = np.clip(dotproduct, -1, 1)
+     surface_tilt = 90 - np.degrees(np.arccos(dotproduct))
+ 
+     # Bundle DataFrame for return values and filter for sun below horizon.
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -39,7 +39,7 @@
+ URL = 'https://github.com/pvlib/pvlib-python'
+ 
+ INSTALL_REQUIRES = ['numpy >= 1.16.0',
+-                    'pandas >= 0.22.0',
++                    'pandas >= 0.25.0',
+                     'pytz',
+                     'requests',
+                     'scipy >= 1.2.0',

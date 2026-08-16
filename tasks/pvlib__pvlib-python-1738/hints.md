@@ -1,0 +1,1 @@
+On second thought, I'm not seeing how this can be deprecated without reordering the parameters, which doesn't seem worth it to me.  I'm inclined to rename it without deprecation in 0.10.0. 

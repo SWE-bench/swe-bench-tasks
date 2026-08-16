@@ -1,0 +1,12 @@
+diff --git a/pvlib/modelchain.py b/pvlib/modelchain.py
+--- a/pvlib/modelchain.py
++++ b/pvlib/modelchain.py
+@@ -1133,7 +1133,7 @@ def prepare_inputs(self, weather):
+         ModelChain.complete_irradiance
+         """
+ 
+-        self._verify_df(weather, required=['ghi', 'dni', 'ghi'])
++        self._verify_df(weather, required=['ghi', 'dni', 'dhi'])
+         self._assign_weather(weather)
+ 
+         self.times = self.weather.index

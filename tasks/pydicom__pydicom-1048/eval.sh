@@ -1,0 +1,111 @@
+#!/bin/bash
+set -uxo pipefail
+source /opt/miniconda3/bin/activate
+conda activate testbed
+cd /testbed
+git config --global --add safe.directory /testbed
+cd /testbed
+git status
+git show
+git -c core.fileMode=false diff 00c248441ffb8b7d46c6d855b723e696a8f5aada
+source /opt/miniconda3/bin/activate
+conda activate testbed
+python -m pip install -e .
+git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py
+git apply -v - <<'EOF_114329324912'
+diff --git a/pydicom/tests/test_filereader.py b/pydicom/tests/test_filereader.py
+--- a/pydicom/tests/test_filereader.py
++++ b/pydicom/tests/test_filereader.py
+@@ -7,6 +7,7 @@
+ from io import BytesIO
+ import os
+ import shutil
++from pathlib import Path
+ from struct import unpack
+ import sys
+ import tempfile
+@@ -114,6 +115,10 @@ def test_UTF8_filename(self):
+         os.remove(utf8_filename)
+         assert ds is not None
+ 
++    def test_pathlib_path_filename(self):
++        """Check that file can be read using pathlib.Path"""
++        ds = dcmread(Path(priv_SQ_name))
++
+     def test_RTPlan(self):
+         """Returns correct values for sample data elements in test
+         RT Plan file.
+diff --git a/pydicom/tests/test_fileutil.py b/pydicom/tests/test_fileutil.py
+new file mode 100644
+--- /dev/null
++++ b/pydicom/tests/test_fileutil.py
+@@ -0,0 +1,37 @@
++# Copyright 2008-2020 pydicom authors. See LICENSE file for details.
++"""Test suite for util functions"""
++import sys
++from io import BytesIO
++from pathlib import Path
++
++import pytest
++
++from pydicom.fileutil import path_from_pathlike
++
++
++class PathLike:
++    """Minimal example for path-like object"""
++    def __init__(self, path: str):
++        self.path = path
++
++    def __fspath__(self):
++        return self.path
++
++
++class TestPathFromPathLike:
++    """Test the fileutil module"""
++
++    def test_non_pathlike_is_returned_unaltered(self):
++        assert 'test.dcm' == path_from_pathlike('test.dcm')
++        assert path_from_pathlike(None) is None
++        file_like = BytesIO()
++        assert file_like == path_from_pathlike(file_like)
++        assert 42 == path_from_pathlike(42)
++
++    def test_pathlib_path(self):
++        assert 'test.dcm' == path_from_pathlike(Path('test.dcm'))
++
++    @pytest.mark.skipif(sys.version_info < (3, 6),
++                        reason="Path-like objects introduced in Python 3.6")
++    def test_path_like(self):
++        assert 'test.dcm' == path_from_pathlike(PathLike('test.dcm'))
+diff --git a/pydicom/tests/test_filewriter.py b/pydicom/tests/test_filewriter.py
+--- a/pydicom/tests/test_filewriter.py
++++ b/pydicom/tests/test_filewriter.py
+@@ -6,6 +6,7 @@
+ from datetime import date, datetime, time, timedelta, timezone
+ from io import BytesIO
+ import os
++from pathlib import Path
+ from platform import python_implementation
+ 
+ from struct import unpack
+@@ -137,6 +138,14 @@ def testJPEG2000(self):
+            them identical (JPEG2K file)."""
+         self.compare(jpeg_name)
+ 
++    def test_pathlib_path_filename(self):
++        """Check that file can be written using pathlib.Path"""
++        ds = dcmread(Path(ct_name))
++        ds.save_as(self.file_out, write_like_original=True)
++        self.file_out.seek(0)
++        ds1 = dcmread(self.file_out)
++        assert ds.PatientName == ds1.PatientName
++
+     def testListItemWriteBack(self):
+         """Change item in a list and confirm
+           it is written to file"""
+
+EOF_114329324912
+: '>>>>> Start Test Output'
+pytest -rA pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py
+: '>>>>> End Test Output'
+git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py

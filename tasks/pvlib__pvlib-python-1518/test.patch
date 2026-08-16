@@ -1,0 +1,67 @@
+diff --git a/pvlib/tests/test_clearsky.py b/pvlib/tests/test_clearsky.py
+--- a/pvlib/tests/test_clearsky.py
++++ b/pvlib/tests/test_clearsky.py
+@@ -511,13 +511,6 @@ def monthly_lt_nointerp(lat, lon, time=months):
+         monthly_lt_nointerp(38.2, -181)  # exceeds min longitude
+ 
+ 
+-def test_degrees_to_index_1():
+-    """Test that _degrees_to_index raises an error when something other than
+-    'latitude' or 'longitude' is passed."""
+-    with pytest.raises(IndexError):  # invalid value for coordinate argument
+-        clearsky._degrees_to_index(degrees=22.0, coordinate='width')
+-
+-
+ @pytest.fixture
+ def detect_clearsky_data():
+     data_file = DATA_DIR / 'detect_clearsky_data.csv'
+diff --git a/pvlib/tests/test_location.py b/pvlib/tests/test_location.py
+--- a/pvlib/tests/test_location.py
++++ b/pvlib/tests/test_location.py
+@@ -12,7 +12,7 @@
+ from pytz.exceptions import UnknownTimeZoneError
+ 
+ import pvlib
+-from pvlib.location import Location
++from pvlib.location import Location, lookup_altitude
+ from pvlib.solarposition import declination_spencer71
+ from pvlib.solarposition import equation_of_time_spencer71
+ from .conftest import requires_ephem
+@@ -326,3 +326,23 @@ def test_get_sun_rise_set_transit_valueerror(golden):
+ def test_extra_kwargs():
+     with pytest.raises(TypeError, match='arbitrary_kwarg'):
+         Location(32.2, -111, arbitrary_kwarg='value')
++
++
++def test_lookup_altitude():
++    max_alt_error = 125
++    # location name, latitude, longitude, altitude
++    test_locations = [
++        ('Tucson, USA', 32.2540, -110.9742, 724),
++        ('Lusaka, Zambia', -15.3875, 28.3228, 1253),
++        ('Tokio, Japan', 35.6762, 139.6503, 40),
++        ('Canberra, Australia', -35.2802, 149.1310, 566),
++        ('Bogota, Colombia', 4.7110, -74.0721, 2555),
++        ('Dead Sea, West Bank', 31.525849, 35.449214, -415),
++        ('New Delhi, India', 28.6139, 77.2090, 214),
++        ('Null Island,  Atlantic Ocean', 0, 0, 0),
++    ]
++
++    for name, lat, lon, expected_alt in test_locations:
++        alt_found = lookup_altitude(lat, lon)
++        assert abs(alt_found - expected_alt) < max_alt_error, \
++            f'Max error exceded for {name} - e: {expected_alt} f: {alt_found}'
+diff --git a/pvlib/tests/test_tools.py b/pvlib/tests/test_tools.py
+--- a/pvlib/tests/test_tools.py
++++ b/pvlib/tests/test_tools.py
+@@ -72,3 +72,10 @@ def test__golden_sect_DataFrame_nans():
+     v, x = tools._golden_sect_DataFrame(params, lower, upper,
+                                         _obj_test_golden_sect)
+     assert np.allclose(x, expected, atol=1e-8, equal_nan=True)
++
++
++def test_degrees_to_index_1():
++    """Test that _degrees_to_index raises an error when something other than
++    'latitude' or 'longitude' is passed."""
++    with pytest.raises(IndexError):  # invalid value for coordinate argument
++        tools._degrees_to_index(degrees=22.0, coordinate='width')

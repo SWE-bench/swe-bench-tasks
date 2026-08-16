@@ -1,0 +1,242 @@
+diff --git a/astroid/arguments.py b/astroid/arguments.py
+--- a/astroid/arguments.py
++++ b/astroid/arguments.py
+@@ -181,7 +181,13 @@ def infer_argument(
+ 
+         positional = self.positional_arguments[: len(funcnode.args.args)]
+         vararg = self.positional_arguments[len(funcnode.args.args) :]
+-        argindex = funcnode.args.find_argname(name)[0]
++
++        # preserving previous behavior, when vararg and kwarg were not included in find_argname results
++        if name in [funcnode.args.vararg, funcnode.args.kwarg]:
++            argindex = None
++        else:
++            argindex = funcnode.args.find_argname(name)[0]
++
+         kwonlyargs = {arg.name for arg in funcnode.args.kwonlyargs}
+         kwargs = {
+             key: value
+diff --git a/astroid/nodes/node_classes.py b/astroid/nodes/node_classes.py
+--- a/astroid/nodes/node_classes.py
++++ b/astroid/nodes/node_classes.py
+@@ -605,7 +605,9 @@ def _infer(
+ DEPRECATED_ARGUMENT_DEFAULT = "DEPRECATED_ARGUMENT_DEFAULT"
+ 
+ 
+-class Arguments(_base_nodes.AssignTypeNode):
++class Arguments(
++    _base_nodes.AssignTypeNode
++):  # pylint: disable=too-many-instance-attributes
+     """Class representing an :class:`ast.arguments` node.
+ 
+     An :class:`Arguments` node represents that arguments in a
+@@ -704,7 +706,20 @@ class Arguments(_base_nodes.AssignTypeNode):
+     kwargannotation: NodeNG | None
+     """The type annotation for the variable length keyword arguments."""
+ 
+-    def __init__(self, vararg: str | None, kwarg: str | None, parent: NodeNG) -> None:
++    vararg_node: AssignName | None
++    """The node for variable length arguments"""
++
++    kwarg_node: AssignName | None
++    """The node for variable keyword arguments"""
++
++    def __init__(
++        self,
++        vararg: str | None,
++        kwarg: str | None,
++        parent: NodeNG,
++        vararg_node: AssignName | None = None,
++        kwarg_node: AssignName | None = None,
++    ) -> None:
+         """Almost all attributes can be None for living objects where introspection failed."""
+         super().__init__(
+             parent=parent,
+@@ -720,6 +735,9 @@ def __init__(self, vararg: str | None, kwarg: str | None, parent: NodeNG) -> Non
+         self.kwarg = kwarg
+         """The name of the variable length keyword arguments."""
+ 
++        self.vararg_node = vararg_node
++        self.kwarg_node = kwarg_node
++
+     # pylint: disable=too-many-arguments
+     def postinit(
+         self,
+@@ -780,8 +798,21 @@ def fromlineno(self) -> int:
+ 
+     @cached_property
+     def arguments(self):
+-        """Get all the arguments for this node, including positional only and positional and keyword"""
+-        return list(itertools.chain((self.posonlyargs or ()), self.args or ()))
++        """Get all the arguments for this node. This includes:
++        * Positional only arguments
++        * Positional arguments
++        * Keyword arguments
++        * Variable arguments (.e.g *args)
++        * Variable keyword arguments (e.g **kwargs)
++        """
++        retval = list(itertools.chain((self.posonlyargs or ()), (self.args or ())))
++        if self.vararg_node:
++            retval.append(self.vararg_node)
++        retval += self.kwonlyargs or ()
++        if self.kwarg_node:
++            retval.append(self.kwarg_node)
++
++        return retval
+ 
+     def format_args(self, *, skippable_names: set[str] | None = None) -> str:
+         """Get the arguments formatted as string.
+@@ -911,15 +942,20 @@ def default_value(self, argname):
+         :raises NoDefault: If there is no default value defined for the
+             given argument.
+         """
+-        args = self.arguments
++        args = [
++            arg for arg in self.arguments if arg.name not in [self.vararg, self.kwarg]
++        ]
++
++        index = _find_arg(argname, self.kwonlyargs)[0]
++        if index is not None and self.kw_defaults[index] is not None:
++            return self.kw_defaults[index]
++
+         index = _find_arg(argname, args)[0]
+         if index is not None:
+-            idx = index - (len(args) - len(self.defaults))
++            idx = index - (len(args) - len(self.defaults) - len(self.kw_defaults))
+             if idx >= 0:
+                 return self.defaults[idx]
+-        index = _find_arg(argname, self.kwonlyargs)[0]
+-        if index is not None and self.kw_defaults[index] is not None:
+-            return self.kw_defaults[index]
++
+         raise NoDefault(func=self.parent, name=argname)
+ 
+     def is_argument(self, name) -> bool:
+@@ -934,11 +970,7 @@ def is_argument(self, name) -> bool:
+             return True
+         if name == self.kwarg:
+             return True
+-        return (
+-            self.find_argname(name)[1] is not None
+-            or self.kwonlyargs
+-            and _find_arg(name, self.kwonlyargs)[1] is not None
+-        )
++        return self.find_argname(name)[1] is not None
+ 
+     def find_argname(self, argname, rec=DEPRECATED_ARGUMENT_DEFAULT):
+         """Get the index and :class:`AssignName` node for given name.
+@@ -956,7 +988,9 @@ def find_argname(self, argname, rec=DEPRECATED_ARGUMENT_DEFAULT):
+                 stacklevel=2,
+             )
+         if self.arguments:
+-            return _find_arg(argname, self.arguments)
++            index, argument = _find_arg(argname, self.arguments)
++            if argument:
++                return index, argument
+         return None, None
+ 
+     def get_children(self):
+diff --git a/astroid/nodes/scoped_nodes/scoped_nodes.py b/astroid/nodes/scoped_nodes/scoped_nodes.py
+--- a/astroid/nodes/scoped_nodes/scoped_nodes.py
++++ b/astroid/nodes/scoped_nodes/scoped_nodes.py
+@@ -963,11 +963,7 @@ def argnames(self) -> list[str]:
+             names = [elt.name for elt in self.args.arguments]
+         else:
+             names = []
+-        if self.args.vararg:
+-            names.append(self.args.vararg)
+-        names += [elt.name for elt in self.args.kwonlyargs]
+-        if self.args.kwarg:
+-            names.append(self.args.kwarg)
++
+         return names
+ 
+     def infer_call_result(
+@@ -1280,11 +1276,7 @@ def argnames(self) -> list[str]:
+             names = [elt.name for elt in self.args.arguments]
+         else:
+             names = []
+-        if self.args.vararg:
+-            names.append(self.args.vararg)
+-        names += [elt.name for elt in self.args.kwonlyargs]
+-        if self.args.kwarg:
+-            names.append(self.args.kwarg)
++
+         return names
+ 
+     def getattr(
+diff --git a/astroid/protocols.py b/astroid/protocols.py
+--- a/astroid/protocols.py
++++ b/astroid/protocols.py
+@@ -352,14 +352,15 @@ def _arguments_infer_argname(
+     # more
+     from astroid import arguments  # pylint: disable=import-outside-toplevel
+ 
+-    if not (self.arguments or self.vararg or self.kwarg):
++    if not self.arguments:
+         yield util.Uninferable
+         return
+ 
++    args = [arg for arg in self.arguments if arg.name not in [self.vararg, self.kwarg]]
+     functype = self.parent.type
+     # first argument of instance/class method
+     if (
+-        self.arguments
++        args
+         and getattr(self.arguments[0], "name", None) == name
+         and functype != "staticmethod"
+     ):
+@@ -388,7 +389,7 @@ def _arguments_infer_argname(
+     if name == self.vararg:
+         vararg = nodes.const_factory(())
+         vararg.parent = self
+-        if not self.arguments and self.parent.name == "__init__":
++        if not args and self.parent.name == "__init__":
+             cls = self.parent.parent.scope()
+             vararg.elts = [cls.instantiate_class()]
+         yield vararg
+diff --git a/astroid/rebuilder.py b/astroid/rebuilder.py
+--- a/astroid/rebuilder.py
++++ b/astroid/rebuilder.py
+@@ -21,6 +21,7 @@
+ from astroid.const import IS_PYPY, PY38, PY39_PLUS, PY312_PLUS, Context
+ from astroid.manager import AstroidManager
+ from astroid.nodes import NodeNG
++from astroid.nodes.node_classes import AssignName
+ from astroid.nodes.utils import Position
+ from astroid.typing import InferenceResult
+ 
+@@ -561,10 +562,33 @@ def visit_arguments(self, node: ast.arguments, parent: NodeNG) -> nodes.Argument
+         """Visit an Arguments node by returning a fresh instance of it."""
+         vararg: str | None = None
+         kwarg: str | None = None
++        vararg_node = node.vararg
++        kwarg_node = node.kwarg
++
+         newnode = nodes.Arguments(
+             node.vararg.arg if node.vararg else None,
+             node.kwarg.arg if node.kwarg else None,
+             parent,
++            AssignName(
++                vararg_node.arg,
++                vararg_node.lineno,
++                vararg_node.col_offset,
++                parent,
++                end_lineno=vararg_node.end_lineno,
++                end_col_offset=vararg_node.end_col_offset,
++            )
++            if vararg_node
++            else None,
++            AssignName(
++                kwarg_node.arg,
++                kwarg_node.lineno,
++                kwarg_node.col_offset,
++                parent,
++                end_lineno=kwarg_node.end_lineno,
++                end_col_offset=kwarg_node.end_col_offset,
++            )
++            if kwarg_node
++            else None,
+         )
+         args = [self.visit(child, newnode) for child in node.args]
+         defaults = [self.visit(child, newnode) for child in node.defaults]

@@ -1,0 +1,89 @@
+diff --git a/astroid/bases.py b/astroid/bases.py
+--- a/astroid/bases.py
++++ b/astroid/bases.py
+@@ -26,7 +26,7 @@
+ import collections
+ 
+ from astroid import context as contextmod
+-from astroid import util
++from astroid import decorators, util
+ from astroid.const import BUILTINS, PY310_PLUS
+ from astroid.exceptions import (
+     AstroidTypeError,
+@@ -543,9 +543,14 @@ class Generator(BaseInstance):
+ 
+     special_attributes = util.lazy_descriptor(objectmodel.GeneratorModel)
+ 
+-    def __init__(self, parent=None):
++    def __init__(self, parent=None, generator_initial_context=None):
+         super().__init__()
+         self.parent = parent
++        self._call_context = contextmod.copy_context(generator_initial_context)
++
++    @decorators.cached
++    def infer_yield_types(self):
++        yield from self.parent.infer_yield_result(self._call_context)
+ 
+     def callable(self):
+         return False
+diff --git a/astroid/protocols.py b/astroid/protocols.py
+--- a/astroid/protocols.py
++++ b/astroid/protocols.py
+@@ -489,22 +489,8 @@ def _infer_context_manager(self, mgr, context):
+             # It doesn't interest us.
+             raise InferenceError(node=func)
+ 
+-        # Get the first yield point. If it has multiple yields,
+-        # then a RuntimeError will be raised.
++        yield next(inferred.infer_yield_types())
+ 
+-        possible_yield_points = func.nodes_of_class(nodes.Yield)
+-        # Ignore yields in nested functions
+-        yield_point = next(
+-            (node for node in possible_yield_points if node.scope() == func), None
+-        )
+-        if yield_point:
+-            if not yield_point.value:
+-                const = nodes.Const(None)
+-                const.parent = yield_point
+-                const.lineno = yield_point.lineno
+-                yield const
+-            else:
+-                yield from yield_point.value.infer(context=context)
+     elif isinstance(inferred, bases.Instance):
+         try:
+             enter = next(inferred.igetattr("__enter__", context=context))
+diff --git a/astroid/scoped_nodes.py b/astroid/scoped_nodes.py
+--- a/astroid/scoped_nodes.py
++++ b/astroid/scoped_nodes.py
+@@ -1708,6 +1708,21 @@ def is_generator(self):
+         """
+         return bool(next(self._get_yield_nodes_skip_lambdas(), False))
+ 
++    def infer_yield_result(self, context=None):
++        """Infer what the function yields when called
++
++        :returns: What the function yields
++        :rtype: iterable(NodeNG or Uninferable) or None
++        """
++        for yield_ in self.nodes_of_class(node_classes.Yield):
++            if yield_.value is None:
++                const = node_classes.Const(None)
++                const.parent = yield_
++                const.lineno = yield_.lineno
++                yield const
++            elif yield_.scope() == self:
++                yield from yield_.value.infer(context=context)
++
+     def infer_call_result(self, caller=None, context=None):
+         """Infer what the function returns when called.
+ 
+@@ -1719,7 +1734,7 @@ def infer_call_result(self, caller=None, context=None):
+                 generator_cls = bases.AsyncGenerator
+             else:
+                 generator_cls = bases.Generator
+-            result = generator_cls(self)
++            result = generator_cls(self, generator_initial_context=context)
+             yield result
+             return
+         # This is really a gigantic hack to work around metaclass generators

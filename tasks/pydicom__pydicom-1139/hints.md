@@ -1,0 +1,4 @@
+I think it is reasonable to support at least some `str` methods (definitely `__contains__` for the example above), but there are many that don't make a lot of sense in this context though - e.g. `join`, `ljust`, `maketrans`, `splitlines` just to name a few, but I suppose each would either never be actually used or would have no effect.
+
+I have a vague memory that one or more of the `PersonName` classes was at one time subclassed from `str`, or at least that it was discussed... does anyone remember?  Maybe it would be easier now with only Python 3 supported.
+`PersonName` was derived from `str` or `unicode` in Python 2, but that caused a number of problems, which is why you switched to `PersonName3` in Python 3, I think. I agree though that it makes sense to implement `str` methods, either by implementing some of them, or generically by adding `__getattr__` that converts it to `str` and applies the attribute to that string. 

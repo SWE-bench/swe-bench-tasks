@@ -1,0 +1,24 @@
+I used these forecast functions earlier in my career for production forecasting (getting forecasted irradiance data). But that said, everything I used it for can be done with different tools (some already in pvlib). There are some good free/paid weather services out there that return weather forecast data, and pvlib already has functions to determine irradiance from cloud_coverage.  
+
+While it could be tough for some to deprecate `forecast.py`, you have other tools that provide solutions and inputs. I have no problem with it being removed, especially if the amount of work to maintain is greater than the number of users who utilize it.
+Probably not a solution but I recently started a weather data service to more easily access time-series reanalysis (ERA5) and forecast data (GFS) (see example here - https://oikolab.com/documentation). It's currently going through beta testing but I've been thinking about how to offer some of the service to the open-source / academic community. 
+
+If you have any suggestion, would be more than happy to discuss.
+I've looked at the `forecast.py` code and I'm here to report a bug on it, so yeah, I see the problem.
+
+I count myself as a newbie user attracted to pvlib in part because of the forecasting. Even so I have no problem with it going away, as long as we have some examples of how to use a different tool for forecasting, if only to be pointed at the existence of the other tool.
+
+Regarding the ideas posted by @wholmgren. If you have no time to work on it, (4) is your only option. If not, you're clearly not in love with `forecast.py` ("I have no problem in it going away"), so I suggest you work toward deprecation and removal. For that, (2) seems the best approach. I also think (2) is the best approach to promote "separation of concerns": Getting and formatting the data seems like a useful piece of functionality by itself so it would be good if it existed as such, rather than buried in the `ForecastModel` class.
+I’ve used `forecast.py` and have found it to be the most straightforward way to get data for pv production forecasting.
+I played around with `solarforecastarbiter` for around a day.  There appear to be lots of interesting functionality to it but I found the expectation of having externally downloaded data outside of the library’s API stored locally a hurdle to using it. Maybe I didn’t give it the chance it deserved or maybe this is something a documentation example can/does solve, but I’m just echoing your point that part of the allure of `forecast.py` is that it pulls the data for you from an external source, eliminating the need to deal with file management yourself, and allows you to stay within pvlib the whole time.
+
+A complete and simple forecasting example within pvlib is a powerful use case for the library.  All that said, If the example uses some “lean” code from `solarforecastarbiter` that’s probably fine too.
+possibly of interest as an alternative data source: https://azure.microsoft.com/en-us/services/open-datasets/catalog/noaa-global-forecast-system/
+After a year and half of mostly following option 4 (`Do nothing and let the forecast.py bugs and technical debt pile up.`), and another release around the corner, maybe it's time to restart this discussion.  @wholmgren, has the arbiter evolved in a way that changes any of your thoughts at the top of this thread?
+
+If the data fetching code needs to live on somewhere, maybe `pvlib.iotools` is as good a place as any.  However I'm not sure that will relieve the maintenance burden much -- of the dozen or so forecast issues opened in the last year, seems like the majority have to do with fetching data.  The dependency complication is for the data fetching as well.
+My initial reaction to every `forecast.py` issue remains "remove it." Short of that, putting the fetch in `pvlib.iotools` and copying SFA's [`forecast.py`](https://github.com/SolarArbiter/solarforecastarbiter-core/blob/master/solarforecastarbiter/reference_forecasts/forecast.py) (either as a whole module or putting contents in other places like irradiance.py) feels like the best approach. I have no time or interest to maintain the original or any refactored code.
+I also have no interest in maintaining the original, maintaining a refactored version, or doing the refactor itself.  I would be willing to deprecate the contents of `forecast.py` because it's easy and means less maintenance in the long run.
+
+Any objections to deprecating without replacement?  Any objection to including the deprecation in 0.9.1?
+My vote would be to move the code to a its own package but I'm with @wholmgren and @kanderso-nrel I don't have the bandwidth to maintain another project.  Maybe we can canvas the user community for volunteers. I support deprecating `forecast.py` perhaps that will encourage someone to come forward to pick it up.

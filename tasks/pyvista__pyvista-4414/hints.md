@@ -1,0 +1,1 @@
+IMO, we shouldn't be seeing a surface, but two consecutive lines as it is shown in PyVista 0.38.6.

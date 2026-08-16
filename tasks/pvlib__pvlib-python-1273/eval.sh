@@ -1,0 +1,43 @@
+#!/bin/bash
+set -uxo pipefail
+source /opt/miniconda3/bin/activate
+conda activate testbed
+cd /testbed
+git config --global --add safe.directory /testbed
+cd /testbed
+git status
+git show
+git -c core.fileMode=false diff 0e6fea6219618c0da944e6ed686c10f5b1e244a2
+source /opt/miniconda3/bin/activate
+conda activate testbed
+python -m pip install -e .[all]
+git checkout 0e6fea6219618c0da944e6ed686c10f5b1e244a2 pvlib/tests/test_tracking.py
+git apply -v - <<'EOF_114329324912'
+diff --git a/pvlib/tests/test_tracking.py b/pvlib/tests/test_tracking.py
+--- a/pvlib/tests/test_tracking.py
++++ b/pvlib/tests/test_tracking.py
+@@ -502,3 +502,18 @@ def test_slope_aware_backtracking():
+     np.testing.assert_allclose(
+         truetracking['tracker_theta'], expected_data['TrueTracking'],
+         rtol=1e-3, atol=1e-3)
++
++
++def test_singleaxis_aoi_gh1221():
++    # vertical tracker
++    loc = pvlib.location.Location(40.1134, -88.3695)
++    dr = pd.date_range(
++        start='02-Jun-1998 00:00:00', end='02-Jun-1998 23:55:00', freq='5T',
++        tz='Etc/GMT+6')
++    sp = loc.get_solarposition(dr)
++    tr = pvlib.tracking.singleaxis(
++        sp['apparent_zenith'], sp['azimuth'], axis_tilt=90, axis_azimuth=180,
++        max_angle=0.001, backtrack=False)
++    fixed = pvlib.irradiance.aoi(90, 180, sp['apparent_zenith'], sp['azimuth'])
++    fixed[np.isnan(tr['aoi'])] = np.nan
++    assert np.allclose(tr['aoi'], fixed, equal_nan=True)
+
+EOF_114329324912
+: '>>>>> Start Test Output'
+pytest -rA pvlib/tests/test_tracking.py
+: '>>>>> End Test Output'
+git checkout 0e6fea6219618c0da944e6ed686c10f5b1e244a2 pvlib/tests/test_tracking.py

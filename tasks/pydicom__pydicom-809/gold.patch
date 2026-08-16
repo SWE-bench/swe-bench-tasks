@@ -1,0 +1,91 @@
+diff --git a/pydicom/dataset.py b/pydicom/dataset.py
+--- a/pydicom/dataset.py
++++ b/pydicom/dataset.py
+@@ -197,6 +197,9 @@ def __init__(self, *args, **kwargs):
+         self.is_little_endian = None
+         self.is_implicit_VR = None
+ 
++        # the parent data set, if this dataset is a sequence item
++        self.parent = None
++
+     def __enter__(self):
+         """Method invoked on entry to a with statement."""
+         return self
+@@ -555,7 +558,13 @@ def __getattr__(self, name):
+             # Try the base class attribute getter (fix for issue 332)
+             return super(Dataset, self).__getattribute__(name)
+         else:
+-            return self[tag].value
++            data_elem = self[tag]
++            value = data_elem.value
++            if data_elem.VR == 'SQ':
++                # let a sequence know its parent dataset, as sequence items
++                # may need parent dataset tags to resolve ambiguous tags
++                value.parent = self
++            return value
+ 
+     @property
+     def _character_set(self):
+@@ -1165,6 +1174,11 @@ def __setattr__(self, name, value):
+                 # don't have this tag yet->create the data_element instance
+                 VR = dictionary_VR(tag)
+                 data_element = DataElement(tag, VR, value)
++                if VR == 'SQ':
++                    # let a sequence know its parent dataset to pass it
++                    # to its items, who may need parent dataset tags
++                    # to resolve ambiguous tags
++                    data_element.parent = self
+             else:
+                 # already have this data_element, just changing its value
+                 data_element = self[tag]
+diff --git a/pydicom/filewriter.py b/pydicom/filewriter.py
+--- a/pydicom/filewriter.py
++++ b/pydicom/filewriter.py
+@@ -69,6 +69,9 @@ def _correct_ambiguous_vr_element(elem, ds, is_little_endian):
+         # US if PixelRepresentation value is 0x0000, else SS
+         #   For references, see the list at
+         #   https://github.com/darcymason/pydicom/pull/298
++        # PixelRepresentation is usually set in the root dataset
++        while 'PixelRepresentation' not in ds and ds.parent:
++            ds = ds.parent
+         if ds.PixelRepresentation == 0:
+             elem.VR = 'US'
+             byte_type = 'H'
+diff --git a/pydicom/sequence.py b/pydicom/sequence.py
+--- a/pydicom/sequence.py
++++ b/pydicom/sequence.py
+@@ -43,6 +43,9 @@ def __init__(self, iterable=None):
+         if isinstance(iterable, Dataset):
+             raise TypeError('The Sequence constructor requires an iterable')
+ 
++        # the parent dataset
++        self._parent = None
++
+         # If no inputs are provided, we create an empty Sequence
+         if not iterable:
+             iterable = list()
+@@ -50,6 +53,24 @@ def __init__(self, iterable=None):
+         # validate_dataset is used as a pseudo type_constructor
+         super(Sequence, self).__init__(validate_dataset, iterable)
+ 
++    @property
++    def parent(self):
++        """Return the parent dataset."""
++        return self._parent
++
++    @parent.setter
++    def parent(self, value):
++        """Set the parent dataset and pass it to all items."""
++        if value != self._parent:
++            self._parent = value
++            for item in self._list:
++                item.parent = self._parent
++
++    def __setitem__(self, i, val):
++        """Set the parent dataset to the new sequence item"""
++        super(Sequence, self).__setitem__(i, val)
++        val.parent = self._parent
++
+     def __str__(self):
+         """String description of the Sequence."""
+         lines = [str(x) for x in self]

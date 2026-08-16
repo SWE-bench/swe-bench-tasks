@@ -1,0 +1,24 @@
+{
+  "FAIL_TO_PASS": [
+    "test/api/simple_test.py::test__api__lint_string"
+  ],
+  "PASS_TO_PASS": [
+    "test/api/simple_test.py::test__api__lint_string_without_violations",
+    "test/api/simple_test.py::test__api__lint_string_specific",
+    "test/api/simple_test.py::test__api__lint_string_specific_single",
+    "test/api/simple_test.py::test__api__lint_string_specific_exclude",
+    "test/api/simple_test.py::test__api__lint_string_specific_exclude_single",
+    "test/api/simple_test.py::test__api__lint_string_specific_exclude_all_failed_rules",
+    "test/api/simple_test.py::test__api__fix_string",
+    "test/api/simple_test.py::test__api__fix_string_specific",
+    "test/api/simple_test.py::test__api__fix_string_specific_exclude",
+    "test/api/simple_test.py::test__api__fix_string_unparsable",
+    "test/api/simple_test.py::test__api__fix_string_unparsable_fix_even_unparsable",
+    "test/api/simple_test.py::test__api__parse_string",
+    "test/api/simple_test.py::test__api__parse_fail",
+    "test/api/simple_test.py::test__api__config_path",
+    "test/api/simple_test.py::test__api__config_override[kwargs0-expected0]",
+    "test/api/simple_test.py::test__api__config_override[kwargs1-expected1]",
+    "test/api/simple_test.py::test__api__invalid_dialect"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_L003_L036_L039_combo_test.py::test__rules__std_L003_L036_L039"
+  ],
+  "PASS_TO_PASS": [
+    "test/rules/std_L016_L36_combo_test.py::test__rules__std_L016_L036_long_line_lint",
+    "test/rules/std_L016_L36_combo_test.py::test__rules__std_L016_L036_long_line_fix",
+    "test/rules/std_L016_L36_combo_test.py::test__rules__std_L016_L036_long_line_fix2"
+  ]
+}

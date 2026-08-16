@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_snow.py::test_loss_townsend",
+    "pvlib/tests/test_snow.py::test_loss_townsend_cases[poa_global0-2.0-2.0066040132080265-0.07620015240030481-1.0-expected0]",
+    "pvlib/tests/test_snow.py::test_loss_townsend_cases[poa_global1-5.0-8.026416052832106-3.0480060960121924-0.75-expected1]",
+    "pvlib/tests/test_snow.py::test_loss_townsend_cases[poa_global2-23.0-4.023427552839317-0.30480060960121924-0.75-expected2]",
+    "pvlib/tests/test_snow.py::test_loss_townsend_cases[poa_global4-60.0-1.0033020066040133-0.63500127000254-1.0-expected4]"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/test_snow.py::test_fully_covered_nrel",
+    "pvlib/tests/test_snow.py::test_coverage_nrel_hourly",
+    "pvlib/tests/test_snow.py::test_coverage_nrel_subhourly",
+    "pvlib/tests/test_snow.py::test_fully_covered_nrel_irregular",
+    "pvlib/tests/test_snow.py::test_coverage_nrel_initial",
+    "pvlib/tests/test_snow.py::test_dc_loss_nrel",
+    "pvlib/tests/test_snow.py::test__townsend_effective_snow",
+    "pvlib/tests/test_snow.py::test_loss_townsend_cases[poa_global3-52.0-1.0033020066040133-0.8636017272034545-0.75-expected3]"
+  ]
+}

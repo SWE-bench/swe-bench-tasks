@@ -1,0 +1,752 @@
+diff --git a/plugins/sqlfluff-plugin-example/src/example/rules.py b/plugins/sqlfluff-plugin-example/src/example/rules.py
+--- a/plugins/sqlfluff-plugin-example/src/example/rules.py
++++ b/plugins/sqlfluff-plugin-example/src/example/rules.py
+@@ -2,7 +2,7 @@
+ 
+ from sqlfluff.core.plugin import hookimpl
+ from sqlfluff.core.rules.base import (
+-    BaseCrawler,
++    BaseRule,
+     LintResult,
+ )
+ from sqlfluff.core.rules.doc_decorators import (
+@@ -15,7 +15,7 @@
+ 
+ 
+ @hookimpl
+-def get_rules() -> List[BaseCrawler]:
++def get_rules() -> List[BaseRule]:
+     """Get plugin rules."""
+     return [Rule_Example_L001]
+ 
+@@ -41,7 +41,7 @@ def get_configs_info() -> dict:
+ # to be displayed in the sqlfluff docs
+ @document_fix_compatible
+ @document_configuration
+-class Rule_Example_L001(BaseCrawler):
++class Rule_Example_L001(BaseRule):
+     """ORDER BY on these columns is forbidden!
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/linter.py b/src/sqlfluff/core/linter.py
+--- a/src/sqlfluff/core/linter.py
++++ b/src/sqlfluff/core/linter.py
+@@ -40,7 +40,7 @@
+ from sqlfluff.core.parser.segments.base import BaseSegment, FixPatch
+ from sqlfluff.core.parser.segments.meta import MetaSegment
+ from sqlfluff.core.parser.segments.raw import RawSegment
+-from sqlfluff.core.rules.base import BaseCrawler
++from sqlfluff.core.rules.base import BaseRule
+ 
+ # Instantiate the linter logger
+ linter_logger: logging.Logger = logging.getLogger("sqlfluff.linter")
+@@ -728,7 +728,7 @@ def __init__(
+         # Store references to user rule classes
+         self.user_rules = user_rules or []
+ 
+-    def get_ruleset(self, config: Optional[FluffConfig] = None) -> List[BaseCrawler]:
++    def get_ruleset(self, config: Optional[FluffConfig] = None) -> List[BaseRule]:
+         """Get hold of a set of rules."""
+         rs = get_ruleset()
+         # Register any user rules
+diff --git a/src/sqlfluff/core/rules/base.py b/src/sqlfluff/core/rules/base.py
+--- a/src/sqlfluff/core/rules/base.py
++++ b/src/sqlfluff/core/rules/base.py
+@@ -1,7 +1,7 @@
+-"""Implements the base crawler which all the rules are based on.
++"""Implements the base rule class.
+ 
+-Crawlers, crawl through the trees returned by the parser and
+-evaluate particular rules.
++Rules crawl through the trees returned by the parser and evaluate particular
++rules.
+ 
+ The intent is that it should be possible for the rules to be expressed
+ as simply as possible, with as much of the complexity abstracted away.
+@@ -39,7 +39,7 @@ def process(self, msg, kwargs):
+ 
+ 
+ class LintResult:
+-    """A class to hold the results of a crawl operation.
++    """A class to hold the results of a rule evaluation.
+ 
+     Args:
+         anchor (:obj:`BaseSegment`, optional): A segment which represents
+@@ -50,7 +50,7 @@ class LintResult:
+             fixes which would correct this issue. If not present then it's
+             assumed that this issue will have to manually fixed.
+         memory (:obj:`dict`, optional): An object which stores any working
+-            memory for the crawler. The `memory` returned in any `LintResult`
++            memory for the rule. The `memory` returned in any `LintResult`
+             will be passed as an input to the next segment to be crawled.
+         description (:obj:`str`, optional): A description of the problem
+             identified as part of this result. This will override the
+@@ -180,8 +180,8 @@ def __eq__(self, other):
+         return True
+ 
+ 
+-class BaseCrawler:
+-    """The base class for a crawler, of which all rules are derived from.
++class BaseRule:
++    """The base class for a rule.
+ 
+     Args:
+         code (:obj:`str`): The identifier for this rule, used in inclusion
+@@ -196,7 +196,7 @@ class BaseCrawler:
+     def __init__(self, code, description, **kwargs):
+         self.description = description
+         self.code = code
+-        # kwargs represents the config passed to the crawler. Add all kwargs as class attributes
++        # kwargs represents the config passed to the rule. Add all kwargs as class attributes
+         # so they can be accessed in rules which inherit from this class
+         for key, value in kwargs.items():
+             self.__dict__[key] = value
+@@ -262,7 +262,7 @@ def crawl(
+         """
+         # parent stack should be a tuple if it exists
+ 
+-        # crawlers, should evaluate on segments FIRST, before evaluating on their
++        # Rules should evaluate on segments FIRST, before evaluating on their
+         # children. They should also return a list of violations.
+ 
+         parent_stack = parent_stack or ()
+@@ -510,7 +510,7 @@ def register(self, cls, plugin=None):
+         .. code-block:: python
+ 
+            @myruleset.register
+-           class Rule_L001(BaseCrawler):
++           class Rule_L001(BaseRule):
+                "Description of rule."
+ 
+                def eval(self, **kwargs):
+@@ -561,7 +561,7 @@ def get_rulelist(self, config):
+         for configuring the rules given the given config.
+ 
+         Returns:
+-            :obj:`list` of instantiated :obj:`BaseCrawler`.
++            :obj:`list` of instantiated :obj:`BaseRule`.
+ 
+         """
+         # Validate all generic rule configs
+diff --git a/src/sqlfluff/core/rules/std/L001.py b/src/sqlfluff/core/rules/std/L001.py
+--- a/src/sqlfluff/core/rules/std/L001.py
++++ b/src/sqlfluff/core/rules/std/L001.py
+@@ -1,10 +1,10 @@
+ """Implementation of Rule L001."""
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L001(BaseCrawler):
++class Rule_L001(BaseRule):
+     """Unnecessary trailing whitespace.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L002.py b/src/sqlfluff/core/rules/std/L002.py
+--- a/src/sqlfluff/core/rules/std/L002.py
++++ b/src/sqlfluff/core/rules/std/L002.py
+@@ -1,6 +1,6 @@
+ """Implementation of Rule L002."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import (
+     document_configuration,
+     document_fix_compatible,
+@@ -9,7 +9,7 @@
+ 
+ @document_configuration
+ @document_fix_compatible
+-class Rule_L002(BaseCrawler):
++class Rule_L002(BaseRule):
+     """Mixed Tabs and Spaces in single whitespace.
+ 
+     This rule will fail if a single section of whitespace
+diff --git a/src/sqlfluff/core/rules/std/L003.py b/src/sqlfluff/core/rules/std/L003.py
+--- a/src/sqlfluff/core/rules/std/L003.py
++++ b/src/sqlfluff/core/rules/std/L003.py
+@@ -1,6 +1,6 @@
+ """Implementation of Rule L003."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import (
+     document_fix_compatible,
+     document_configuration,
+@@ -9,7 +9,7 @@
+ 
+ @document_fix_compatible
+ @document_configuration
+-class Rule_L003(BaseCrawler):
++class Rule_L003(BaseRule):
+     """Indentation not consistent with previous lines.
+ 
+     Note:
+diff --git a/src/sqlfluff/core/rules/std/L004.py b/src/sqlfluff/core/rules/std/L004.py
+--- a/src/sqlfluff/core/rules/std/L004.py
++++ b/src/sqlfluff/core/rules/std/L004.py
+@@ -1,6 +1,6 @@
+ """Implementation of Rule L004."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import (
+     document_fix_compatible,
+     document_configuration,
+@@ -9,7 +9,7 @@
+ 
+ @document_fix_compatible
+ @document_configuration
+-class Rule_L004(BaseCrawler):
++class Rule_L004(BaseRule):
+     """Incorrect indentation type.
+ 
+     Note 1: spaces are only fixed to tabs if the number of spaces in the
+diff --git a/src/sqlfluff/core/rules/std/L005.py b/src/sqlfluff/core/rules/std/L005.py
+--- a/src/sqlfluff/core/rules/std/L005.py
++++ b/src/sqlfluff/core/rules/std/L005.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L005."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L005(BaseCrawler):
++class Rule_L005(BaseRule):
+     """Commas should not have whitespace directly before them.
+ 
+     Unless it's an indent. Trailing/leading commas are dealt with
+diff --git a/src/sqlfluff/core/rules/std/L006.py b/src/sqlfluff/core/rules/std/L006.py
+--- a/src/sqlfluff/core/rules/std/L006.py
++++ b/src/sqlfluff/core/rules/std/L006.py
+@@ -1,12 +1,12 @@
+ """Implementation of Rule L006."""
+ 
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L006(BaseCrawler):
++class Rule_L006(BaseRule):
+     """Operators should be surrounded by a single whitespace.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L007.py b/src/sqlfluff/core/rules/std/L007.py
+--- a/src/sqlfluff/core/rules/std/L007.py
++++ b/src/sqlfluff/core/rules/std/L007.py
+@@ -1,9 +1,9 @@
+ """Implementation of Rule L007."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ 
+ 
+-class Rule_L007(BaseCrawler):
++class Rule_L007(BaseRule):
+     """Operators near newlines should be after, not before the newline.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L008.py b/src/sqlfluff/core/rules/std/L008.py
+--- a/src/sqlfluff/core/rules/std/L008.py
++++ b/src/sqlfluff/core/rules/std/L008.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L008."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L008(BaseCrawler):
++class Rule_L008(BaseRule):
+     """Commas should be followed by a single whitespace unless followed by a comment.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L009.py b/src/sqlfluff/core/rules/std/L009.py
+--- a/src/sqlfluff/core/rules/std/L009.py
++++ b/src/sqlfluff/core/rules/std/L009.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L009."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L009(BaseCrawler):
++class Rule_L009(BaseRule):
+     """Files must end with a trailing newline."""
+ 
+     def _eval(self, segment, siblings_post, parent_stack, **kwargs):
+diff --git a/src/sqlfluff/core/rules/std/L010.py b/src/sqlfluff/core/rules/std/L010.py
+--- a/src/sqlfluff/core/rules/std/L010.py
++++ b/src/sqlfluff/core/rules/std/L010.py
+@@ -1,7 +1,7 @@
+ """Implementation of Rule L010."""
+ 
+ from typing import Tuple, List
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import (
+     document_fix_compatible,
+     document_configuration,
+@@ -10,7 +10,7 @@
+ 
+ @document_fix_compatible
+ @document_configuration
+-class Rule_L010(BaseCrawler):
++class Rule_L010(BaseRule):
+     """Inconsistent capitalisation of keywords.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L011.py b/src/sqlfluff/core/rules/std/L011.py
+--- a/src/sqlfluff/core/rules/std/L011.py
++++ b/src/sqlfluff/core/rules/std/L011.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L011."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult, LintFix
++from sqlfluff.core.rules.base import BaseRule, LintResult, LintFix
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L011(BaseCrawler):
++class Rule_L011(BaseRule):
+     """Implicit aliasing of table not allowed. Use explicit `AS` clause.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L013.py b/src/sqlfluff/core/rules/std/L013.py
+--- a/src/sqlfluff/core/rules/std/L013.py
++++ b/src/sqlfluff/core/rules/std/L013.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L013."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_configuration
+ 
+ 
+ @document_configuration
+-class Rule_L013(BaseCrawler):
++class Rule_L013(BaseRule):
+     """Column expression without alias. Use explicit `AS` clause.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L015.py b/src/sqlfluff/core/rules/std/L015.py
+--- a/src/sqlfluff/core/rules/std/L015.py
++++ b/src/sqlfluff/core/rules/std/L015.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L015."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L015(BaseCrawler):
++class Rule_L015(BaseRule):
+     """DISTINCT used with parentheses.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L017.py b/src/sqlfluff/core/rules/std/L017.py
+--- a/src/sqlfluff/core/rules/std/L017.py
++++ b/src/sqlfluff/core/rules/std/L017.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L017."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L017(BaseCrawler):
++class Rule_L017(BaseRule):
+     """Function name not immediately followed by bracket.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L018.py b/src/sqlfluff/core/rules/std/L018.py
+--- a/src/sqlfluff/core/rules/std/L018.py
++++ b/src/sqlfluff/core/rules/std/L018.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L018."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L018(BaseCrawler):
++class Rule_L018(BaseRule):
+     """WITH clause closing bracket should be aligned with WITH keyword.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L019.py b/src/sqlfluff/core/rules/std/L019.py
+--- a/src/sqlfluff/core/rules/std/L019.py
++++ b/src/sqlfluff/core/rules/std/L019.py
+@@ -2,7 +2,7 @@
+ 
+ from typing import Dict, Any
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import (
+     document_fix_compatible,
+     document_configuration,
+@@ -11,7 +11,7 @@
+ 
+ @document_fix_compatible
+ @document_configuration
+-class Rule_L019(BaseCrawler):
++class Rule_L019(BaseRule):
+     """Leading/Trailing comma enforcement.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L020.py b/src/sqlfluff/core/rules/std/L020.py
+--- a/src/sqlfluff/core/rules/std/L020.py
++++ b/src/sqlfluff/core/rules/std/L020.py
+@@ -2,11 +2,11 @@
+ 
+ import itertools
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ from sqlfluff.core.rules.analysis.select import get_select_statement_info
+ 
+ 
+-class Rule_L020(BaseCrawler):
++class Rule_L020(BaseRule):
+     """Table aliases should be unique within each clause."""
+ 
+     def _lint_references_and_aliases(
+diff --git a/src/sqlfluff/core/rules/std/L021.py b/src/sqlfluff/core/rules/std/L021.py
+--- a/src/sqlfluff/core/rules/std/L021.py
++++ b/src/sqlfluff/core/rules/std/L021.py
+@@ -1,10 +1,10 @@
+ """Implementation of Rule L021."""
+ 
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ 
+ 
+-class Rule_L021(BaseCrawler):
++class Rule_L021(BaseRule):
+     """Ambiguous use of DISTINCT in select statement with GROUP BY.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L022.py b/src/sqlfluff/core/rules/std/L022.py
+--- a/src/sqlfluff/core/rules/std/L022.py
++++ b/src/sqlfluff/core/rules/std/L022.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L022."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L022(BaseCrawler):
++class Rule_L022(BaseRule):
+     """Blank line expected but not found after CTE closing bracket.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L023.py b/src/sqlfluff/core/rules/std/L023.py
+--- a/src/sqlfluff/core/rules/std/L023.py
++++ b/src/sqlfluff/core/rules/std/L023.py
+@@ -2,12 +2,12 @@
+ 
+ from typing import Optional, List
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L023(BaseCrawler):
++class Rule_L023(BaseRule):
+     """Single whitespace expected after AS in WITH clause.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L029.py b/src/sqlfluff/core/rules/std/L029.py
+--- a/src/sqlfluff/core/rules/std/L029.py
++++ b/src/sqlfluff/core/rules/std/L029.py
+@@ -1,12 +1,12 @@
+ """Implementation of Rule L029."""
+ 
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_configuration
+ 
+ 
+ @document_configuration
+-class Rule_L029(BaseCrawler):
++class Rule_L029(BaseRule):
+     """Keywords should not be used as identifiers.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L031.py b/src/sqlfluff/core/rules/std/L031.py
+--- a/src/sqlfluff/core/rules/std/L031.py
++++ b/src/sqlfluff/core/rules/std/L031.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L031."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L031(BaseCrawler):
++class Rule_L031(BaseRule):
+     """Avoid table aliases in from clauses and join conditions.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L032.py b/src/sqlfluff/core/rules/std/L032.py
+--- a/src/sqlfluff/core/rules/std/L032.py
++++ b/src/sqlfluff/core/rules/std/L032.py
+@@ -1,9 +1,9 @@
+ """Implementation of Rule L032."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ 
+ 
+-class Rule_L032(BaseCrawler):
++class Rule_L032(BaseRule):
+     """Prefer specifying join keys instead of using "USING".
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L033.py b/src/sqlfluff/core/rules/std/L033.py
+--- a/src/sqlfluff/core/rules/std/L033.py
++++ b/src/sqlfluff/core/rules/std/L033.py
+@@ -1,9 +1,9 @@
+ """Implementation of Rule L033."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ 
+ 
+-class Rule_L033(BaseCrawler):
++class Rule_L033(BaseRule):
+     """UNION ALL is preferred over UNION.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L034.py b/src/sqlfluff/core/rules/std/L034.py
+--- a/src/sqlfluff/core/rules/std/L034.py
++++ b/src/sqlfluff/core/rules/std/L034.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L034."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L034(BaseCrawler):
++class Rule_L034(BaseRule):
+     """Use wildcards then simple select targets before calculations and aggregates.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L035.py b/src/sqlfluff/core/rules/std/L035.py
+--- a/src/sqlfluff/core/rules/std/L035.py
++++ b/src/sqlfluff/core/rules/std/L035.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L035."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L035(BaseCrawler):
++class Rule_L035(BaseRule):
+     """Do not specify "else null" in a case when statement (redundant).
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L036.py b/src/sqlfluff/core/rules/std/L036.py
+--- a/src/sqlfluff/core/rules/std/L036.py
++++ b/src/sqlfluff/core/rules/std/L036.py
+@@ -3,7 +3,7 @@
+ from typing import List, NamedTuple
+ 
+ from sqlfluff.core.parser import BaseSegment
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+@@ -18,7 +18,7 @@ class SelectTargetsInfo(NamedTuple):
+ 
+ 
+ @document_fix_compatible
+-class Rule_L036(BaseCrawler):
++class Rule_L036(BaseRule):
+     """Select targets should be on a new line unless there is only one select target.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L037.py b/src/sqlfluff/core/rules/std/L037.py
+--- a/src/sqlfluff/core/rules/std/L037.py
++++ b/src/sqlfluff/core/rules/std/L037.py
+@@ -2,7 +2,7 @@
+ 
+ from typing import NamedTuple, Optional, List
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.parser import BaseSegment
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+@@ -15,7 +15,7 @@ class OrderByColumnInfo(NamedTuple):
+ 
+ 
+ @document_fix_compatible
+-class Rule_L037(BaseCrawler):
++class Rule_L037(BaseRule):
+     """Ambiguous ordering directions for columns in order by clause.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L038.py b/src/sqlfluff/core/rules/std/L038.py
+--- a/src/sqlfluff/core/rules/std/L038.py
++++ b/src/sqlfluff/core/rules/std/L038.py
+@@ -1,12 +1,12 @@
+ """Implementation of Rule L038."""
+ 
+-from ..base import BaseCrawler, LintFix, LintResult
++from ..base import BaseRule, LintFix, LintResult
+ from ..doc_decorators import document_fix_compatible, document_configuration
+ 
+ 
+ @document_configuration
+ @document_fix_compatible
+-class Rule_L038(BaseCrawler):
++class Rule_L038(BaseRule):
+     """Trailing commas within select clause.
+ 
+     For some database backends this is allowed. For some users
+diff --git a/src/sqlfluff/core/rules/std/L039.py b/src/sqlfluff/core/rules/std/L039.py
+--- a/src/sqlfluff/core/rules/std/L039.py
++++ b/src/sqlfluff/core/rules/std/L039.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L039."""
+ 
+-from ..base import BaseCrawler, LintFix, LintResult
++from ..base import BaseRule, LintFix, LintResult
+ from ..doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L039(BaseCrawler):
++class Rule_L039(BaseRule):
+     """Unnecessary whitespace found.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L041.py b/src/sqlfluff/core/rules/std/L041.py
+--- a/src/sqlfluff/core/rules/std/L041.py
++++ b/src/sqlfluff/core/rules/std/L041.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L040."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L041(BaseCrawler):
++class Rule_L041(BaseRule):
+     """SELECT clause modifiers such as DISTINCT must be on the same line as SELECT.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L042.py b/src/sqlfluff/core/rules/std/L042.py
+--- a/src/sqlfluff/core/rules/std/L042.py
++++ b/src/sqlfluff/core/rules/std/L042.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L042."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_configuration
+ 
+ 
+ @document_configuration
+-class Rule_L042(BaseCrawler):
++class Rule_L042(BaseRule):
+     """Join/From clauses should not contain subqueries. Use CTEs instead.
+ 
+     By default this rule is configured to allow subqueries within `FROM`
+diff --git a/src/sqlfluff/core/rules/std/L043.py b/src/sqlfluff/core/rules/std/L043.py
+--- a/src/sqlfluff/core/rules/std/L043.py
++++ b/src/sqlfluff/core/rules/std/L043.py
+@@ -1,11 +1,11 @@
+ """Implementation of Rule L043."""
+ 
+-from sqlfluff.core.rules.base import BaseCrawler, LintFix, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintFix, LintResult
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L043(BaseCrawler):
++class Rule_L043(BaseRule):
+     """Unnecessary case when statement. Use the "when" condition itself.
+ 
+     If a case when else statement returns booleans, we can reduce it to the
+diff --git a/src/sqlfluff/core/rules/std/L044.py b/src/sqlfluff/core/rules/std/L044.py
+--- a/src/sqlfluff/core/rules/std/L044.py
++++ b/src/sqlfluff/core/rules/std/L044.py
+@@ -3,7 +3,7 @@
+ 
+ from sqlfluff.core.rules.analysis.select_crawler import SelectCrawler
+ from sqlfluff.core.dialects.base import Dialect
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ 
+ 
+ class RuleFailure(Exception):
+@@ -12,7 +12,7 @@ class RuleFailure(Exception):
+     pass
+ 
+ 
+-class Rule_L044(BaseCrawler):
++class Rule_L044(BaseRule):
+     """Query produces an unknown number of result columns.
+ 
+     | **Anti-pattern**
+diff --git a/src/sqlfluff/core/rules/std/L045.py b/src/sqlfluff/core/rules/std/L045.py
+--- a/src/sqlfluff/core/rules/std/L045.py
++++ b/src/sqlfluff/core/rules/std/L045.py
+@@ -2,13 +2,13 @@
+ from typing import Dict, List
+ 
+ from sqlfluff.core.dialects.base import Dialect
+-from sqlfluff.core.rules.base import BaseCrawler, LintResult
++from sqlfluff.core.rules.base import BaseRule, LintResult
+ from sqlfluff.core.rules.analysis.select_crawler import SelectCrawler
+ from sqlfluff.core.rules.doc_decorators import document_fix_compatible
+ 
+ 
+ @document_fix_compatible
+-class Rule_L045(BaseCrawler):
++class Rule_L045(BaseRule):
+     """Query defines a CTE (common-table expression) but does not use it.
+ 
+     | **Anti-pattern**

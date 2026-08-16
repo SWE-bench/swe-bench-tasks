@@ -1,0 +1,100 @@
+#!/bin/bash
+set -uxo pipefail
+source /opt/miniconda3/bin/activate
+conda activate testbed
+cd /testbed
+git config --global --add safe.directory /testbed
+cd /testbed
+git status
+git show
+git -c core.fileMode=false diff 62e8dc3a148c40c0c28f62b23e943692a3198846
+source /opt/miniconda3/bin/activate
+conda activate testbed
+python -m pip install -e .
+git checkout 62e8dc3a148c40c0c28f62b23e943692a3198846 test/api/simple_test.py test/fixtures/rules/std_rule_cases/L036.yml
+git apply -v - <<'EOF_114329324912'
+diff --git a/test/api/simple_test.py b/test/api/simple_test.py
+--- a/test/api/simple_test.py
++++ b/test/api/simple_test.py
+@@ -121,7 +121,14 @@ def test__api__fix_string():
+     # Check return types.
+     assert isinstance(result, str)
+     # Check actual result
+-    assert result == "SELECT\n    *, 1, blah AS foo FROM mytable\n"
++    assert (
++        result
++        == """SELECT
++    *,
++    1,
++    blah AS foo FROM mytable
++"""
++    )
+ 
+ 
+ def test__api__fix_string_specific():
+diff --git a/test/fixtures/rules/std_rule_cases/L036.yml b/test/fixtures/rules/std_rule_cases/L036.yml
+--- a/test/fixtures/rules/std_rule_cases/L036.yml
++++ b/test/fixtures/rules/std_rule_cases/L036.yml
+@@ -37,7 +37,7 @@ test_multiple_select_targets_all_on_the_same_line:
+   fail_str: |
+     select a, b, c
+     from x
+-  fix_str: "select\na, b, c\nfrom x\n"
++  fix_str: "select\na,\nb,\nc\nfrom x\n"
+ 
+ test_multiple_select_targets_trailing_whitespace_after_select:
+   # TRICKY: Use explicit newlines to preserve the trailing space after "SELECT".
+@@ -57,3 +57,47 @@ test_comment_between_select_and_single_select_target:
+         -- This is the user's ID.
+         FROM
+         safe_user
++
++test_multiple_select_targets_some_newlines_missing_1:
++  fail_str: |
++    select
++      a, b, c,
++      d, e, f, g,
++      h
++    from x
++  # The spaces before a, d, and h look odd, but these are places where the
++  # select targets were already on a separate line, and the rule made no
++  # changes.
++  fix_str: |
++    select
++      a,
++    b,
++    c,
++      d,
++    e,
++    f,
++    g,
++      h
++    from x
++
++
++test_multiple_select_targets_some_newlines_missing_2:
++  fail_str: |
++    select a, b, c,
++      d, e, f, g,
++      h
++    from x
++  # The spaces before d, and h look odd, but these are places where the
++  # select targets were already on a separate line, and the rule made no
++  # changes.
++  fix_str: |
++    select
++    a,
++    b,
++    c,
++      d,
++    e,
++    f,
++    g,
++      h
++    from x
+
+EOF_114329324912
+: '>>>>> Start Test Output'
+pytest -rA test/api/simple_test.py
+: '>>>>> End Test Output'
+git checkout 62e8dc3a148c40c0c28f62b23e943692a3198846 test/api/simple_test.py test/fixtures/rules/std_rule_cases/L036.yml

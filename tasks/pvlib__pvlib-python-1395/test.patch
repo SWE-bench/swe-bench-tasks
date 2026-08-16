@@ -1,0 +1,92 @@
+diff --git a/pvlib/data/test_read_pvgis_horizon.csv b/pvlib/data/test_read_pvgis_horizon.csv
+new file mode 100644
+--- /dev/null
++++ b/pvlib/data/test_read_pvgis_horizon.csv
+@@ -0,0 +1,49 @@
++horizon_azimuth,horizon_elevation
++0,9.9
++7.5,13
++15,14.5
++22.5,15.7
++30,14.9
++37.5,15.3
++45,15.7
++52.5,15.7
++60,13
++67.5,11.5
++75,11.1
++82.5,11.5
++90,10.3
++97.5,11.5
++105,10.3
++112.5,9.5
++120,10.7
++127.5,11.8
++135,11.8
++142.5,8.8
++150,8.4
++157.5,7.3
++165,5.7
++172.5,5.7
++180,4.6
++187.5,3.4
++195,0.8
++202.5,0
++210,0
++217.5,0
++225,0
++232.5,0
++240,0
++247.5,0
++255,0
++262.5,0
++270,0
++277.5,0
++285,0
++292.5,0
++300,0
++307.5,0
++315,1.1
++322.5,1.9
++330,3.8
++337.5,5
++345,6.5
++352.5,9.2
+diff --git a/pvlib/tests/iotools/test_pvgis.py b/pvlib/tests/iotools/test_pvgis.py
+--- a/pvlib/tests/iotools/test_pvgis.py
++++ b/pvlib/tests/iotools/test_pvgis.py
+@@ -9,8 +9,9 @@
+ import requests
+ from pvlib.iotools import get_pvgis_tmy, read_pvgis_tmy
+ from pvlib.iotools import get_pvgis_hourly, read_pvgis_hourly
++from pvlib.iotools import get_pvgis_horizon
+ from ..conftest import (DATA_DIR, RERUNS, RERUNS_DELAY, assert_frame_equal,
+-                        fail_on_pvlib_version)
++                        fail_on_pvlib_version, assert_series_equal)
+ from pvlib._deprecation import pvlibDeprecationWarning
+ 
+ 
+@@ -509,6 +510,23 @@ def test_get_pvgis_map_variables(pvgis_tmy_mapped_columns):
+     assert all([c in pvgis_tmy_mapped_columns for c in actual.columns])
+ 
+ 
++@pytest.mark.remote_data
++@pytest.mark.flaky(reruns=RERUNS, reruns_delay=RERUNS_DELAY)
++def test_read_pvgis_horizon():
++    pvgis_data, _ = get_pvgis_horizon(35.171051, -106.465158)
++    horizon_data = pd.read_csv(DATA_DIR / 'test_read_pvgis_horizon.csv',
++                               index_col=0)
++    horizon_data = horizon_data['horizon_elevation']
++    assert_series_equal(pvgis_data, horizon_data)
++
++
++@pytest.mark.remote_data
++@pytest.mark.flaky(reruns=RERUNS, reruns_delay=RERUNS_DELAY)
++def test_read_pvgis_horizon_invalid_coords():
++    with pytest.raises(requests.HTTPError, match='lat: Incorrect value'):
++        _, _ = get_pvgis_horizon(100, 50)  # unfeasible latitude
++
++
+ def test_read_pvgis_tmy_map_variables(pvgis_tmy_mapped_columns):
+     fn = DATA_DIR / 'tmy_45.000_8.000_2005_2016.json'
+     actual, _, _, _ = read_pvgis_tmy(fn, map_variables=True)

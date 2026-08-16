@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral_pass_cell_ids",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral_pass_cell_data"
+  ],
+  "PASS_TO_PASS": [
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral[5]",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral[6]",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral[12]",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral_raise",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral_mixed",
+    "tests/filters/test_rectilinear_grid.py::test_to_tetrahedral_edge_case"
+  ]
+}

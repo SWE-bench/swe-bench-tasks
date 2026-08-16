@@ -1,0 +1,1118 @@
+diff --git a/pyvista/_vtk.py b/pyvista/_vtk.py
+--- a/pyvista/_vtk.py
++++ b/pyvista/_vtk.py
+@@ -499,6 +499,7 @@
+         vtkPointPicker,
+         vtkPolyDataMapper,
+         vtkPolyDataMapper2D,
++        vtkProp3D,
+         vtkPropAssembly,
+         vtkProperty,
+         vtkPropPicker,
+diff --git a/pyvista/plotting/actor.py b/pyvista/plotting/actor.py
+--- a/pyvista/plotting/actor.py
++++ b/pyvista/plotting/actor.py
+@@ -6,15 +6,16 @@
+ import numpy as np
+ 
+ import pyvista as pv
++from pyvista import _vtk
+ from pyvista.utilities.misc import no_new_attr
+ 
+-from .._typing import BoundsLike
+ from ._property import Property
+ from .mapper import _BaseMapper
++from .prop3d import Prop3D
+ 
+ 
+ @no_new_attr
+-class Actor(pv._vtk.vtkActor):
++class Actor(Prop3D, _vtk.vtkActor):
+     """Wrap vtkActor.
+ 
+     This class represents the geometry & properties in a rendered
+@@ -239,29 +240,6 @@ def visibility(self) -> bool:
+     def visibility(self, value: bool):
+         return self.SetVisibility(value)
+ 
+-    @property
+-    def scale(self) -> tuple:
+-        """Return or set actor scale.
+-
+-        Examples
+-        --------
+-        Create an actor using the :class:`pyvista.Plotter` and then change the
+-        scale of the actor.
+-
+-        >>> import pyvista as pv
+-        >>> pl = pv.Plotter()
+-        >>> actor = pl.add_mesh(pv.Sphere())
+-        >>> actor.scale = (2.0, 2.0, 2.0)
+-        >>> actor.scale
+-        (2.0, 2.0, 2.0)
+-
+-        """
+-        return self.GetScale()
+-
+-    @scale.setter
+-    def scale(self, value: tuple):
+-        return self.SetScale(value)
+-
+     def plot(self, **kwargs):
+         """Plot just the actor.
+ 
+@@ -290,159 +268,6 @@ def plot(self, **kwargs):
+         pl.add_actor(self)
+         pl.show(**kwargs)
+ 
+-    @property
+-    def position(self):
+-        """Return or set the actor position.
+-
+-        Examples
+-        --------
+-        Change the position of an actor. Note how this does not change the
+-        position of the underlying dataset, just the relative location of the
+-        actor in the :class:`pyvista.Plotter`.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Sphere()
+-        >>> pl = pv.Plotter()
+-        >>> _ = pl.add_mesh(mesh, color='b')
+-        >>> actor = pl.add_mesh(mesh, color='r')
+-        >>> actor.position = (0, 0, 1)  # shifts the red sphere up
+-        >>> pl.show()
+-
+-        """
+-        return self.GetPosition()
+-
+-    @position.setter
+-    def position(self, value: tuple):
+-        self.SetPosition(value)
+-
+-    def rotate_x(self, angle: float):
+-        """Rotate the actor about the x axis.
+-
+-        Parameters
+-        ----------
+-        angle : float
+-            Angle to rotate the actor about the x axis in degrees.
+-
+-        Examples
+-        --------
+-        Rotate the actor about the x axis 45 degrees. Note how this does not
+-        change the location of the underlying dataset.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Cube()
+-        >>> pl = pv.Plotter()
+-        >>> _ = pl.add_mesh(mesh, color='b')
+-        >>> actor = pl.add_mesh(
+-        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
+-        ... )
+-        >>> actor.rotate_x(45)
+-        >>> pl.show_axes()
+-        >>> pl.show()
+-
+-        """
+-        self.RotateX(angle)
+-
+-    def rotate_y(self, angle: float):
+-        """Rotate the actor about the y axis.
+-
+-        Parameters
+-        ----------
+-        angle : float
+-            Angle to rotate the actor about the y axis in degrees.
+-
+-        Examples
+-        --------
+-        Rotate the actor about the y axis 45 degrees. Note how this does not
+-        change the location of the underlying dataset.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Cube()
+-        >>> pl = pv.Plotter()
+-        >>> _ = pl.add_mesh(mesh, color='b')
+-        >>> actor = pl.add_mesh(
+-        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
+-        ... )
+-        >>> actor.rotate_y(45)
+-        >>> pl.show_axes()
+-        >>> pl.show()
+-
+-        """
+-        self.RotateY(angle)
+-
+-    def rotate_z(self, angle: float):
+-        """Rotate the actor about the z axis.
+-
+-        Parameters
+-        ----------
+-        angle : float
+-            Angle to rotate the actor about the z axis in degrees.
+-
+-        Examples
+-        --------
+-        Rotate the actor about the Z axis 45 degrees. Note how this does not
+-        change the location of the underlying dataset.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Cube()
+-        >>> pl = pv.Plotter()
+-        >>> _ = pl.add_mesh(mesh, color='b')
+-        >>> actor = pl.add_mesh(
+-        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
+-        ... )
+-        >>> actor.rotate_z(45)
+-        >>> pl.show_axes()
+-        >>> pl.show()
+-
+-        """
+-        self.RotateZ(angle)
+-
+-    @property
+-    def orientation(self) -> tuple:
+-        """Return or set the actor orientation.
+-
+-        Orientation is defined as the rotation from the global axes in degrees
+-        about the actor's x, y, and z axes.
+-
+-        Examples
+-        --------
+-        Show that the orientation changes with rotation.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Cube()
+-        >>> pl = pv.Plotter()
+-        >>> actor = pl.add_mesh(mesh)
+-        >>> actor.rotate_x(90)
+-        >>> actor.orientation  # doctest:+SKIP
+-        (90, 0, 0)
+-
+-        Set the orientation directly.
+-
+-        >>> actor.orientation = (0, 45, 45)
+-        >>> actor.orientation  # doctest:+SKIP
+-        (0, 45, 45)
+-
+-        Reorient just the actor and plot it. Note how the actor is rotated
+-        about its own axes as defined by its position.
+-
+-        >>> import pyvista as pv
+-        >>> mesh = pv.Cube()
+-        >>> pl = pv.Plotter()
+-        >>> _ = pl.add_mesh(mesh, color='b')
+-        >>> actor = pl.add_mesh(
+-        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
+-        ... )
+-        >>> actor.position = (0, 0, 1)
+-        >>> actor.orientation = (45, 0, 0)
+-        >>> pl.show_axes()
+-        >>> pl.show()
+-
+-        """
+-        return self.GetOrientation()
+-
+-    @orientation.setter
+-    def orientation(self, value: tuple):
+-        self.SetOrientation(value)
+-
+     def copy(self, deep=True) -> 'Actor':
+         """Create a copy of this actor.
+ 
+@@ -556,38 +381,6 @@ def user_matrix(self, value: Union[pv._vtk.vtkMatrix4x4, np.ndarray]):
+             value = pv.vtkmatrix_from_array(value)
+         self.SetUserMatrix(value)
+ 
+-    @property
+-    def bounds(self) -> BoundsLike:
+-        """Return the bounds of the actor.
+-
+-        Bounds are ``(-X, +X, -Y, +Y, -Z, +Z)``
+-
+-        Examples
+-        --------
+-        >>> import pyvista as pv
+-        >>> pl = pv.Plotter()
+-        >>> mesh = pv.Cube(x_length=0.1, y_length=0.2, z_length=0.3)
+-        >>> actor = pl.add_mesh(mesh)
+-        >>> actor.bounds
+-        (-0.05, 0.05, -0.1, 0.1, -0.15, 0.15)
+-
+-        """
+-        return self.GetBounds()
+-
+-    @property
+-    def center(self) -> tuple:
+-        """Return the center of the actor.
+-
+-        Examples
+-        --------
+-        >>> import pyvista as pv
+-        >>> pl = pv.Plotter()
+-        >>> actor = pl.add_mesh(pv.Sphere(center=(0.5, 0.5, 1)))
+-        >>> actor.center  # doctest:+SKIP
+-        (0.5, 0.5, 1)
+-        """
+-        return self.GetCenter()
+-
+     @property
+     def backface_prop(self) -> Optional['pv.Property']:
+         """Return or set the backface property.
+diff --git a/pyvista/plotting/mapper.py b/pyvista/plotting/mapper.py
+--- a/pyvista/plotting/mapper.py
++++ b/pyvista/plotting/mapper.py
+@@ -1,6 +1,6 @@
+ """An internal module for wrapping the use of mappers."""
+ import sys
+-from typing import Optional
++from typing import Optional, Union
+ 
+ import numpy as np
+ 
+@@ -14,6 +14,7 @@
+ )
+ from pyvista.utilities.misc import has_module, no_new_attr
+ 
++from .._typing import BoundsLike
+ from .colors import Color, get_cmap_safe
+ from .lookup_table import LookupTable
+ from .tools import normalize
+@@ -29,6 +30,20 @@ def __init__(self, theme=None, **kwargs):
+         self._theme = theme
+         self.lookup_table = LookupTable()
+ 
++    @property
++    def bounds(self) -> BoundsLike:
++        """Return the bounds of this mapper.
++
++        Examples
++        --------
++        >>> import pyvista as pv
++        >>> mapper = pv.DataSetMapper(dataset=pv.Cube())
++        >>> mapper.bounds
++        (-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
++
++        """
++        return self.GetBounds()
++
+     def copy(self) -> '_BaseMapper':
+         """Create a copy of this mapper.
+ 
+@@ -501,16 +516,16 @@ def set_scalars(
+             than zero are mapped to the smallest representable
+             positive float.
+ 
+-        nan_color : ColorLike, optional
++        nan_color : color_like, optional
+             The color to use for all ``NaN`` values in the plotted
+             scalar array.
+ 
+-        above_color : ColorLike, optional
++        above_color : color_like, optional
+             Solid color for values below the scalars range
+             (``clim``). This will automatically set the scalar bar
+             ``above_label`` to ``'Above'``.
+ 
+-        below_color : ColorLike, optional
++        below_color : color_like, optional
+             Solid color for values below the scalars range
+             (``clim``). This will automatically set the scalar bar
+             ``below_label`` to ``'Below'``.
+@@ -721,7 +736,7 @@ def set_custom_opacity(self, opacity, color, n_colors, preference='point'):
+             Opacity array to color the dataset. Array length must match either
+             the number of points or cells.
+ 
+-        color : ColorLike
++        color : color_like
+             The color to use with the opacity array.
+ 
+         n_colors : int
+@@ -869,7 +884,8 @@ def __init__(self, theme=None):
+     @property
+     def dataset(self):
+         """Return or set the dataset assigned to this mapper."""
+-        return self.GetInputAsDataSet()
++        # GetInputAsDataSet unavailable on volume mappers
++        return self.GetDataSetInput()
+ 
+     @dataset.setter
+     def dataset(self, new_dataset: 'pv.core.dataset.DataSet'):
+@@ -894,6 +910,64 @@ def scalar_range(self, clim):
+             self.lookup_table.SetRange(*clim)
+         self._scalar_range = clim
+ 
++    @property
++    def blend_mode(self) -> str:
++        """Return or set the blend mode.
++
++        One of the following:
++
++        * ``"composite"``
++        * ``"maximum"``
++        * ``"minimum"``
++        * ``"average"``
++        * ``"additive"``
++
++        Also accepts integer values corresponding to
++        ``vtk.vtkVolumeMapper.BlendModes``. For example
++        ``vtk.vtkVolumeMapper.COMPOSITE_BLEND``.
++
++        """
++        value = self.GetBlendMode()
++        if value == 0:
++            return 'composite'
++        elif value == 1:
++            return 'maximum'
++        elif value == 2:
++            return 'minimum'
++        elif value == 3:
++            return 'average'
++        elif value == 4:
++            return 'additive'
++
++        raise NotImplementedError(
++            f'Unsupported blend mode return value {value}'
++        )  # pragma: no cover
++
++    @blend_mode.setter
++    def blend_mode(self, value: Union[str, int]):
++        if isinstance(value, int):
++            self.SetBlendMode(value)
++        elif isinstance(value, str):
++            value = value.lower()
++            if value in ['additive', 'add', 'sum']:
++                self.SetBlendModeToAdditive()
++            elif value in ['average', 'avg', 'average_intensity']:
++                self.SetBlendModeToAverageIntensity()
++            elif value in ['composite', 'comp']:
++                self.SetBlendModeToComposite()
++            elif value in ['maximum', 'max', 'maximum_intensity']:
++                self.SetBlendModeToMaximumIntensity()
++            elif value in ['minimum', 'min', 'minimum_intensity']:
++                self.SetBlendModeToMinimumIntensity()
++            else:
++                raise ValueError(
++                    f'Blending mode {value!r} invalid. '
++                    'Please choose either "additive", '
++                    '"composite", "minimum" or "maximum".'
++                )
++        else:
++            raise TypeError(f'`blend_mode` should be either an int or str, not `{type(value)}`')
++
+     def __del__(self):
+         self._lut = None
+ 
+diff --git a/pyvista/plotting/plotting.py b/pyvista/plotting/plotting.py
+--- a/pyvista/plotting/plotting.py
++++ b/pyvista/plotting/plotting.py
+@@ -20,6 +20,7 @@
+ 
+ import pyvista
+ from pyvista import _vtk
++from pyvista.plotting.volume import Volume
+ from pyvista.utilities import (
+     FieldAssociation,
+     abstract_class,
+@@ -62,6 +63,7 @@
+ from .renderers import Renderers
+ from .scalar_bars import ScalarBars
+ from .tools import FONTS, normalize, opacity_transfer_function, parse_font_family  # noqa
++from .volume_property import VolumeProperty
+ from .widgets import WidgetHelper
+ 
+ SUPPORTED_FORMATS = [".png", ".jpeg", ".jpg", ".bmp", ".tif", ".tiff"]
+@@ -3687,39 +3689,21 @@ def add_volume(
+                 self.mapper.lookup_table.annotations = annotations
+ 
+         self.mapper.dataset = volume
+-
+-        blending = blending.lower()
+-        if blending in ['additive', 'add', 'sum']:
+-            self.mapper.SetBlendModeToAdditive()
+-        elif blending in ['average', 'avg', 'average_intensity']:
+-            self.mapper.SetBlendModeToAverageIntensity()
+-        elif blending in ['composite', 'comp']:
+-            self.mapper.SetBlendModeToComposite()
+-        elif blending in ['maximum', 'max', 'maximum_intensity']:
+-            self.mapper.SetBlendModeToMaximumIntensity()
+-        elif blending in ['minimum', 'min', 'minimum_intensity']:
+-            self.mapper.SetBlendModeToMinimumIntensity()
+-        else:
+-            raise ValueError(
+-                f'Blending mode {blending!r} invalid. '
+-                'Please choose either "additive", '
+-                '"composite", "minimum" or "maximum".'
+-            )
++        self.mapper.blend_mode = blending
+         self.mapper.update()
+ 
+-        self.volume = _vtk.vtkVolume()
+-        self.volume.SetMapper(self.mapper)
+-
+-        prop = _vtk.vtkVolumeProperty()
+-        prop.SetColor(self.mapper.lookup_table.to_color_tf())
+-        prop.SetScalarOpacity(self.mapper.lookup_table.to_opacity_tf())
+-        prop.SetAmbient(ambient)
+-        prop.SetScalarOpacityUnitDistance(opacity_unit_distance)
+-        prop.SetShade(shade)
+-        prop.SetDiffuse(diffuse)
+-        prop.SetSpecular(specular)
+-        prop.SetSpecularPower(specular_power)
+-        self.volume.SetProperty(prop)
++        self.volume = Volume()
++        self.volume.mapper = self.mapper
++
++        self.volume.prop = VolumeProperty(
++            lookup_table=self.mapper.lookup_table,
++            ambient=ambient,
++            shade=shade,
++            specular=specular,
++            specular_power=specular_power,
++            diffuse=diffuse,
++            opacity_unit_distance=opacity_unit_distance,
++        )
+ 
+         actor, prop = self.add_actor(
+             self.volume,
+diff --git a/pyvista/plotting/prop3d.py b/pyvista/plotting/prop3d.py
+new file mode 100644
+--- /dev/null
++++ b/pyvista/plotting/prop3d.py
+@@ -0,0 +1,227 @@
++"""Prop3D module."""
++from typing import Tuple
++
++from pyvista import _vtk
++
++from .._typing import BoundsLike, Vector
++
++
++class Prop3D(_vtk.vtkProp3D):
++    """Prop3D wrapper for vtkProp3D.
++
++    Used to represent an entity in a rendering scene. It handles functions
++    related to the position, orientation and scaling. Used as parent class
++    in Actor and Volume class.
++    """
++
++    def __init__(self):
++        """Initialize Prop3D."""
++        super().__init__()
++
++    @property
++    def scale(self) -> Tuple[float, float, float]:
++        """Return or set entity scale.
++
++        Examples
++        --------
++        Create an actor using the :class:`pyvista.Plotter` and then change the
++        scale of the actor.
++
++        >>> import pyvista as pv
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_mesh(pv.Sphere())
++        >>> actor.scale = (2.0, 2.0, 2.0)
++        >>> actor.scale
++        (2.0, 2.0, 2.0)
++
++        """
++        return self.GetScale()
++
++    @scale.setter
++    def scale(self, value: Vector):
++        return self.SetScale(value)
++
++    @property
++    def position(self) -> Tuple[float, float, float]:
++        """Return or set the entity position.
++
++        Examples
++        --------
++        Change the position of an actor. Note how this does not change the
++        position of the underlying dataset, just the relative location of the
++        actor in the :class:`pyvista.Plotter`.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Sphere()
++        >>> pl = pv.Plotter()
++        >>> _ = pl.add_mesh(mesh, color='b')
++        >>> actor = pl.add_mesh(mesh, color='r')
++        >>> actor.position = (0, 0, 1)  # shifts the red sphere up
++        >>> pl.show()
++
++        """
++        return self.GetPosition()
++
++    @position.setter
++    def position(self, value: Vector):
++        self.SetPosition(value)
++
++    def rotate_x(self, angle: float):
++        """Rotate the entity about the x axis.
++
++        Parameters
++        ----------
++        angle : float
++            Angle to rotate the entity about the x axis in degrees.
++
++        Examples
++        --------
++        Rotate the actor about the x axis 45 degrees. Note how this does not
++        change the location of the underlying dataset.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Cube()
++        >>> pl = pv.Plotter()
++        >>> _ = pl.add_mesh(mesh, color='b')
++        >>> actor = pl.add_mesh(
++        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
++        ... )
++        >>> actor.rotate_x(45)
++        >>> pl.show_axes()
++        >>> pl.show()
++
++        """
++        self.RotateX(angle)
++
++    def rotate_y(self, angle: float):
++        """Rotate the entity about the y axis.
++
++        Parameters
++        ----------
++        angle : float
++            Angle to rotate the entity about the y axis in degrees.
++
++        Examples
++        --------
++        Rotate the actor about the y axis 45 degrees. Note how this does not
++        change the location of the underlying dataset.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Cube()
++        >>> pl = pv.Plotter()
++        >>> _ = pl.add_mesh(mesh, color='b')
++        >>> actor = pl.add_mesh(
++        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
++        ... )
++        >>> actor.rotate_y(45)
++        >>> pl.show_axes()
++        >>> pl.show()
++
++        """
++        self.RotateY(angle)
++
++    def rotate_z(self, angle: float):
++        """Rotate the entity about the z axis.
++
++        Parameters
++        ----------
++        angle : float
++            Angle to rotate the entity about the z axis in degrees.
++
++        Examples
++        --------
++        Rotate the actor about the Z axis 45 degrees. Note how this does not
++        change the location of the underlying dataset.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Cube()
++        >>> pl = pv.Plotter()
++        >>> _ = pl.add_mesh(mesh, color='b')
++        >>> actor = pl.add_mesh(
++        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
++        ... )
++        >>> actor.rotate_z(45)
++        >>> pl.show_axes()
++        >>> pl.show()
++
++        """
++        self.RotateZ(angle)
++
++    @property
++    def orientation(self) -> tuple:
++        """Return or set the entity orientation.
++
++        Orientation is defined as the rotation from the global axes in degrees
++        about the actor's x, y, and z axes.
++
++        Examples
++        --------
++        Show that the orientation changes with rotation.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Cube()
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_mesh(mesh)
++        >>> actor.rotate_x(90)
++        >>> actor.orientation  # doctest:+SKIP
++        (90, 0, 0)
++
++        Set the orientation directly.
++
++        >>> actor.orientation = (0, 45, 45)
++        >>> actor.orientation  # doctest:+SKIP
++        (0, 45, 45)
++
++        Reorient just the actor and plot it. Note how the actor is rotated
++        about its own axes as defined by its position.
++
++        >>> import pyvista as pv
++        >>> mesh = pv.Cube()
++        >>> pl = pv.Plotter()
++        >>> _ = pl.add_mesh(mesh, color='b')
++        >>> actor = pl.add_mesh(
++        ...     mesh, color='r', style='wireframe', line_width=5, lighting=False,
++        ... )
++        >>> actor.position = (0, 0, 1)
++        >>> actor.orientation = (45, 0, 0)
++        >>> pl.show_axes()
++        >>> pl.show()
++
++        """
++        return self.GetOrientation()
++
++    @orientation.setter
++    def orientation(self, value: tuple):
++        self.SetOrientation(value)
++
++    @property
++    def bounds(self) -> BoundsLike:
++        """Return the bounds of the entity.
++
++        Bounds are ``(-X, +X, -Y, +Y, -Z, +Z)``
++
++        Examples
++        --------
++        >>> import pyvista as pv
++        >>> pl = pv.Plotter()
++        >>> mesh = pv.Cube(x_length=0.1, y_length=0.2, z_length=0.3)
++        >>> actor = pl.add_mesh(mesh)
++        >>> actor.bounds
++        (-0.05, 0.05, -0.1, 0.1, -0.15, 0.15)
++
++        """
++        return self.GetBounds()
++
++    @property
++    def center(self) -> tuple:
++        """Return the center of the entity.
++
++        Examples
++        --------
++        >>> import pyvista as pv
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_mesh(pv.Sphere(center=(0.5, 0.5, 1)))
++        >>> actor.center  # doctest:+SKIP
++        (0.5, 0.5, 1)
++        """
++        return self.GetCenter()
+diff --git a/pyvista/plotting/volume.py b/pyvista/plotting/volume.py
+new file mode 100644
+--- /dev/null
++++ b/pyvista/plotting/volume.py
+@@ -0,0 +1,65 @@
++"""PyVista volume module."""
++from pyvista import _vtk
++
++from ._property import Property
++from .mapper import _BaseMapper
++from .prop3d import Prop3D
++
++
++class Volume(Prop3D, _vtk.vtkVolume):
++    """Wrapper class for VTK volume.
++
++    This class represents a volume in a rendered scene. It inherits
++    functions related to the volume's position, orientation and origin
++    from Prop3D.
++
++    """
++
++    def __init__(self):
++        """Initialize volume."""
++        super().__init__()
++
++    @property
++    def mapper(self) -> _BaseMapper:
++        """Return or set the mapper of the volume.
++
++        Examples
++        --------
++        Add a volume to a :class:`pyvista.Plotter` and get its mapper.
++
++        >>> import pyvista as pv
++        >>> vol = pv.UniformGrid(dimensions=(10, 10, 10))
++        >>> vol['scalars'] = 255 - vol.z*25
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_volume(vol)
++        >>> actor.mapper.bounds
++        (0.0, 9.0, 0.0, 9.0, 0.0, 9.0)
++        """
++        return self.GetMapper()
++
++    @mapper.setter
++    def mapper(self, obj):
++        return self.SetMapper(obj)
++
++    @property
++    def prop(self):
++        """Return or set the property of this actor.
++
++        Examples
++        --------
++        Create an volume and get its properties.
++
++        >>> import pyvista as pv
++        >>> vol = pv.UniformGrid(dimensions=(10, 10, 10))
++        >>> vol['scalars'] = 255 - vol.z*25
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_volume(vol)
++        >>> actor.prop.GetShade()
++        0
++
++        """
++        return self.GetProperty()
++
++    @prop.setter
++    def prop(self, obj: Property):
++        self.SetProperty(obj)
+diff --git a/pyvista/plotting/volume_property.py b/pyvista/plotting/volume_property.py
+new file mode 100644
+--- /dev/null
++++ b/pyvista/plotting/volume_property.py
+@@ -0,0 +1,333 @@
++"""This module contains the VolumeProperty class."""
++import pyvista as pv
++from pyvista import _vtk
++from pyvista.utilities.misc import no_new_attr
++
++
++@no_new_attr
++class VolumeProperty(_vtk.vtkVolumeProperty):
++    """Wrap the VTK class vtkVolumeProperty.
++
++    This class is used to represent common properties associated with volume
++    rendering. This includes properties for determining the type of
++    interpolation to use when sampling a volume, the color of a volume, the
++    scalar opacity of a volume, the gradient opacity of a volume, and the
++    shading parameters of a volume.
++
++    Parameters
++    ----------
++    lookup_table : pyvista.LookupTable, optional
++        Lookup table to set the color and opacity transfer functions.
++
++    interpolation_type : str, optional
++        Value must be either ``'linear'`` or ``'nearest'``.
++
++    ambient : float, optional
++        When lighting is enabled, this is the amount of light in
++        the range of 0 to 1 (default 0.0) that reaches the actor
++        when not directed at the light source emitted from the
++        viewer.
++
++    diffuse : float, optional
++        The diffuse lighting coefficient. Default 1.0.
++
++    specular : float, optional
++        The specular lighting coefficient. Default 0.0.
++
++    specular_power : float, optional
++        The specular power. Between 0.0 and 128.0.
++
++    shade : bool, optional
++        Enable or disable volume shading.  If shading is turned off, then the
++        mapper for the volume will not perform shading calculations. If shading
++        is turned on, the mapper may perform shading calculations - in some
++        cases shading does not apply (for example, in a maximum intensity
++        projection) and therefore shading will not be performed even if this
++        flag is on. For a compositing type of mapper, turning shading off is
++        generally the same as setting ``ambient=1``, ``diffuse=0``,
++        ``specular=0``. Shading can be independently turned on/off per
++        component.
++
++    opacity_unit_distance : float, optional
++        This is the unit distance on which the scalar opacity transfer function
++        is defined. By default this is 1.0, meaning that over a distance of 1.0
++        units, a given opacity (from the transfer function) is
++        accumulated. This is adjusted for the actual sampling distance during
++        rendering.
++
++    Examples
++    --------
++    Create a sample dataset from perlin noise and apply a lookup table to the
++    :class:`VolumeProperty`.
++
++    >>> import pyvista as pv
++    >>> noise = pv.perlin_noise(1, (1, 3, 5), (0, 0, 0))
++    >>> grid = pv.sample_function(noise, [0, 3.0, -0, 1.0, 0, 1.0], dim=(40, 40, 40))
++    >>> grid['scalars'] -= grid['scalars'].min()
++    >>> grid['scalars']*= 255/grid['scalars'].max()
++    >>> pl = pv.Plotter()
++    >>> actor = pl.add_volume(grid, show_scalar_bar=False)
++    >>> lut = pv.LookupTable(cmap='bwr')
++    >>> lut.apply_opacity([1.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.0, 0.3])
++    >>> actor.prop.apply_lookup_table(lut)
++    >>> pl.show()
++
++
++    """
++
++    def __init__(
++        self,
++        lookup_table=None,
++        interpolation_type=None,
++        ambient=None,
++        diffuse=None,
++        specular=None,
++        specular_power=None,
++        shade=None,
++        opacity_unit_distance=None,
++    ):
++        """Initialize the vtkVolumeProperty class."""
++        super().__init__()
++        if lookup_table is not None:
++            self.apply_lookup_table(lookup_table)
++        if interpolation_type is not None:
++            self.interpolation_type = interpolation_type
++        if ambient is not None:
++            self.ambient = ambient
++        if diffuse is not None:
++            self.diffuse = diffuse
++        if specular is not None:
++            self.specular = specular
++        if specular_power is not None:
++            self.specular_power = specular_power
++        if shade is not None:
++            self.shade = shade
++        if opacity_unit_distance is not None:
++            self.opacity_unit_distance = opacity_unit_distance
++
++    def apply_lookup_table(self, lookup_table: 'pv.LookupTable'):
++        """Apply a lookup table to the volume property.
++
++        Applies both the color and opacity of the lookup table as transfer
++        functions.
++
++        Parameters
++        ----------
++        lookup_table : pyvista.LookupTable, optional
++            Lookup table to set the color and opacity transfer functions.
++
++        Examples
++        --------
++        Plot perlin noise volumetrically using a custom lookup table.
++
++        >>> import pyvista as pv
++        >>> noise = pv.perlin_noise(1, (1, 3, 5), (0, 0, 0))
++        >>> grid = pv.sample_function(noise, [0, 3.0, -0, 1.0, 0, 1.0], dim=(40, 40, 40))
++        >>> grid['scalars'] -= grid['scalars'].min()
++        >>> grid['scalars']*= 255/grid['scalars'].max()
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_volume(grid, show_scalar_bar=False)
++        >>> lut = pv.LookupTable(cmap='bwr')
++        >>> lut.apply_opacity([1.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.0, 0.3])
++        >>> actor.prop.apply_lookup_table(lut)
++        >>> pl.show()
++
++        """
++        if not isinstance(lookup_table, pv.LookupTable):
++            raise TypeError('`lookup_table` must be a `pyvista.LookupTable`')
++
++        self.SetColor(lookup_table.to_color_tf())
++        self.SetScalarOpacity(lookup_table.to_opacity_tf())
++
++    @property
++    def interpolation_type(self) -> str:
++        """Return or set the interpolation type.
++
++        Value must be either ``'linear'`` or ``'nearest'``.
++
++        Examples
++        --------
++        Create a sample :class:`pyvista.UniformGrid` dataset.
++
++        >>> import numpy as np
++        >>> import pyvista as pv
++        >>> n = 21
++        >>> c = -(n-1)/2
++        >>> vol = pv.UniformGrid(dimensions=(n, n, n), origin=(c, c, c))
++        >>> scalars = np.linalg.norm(vol.points, axis=1)
++        >>> scalars *= 255/scalars.max()
++        >>> vol['scalars'] = scalars
++
++        Demonstrate nearest (default) interpolation.
++
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_volume(
++        ...     vol,
++        ...     show_scalar_bar=False,
++        ...     opacity=[0.3, 0.0, 0.05, 0.0, 0.0, 0.0, 1.0, 0.0],
++        ...     cmap='plasma'
++        ... )
++        >>> actor.prop.interpolation_type = 'nearest'
++        >>> pl.show()
++
++        Demonstrate linear interpolation.
++
++        >>> pl = pv.Plotter()
++        >>> actor = pl.add_volume(
++        ...     vol,
++        ...     show_scalar_bar=False,
++        ...     opacity=[0.3, 0.0, 0.05, 0.0, 0.0, 0.0, 1.0, 0.0],
++        ...     cmap='plasma'
++        ... )
++        >>> actor.prop.interpolation_type = 'linear'
++        >>> pl.show()
++
++        """
++        return self.GetInterpolationTypeAsString().split()[0].lower()
++
++    @interpolation_type.setter
++    def interpolation_type(self, value: str):
++        if value == 'linear':
++            self.SetInterpolationTypeToLinear()
++        elif value == 'nearest':
++            self.SetInterpolationTypeToNearest()
++        else:
++            raise ValueError('`interpolation_type` must be either "linear" or "nearest"')
++
++    @property
++    def opacity_unit_distance(self) -> float:
++        """Return or set the opacity unit distance.
++
++        This is the unit distance on which the scalar opacity transfer function
++        is defined.
++
++        By default this is 1.0, meaning that over a distance of 1.0 units, a
++        given opacity (from the transfer function) is accumulated. This is
++        adjusted for the actual sampling distance during rendering.
++        """
++        return self.GetScalarOpacityUnitDistance()
++
++    @opacity_unit_distance.setter
++    def opacity_unit_distance(self, value: float):
++        self.SetScalarOpacityUnitDistance(value)
++
++    @property
++    def shade(self) -> bool:
++        """Return or set shading of a volume.
++
++        If shading is turned off, then the mapper for the volume will not
++        perform shading calculations. If shading is turned on, the mapper may
++        perform shading calculations - in some cases shading does not apply
++        (for example, in a maximum intensity projection) and therefore shading
++        will not be performed even if this flag is on. For a compositing type
++        of mapper, turning shading off is generally the same as setting
++        ``ambient=1``, ``diffuse=0``, ``specular=0``. Shading can be
++        independently turned on/off per component.
++
++        """
++        return bool(self.GetShade())
++
++    @shade.setter
++    def shade(self, value: bool):
++        self.SetShade(value)
++
++    @property
++    def ambient(self) -> float:
++        """Return or set ambient lighting coefficient.
++
++        This is the amount of light in the range of 0 to 1 (default 0.0) that
++        reaches the actor when not directed at the light source emitted from
++        the viewer.
++
++        Changing attribute has no effect unless :attr:`VolumeProperty.shade` is
++        set to ``True``.
++
++        """
++        return self.GetAmbient()
++
++    @ambient.setter
++    def ambient(self, value: float):
++        self.SetAmbient(value)
++
++    @property
++    def diffuse(self) -> float:
++        """Return or set the diffuse lighting coefficient.
++
++        Default 1.0.
++
++        This is the scattering of light by reflection or transmission. Diffuse
++        reflection results when light strikes an irregular surface such as a
++        frosted window or the surface of a frosted or coated light bulb.
++
++        Changing attribute has no effect unless :attr:`VolumeProperty.shade` is
++        set to ``True``.
++
++        """
++        return self.GetDiffuse()
++
++    @diffuse.setter
++    def diffuse(self, value: float):
++        self.SetDiffuse(value)
++
++    @property
++    def specular(self) -> float:
++        """Return or set specular.
++
++        Default 0.0
++
++        Specular lighting simulates the bright spot of a light that appears on
++        shiny objects.
++
++        Changing attribute has no effect unless :attr:`VolumeProperty.shade` is
++        set to ``True``.
++
++        """
++        return self.GetSpecular()
++
++    @specular.setter
++    def specular(self, value: float):
++        self.SetSpecular(value)
++
++    @property
++    def specular_power(self) -> float:
++        """Return or set specular power.
++
++        The specular power. Between 0.0 and 128.0. Default 10.0
++
++        """
++        return self.GetSpecularPower()
++
++    @specular_power.setter
++    def specular_power(self, value: float):
++        self.SetSpecularPower(value)
++
++    def copy(self) -> 'VolumeProperty':
++        """Create a deep copy of this property.
++
++        Returns
++        -------
++        pyvista.VolumeProperty
++            Deep copy of this property.
++
++        """
++        new_prop = VolumeProperty()
++        new_prop.DeepCopy(self)
++        return new_prop
++
++    def __repr__(self):
++        """Representation of this property."""
++        props = [
++            f'{type(self).__name__} ({hex(id(self))})',
++        ]
++
++        for attr in dir(self):
++            if not attr.startswith('_') and attr[0].islower():
++                name = ' '.join(attr.split('_')).capitalize() + ':'
++                value = getattr(self, attr)
++                if callable(value):
++                    continue
++                if isinstance(value, str):
++                    value = f'"{value}"'
++                props.append(f'  {name:28s} {value}')
++
++        return '\n'.join(props)

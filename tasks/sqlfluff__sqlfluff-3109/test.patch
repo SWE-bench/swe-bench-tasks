@@ -1,0 +1,69 @@
+diff --git a/test/cli/commands_test.py b/test/cli/commands_test.py
+--- a/test/cli/commands_test.py
++++ b/test/cli/commands_test.py
+@@ -968,11 +968,12 @@ def test__cli__command_fail_nice_not_found(command):
+ 
+ 
+ @pytest.mark.parametrize(
+-    "serialize", ["yaml", "json", "github-annotation", "github-annotation-native"]
++    "serialize",
++    ["human", "yaml", "json", "github-annotation", "github-annotation-native"],
+ )
+ @pytest.mark.parametrize("write_file", [None, "outfile"])
+ def test__cli__command_lint_serialize_multiple_files(serialize, write_file, tmp_path):
+-    """Check the general format of JSON output for multiple files.
++    """Test the output output formats for multiple files.
+ 
+     This tests runs both stdout checking and file checking.
+     """
+@@ -987,9 +988,11 @@ def test__cli__command_lint_serialize_multiple_files(serialize, write_file, tmp_
+     )
+ 
+     if write_file:
+-        target_file = os.path.join(
+-            tmp_path, write_file + (".yaml" if serialize == "yaml" else ".json")
+-        )
++        ext = {
++            "human": ".txt",
++            "yaml": ".yaml",
++        }
++        target_file = os.path.join(tmp_path, write_file + ext.get(serialize, ".json"))
+         cmd_args += ("--write-output", target_file)
+ 
+     # note the file is in here twice. two files = two payloads.
+@@ -1004,7 +1007,9 @@ def test__cli__command_lint_serialize_multiple_files(serialize, write_file, tmp_
+     else:
+         result_payload = result.output
+ 
+-    if serialize == "json":
++    if serialize == "human":
++        assert len(result_payload.split("\n")) == 29 if write_file else 30
++    elif serialize == "json":
+         result = json.loads(result_payload)
+         assert len(result) == 2
+     elif serialize == "yaml":
+diff --git a/test/core/linter_test.py b/test/core/linter_test.py
+--- a/test/core/linter_test.py
++++ b/test/core/linter_test.py
+@@ -11,7 +11,8 @@
+ from sqlfluff.core.dialects import load_raw_dialect
+ from sqlfluff.core.linter import runner
+ from sqlfluff.core.errors import SQLLexError, SQLBaseError, SQLLintError, SQLParseError
+-from sqlfluff.cli.formatters import CallbackFormatter
++from sqlfluff.cli.formatters import OutputStreamFormatter
++from sqlfluff.cli.outputstream import make_output_stream
+ from sqlfluff.core.linter import LintingResult, NoQaDirective
+ import sqlfluff.core.linter as linter
+ from sqlfluff.core.parser import GreedyUntil, Ref
+@@ -256,8 +257,10 @@ def imap_unordered(self, *args, **kwargs):
+ 
+         monkeypatch.setattr(runner.MultiProcessRunner, "_create_pool", _create_pool)
+ 
++    config = FluffConfig(overrides={"dialect": "ansi"})
++    output_stream = make_output_stream(config, None, os.devnull)
+     lntr = Linter(
+-        formatter=CallbackFormatter(callback=lambda m: None, verbosity=0),
++        formatter=OutputStreamFormatter(output_stream, verbosity=0),
+         dialect="ansi",
+     )
+     result = lntr.lint_paths(

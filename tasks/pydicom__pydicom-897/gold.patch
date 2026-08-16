@@ -1,0 +1,81 @@
+diff --git a/pydicom/dataelem.py b/pydicom/dataelem.py
+--- a/pydicom/dataelem.py
++++ b/pydicom/dataelem.py
+@@ -378,7 +378,7 @@ def _convert(self, val):
+         elif self.VR == 'TM' and config.datetime_conversion:
+             return pydicom.valuerep.TM(val)
+         elif self.VR == "UI":
+-            return UID(val)
++            return UID(val if val else '')
+         elif not in_py2 and self.VR == "PN":
+             return PersonName(val)
+         # Later may need this for PersonName as for UI,
+diff --git a/pydicom/multival.py b/pydicom/multival.py
+--- a/pydicom/multival.py
++++ b/pydicom/multival.py
+@@ -2,6 +2,7 @@
+ """Code for multi-value data elements values,
+ or any list of items that must all be the same type.
+ """
++from pydicom import compat
+ 
+ try:
+     from collections.abc import MutableSequence
+@@ -30,7 +31,7 @@ def __init__(self, type_constructor, iterable):
+         :param type_constructor: a constructor for the required
+                            type for all list items. Could be the
+                            class, or a factory function. For DICOM
+-                           mult-value data elements, this will be the
++                           multi-value data elements, this will be the
+                            class or type corresponding to the VR.
+         :param iterable: an iterable (e.g. list, tuple) of items
+                         to initialize the MultiValue list
+@@ -59,8 +60,11 @@ def __setitem__(self, i, val):
+             self._list.__setitem__(i, self.type_constructor(val))
+ 
+     def __str__(self):
+-        lines = [str(x) for x in self]
+-        return "['" + "', '".join(lines) + "']"
++        if not self:
++            return ''
++        lines = ["'{}'".format(x) if isinstance(x, compat.char_types)
++                 else str(x) for x in self]
++        return "[" + ", ".join(lines) + "]"
+ 
+     __repr__ = __str__
+ 
+diff --git a/pydicom/valuerep.py b/pydicom/valuerep.py
+--- a/pydicom/valuerep.py
++++ b/pydicom/valuerep.py
+@@ -603,8 +603,6 @@ def _encode_personname(components, encodings):
+ 
+ class PersonName3(object):
+     def __init__(self, val, encodings=None, original_string=None):
+-        # handle None `val` as empty string
+-        val = val or ''
+         if isinstance(val, PersonName3):
+             encodings = val.encodings
+             self.original_string = val.original_string
+@@ -614,6 +612,9 @@ def __init__(self, val, encodings=None, original_string=None):
+             self.original_string = val
+             self._components = None
+         else:
++            # handle None `val` as empty string
++            val = val or ''
++
+             # this is the decoded string - save the original string if
+             # available for easier writing back
+             self.original_string = original_string
+@@ -774,6 +775,12 @@ def formatted(self, format_str):
+         self._create_dict()
+         return format_str % self._dict
+ 
++    def __bool__(self):
++        if self.original_string is None:
++            return (self._components is not None and
++                    (len(self._components) > 1 or bool(self._components[0])))
++        return bool(self.original_string)
++
+ 
+ class PersonNameBase(object):
+     """Base class for Person Name classes"""

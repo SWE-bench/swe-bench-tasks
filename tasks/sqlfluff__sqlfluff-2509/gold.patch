@@ -1,0 +1,156 @@
+diff --git a/src/sqlfluff/core/linter/common.py b/src/sqlfluff/core/linter/common.py
+--- a/src/sqlfluff/core/linter/common.py
++++ b/src/sqlfluff/core/linter/common.py
+@@ -42,6 +42,7 @@ class RenderedFile(NamedTuple):
+     time_dict: Dict[str, float]
+     fname: str
+     encoding: str
++    source_str: str
+ 
+ 
+ class ParsedString(NamedTuple):
+@@ -65,6 +66,7 @@ class ParsedString(NamedTuple):
+     templated_file: TemplatedFile
+     config: FluffConfig
+     fname: str
++    source_str: str
+ 
+ 
+ class EnrichedFixPatch(NamedTuple):
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -26,7 +26,7 @@
+     SQLParseError,
+     SQLTemplaterSkipFile,
+ )
+-from sqlfluff.core.parser import Lexer, Parser
++from sqlfluff.core.parser import Lexer, Parser, RegexLexer
+ from sqlfluff.core.file_helpers import get_encoding
+ from sqlfluff.core.templaters import TemplatedFile
+ from sqlfluff.core.rules import get_ruleset
+@@ -343,7 +343,7 @@ def parse_rendered(
+         cls,
+         rendered: RenderedFile,
+         recurse: bool = True,
+-    ):
++    ) -> ParsedString:
+         """Parse a rendered file."""
+         t0 = time.monotonic()
+         violations = cast(List[SQLBaseError], rendered.templater_violations)
+@@ -382,6 +382,7 @@ def parse_rendered(
+             rendered.templated_file,
+             rendered.config,
+             rendered.fname,
++            rendered.source_str,
+         )
+ 
+     @classmethod
+@@ -400,7 +401,7 @@ def extract_ignore_from_comment(
+         return result
+ 
+     @classmethod
+-    def extract_ignore_mask(
++    def extract_ignore_mask_tree(
+         cls,
+         tree: BaseSegment,
+         rule_codes: List[str],
+@@ -419,6 +420,34 @@ def extract_ignore_mask(
+             linter_logger.info("Parsed noqa directives from file: %r", ignore_buff)
+         return ignore_buff, violations
+ 
++    @classmethod
++    def extract_ignore_mask_source(
++        cls,
++        source: str,
++        inline_comment_regex: RegexLexer,
++        rule_codes: List[str],
++    ) -> Tuple[List[NoQaDirective], List[SQLBaseError]]:
++        """Look for inline ignore comments and return NoQaDirectives.
++
++        Very similar to extract_ignore_mask_tree(), but can be run on raw source
++        (i.e. does not require the code to have parsed successfully).
++        """
++        ignore_buff: List[NoQaDirective] = []
++        violations: List[SQLBaseError] = []
++        for idx, line in enumerate(source.split("\n")):
++            match = inline_comment_regex.search(line) if line else None
++            if match:
++                ignore_entry = cls.parse_noqa(
++                    line[match[0] : match[1]], idx + 1, rule_codes
++                )
++                if isinstance(ignore_entry, SQLParseError):
++                    violations.append(ignore_entry)  # pragma: no cover
++                elif ignore_entry:
++                    ignore_buff.append(ignore_entry)
++        if ignore_buff:
++            linter_logger.info("Parsed noqa directives from file: %r", ignore_buff)
++        return ignore_buff, violations
++
+     @classmethod
+     def lint_fix_parsed(
+         cls,
+@@ -449,7 +478,7 @@ def lint_fix_parsed(
+         # Look for comment segments which might indicate lines to ignore.
+         if not config.get("disable_noqa"):
+             rule_codes = [r.code for r in rule_set]
+-            ignore_buff, ivs = cls.extract_ignore_mask(tree, rule_codes)
++            ignore_buff, ivs = cls.extract_ignore_mask_tree(tree, rule_codes)
+             all_linting_errors += ivs
+         else:
+             ignore_buff = []
+@@ -556,6 +585,21 @@ def lint_parsed(
+             # If no parsed tree, set to None
+             tree = None
+             ignore_buff = []
++            if not parsed.config.get("disable_noqa"):
++                # Templating and/or parsing have failed. Look for "noqa"
++                # comments (the normal path for identifying these comments
++                # requires access to the parse tree, and because of the failure,
++                # we don't have a parse tree).
++                ignore_buff, ignore_violations = cls.extract_ignore_mask_source(
++                    parsed.source_str,
++                    [
++                        lm
++                        for lm in parsed.config.get("dialect_obj").lexer_matchers
++                        if lm.name == "inline_comment"
++                    ][0],
++                    [r.code for r in rule_set],
++                )
++                violations += ignore_violations
+ 
+         # We process the ignore config here if appropriate
+         for violation in violations:
+@@ -649,7 +693,13 @@ def render_string(
+         time_dict = {"templating": time.monotonic() - t0}
+ 
+         return RenderedFile(
+-            templated_file, templater_violations, config, time_dict, fname, encoding
++            templated_file,
++            templater_violations,
++            config,
++            time_dict,
++            fname,
++            encoding,
++            in_str,
+         )
+ 
+     def render_file(self, fname: str, root_config: FluffConfig) -> RenderedFile:
+diff --git a/src/sqlfluff/core/templaters/jinja.py b/src/sqlfluff/core/templaters/jinja.py
+--- a/src/sqlfluff/core/templaters/jinja.py
++++ b/src/sqlfluff/core/templaters/jinja.py
+@@ -386,7 +386,13 @@ def process(
+                         "Unrecoverable failure in Jinja templating: {}. Have you "
+                         "configured your variables? "
+                         "https://docs.sqlfluff.com/en/latest/configuration.html"
+-                    ).format(err)
++                    ).format(err),
++                    # We don't have actual line number information, but specify
++                    # line 1 so users can ignore with "noqa" if they want. (The
++                    # default is line 0, which can't be ignored because it's not
++                    # a valid line number.)
++                    line_no=1,
++                    line_pos=1,
+                 )
+             )
+             return None, violations

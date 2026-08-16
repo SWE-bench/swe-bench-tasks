@@ -1,0 +1,11 @@
+name: SWE-Bench Verified
+description: SWE-bench Verified is a curated, human-annotated subset of 500 issues from the original SWE-bench, designed to accurately evaluate AI models on real-world software engineering tasks. It fixes issues in the original dataset by ensuring all tasks are solvable, well-defined, and properly tested by human developers.
+evaluation_framework: swe-bench
+
+tasks:
+  - id: swe_bench_%_resolved
+    config: default
+    split: test
+  - id: swe_bench_average_cost
+    config: default
+    split: test

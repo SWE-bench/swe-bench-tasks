@@ -1,0 +1,150 @@
+diff --git a/src/sqlfluff/cli/commands.py b/src/sqlfluff/cli/commands.py
+--- a/src/sqlfluff/cli/commands.py
++++ b/src/sqlfluff/cli/commands.py
+@@ -1356,7 +1356,7 @@ def render(
+             fname = path
+ 
+     # Get file specific config
+-    file_config.process_raw_file_for_config(raw_sql)
++    file_config.process_raw_file_for_config(raw_sql, fname)
+     rendered = lnt.render_string(raw_sql, fname, file_config, "utf8")
+ 
+     if rendered.templater_violations:
+diff --git a/src/sqlfluff/core/config.py b/src/sqlfluff/core/config.py
+--- a/src/sqlfluff/core/config.py
++++ b/src/sqlfluff/core/config.py
+@@ -34,6 +34,16 @@
+ ConfigElemType = Tuple[Tuple[str, ...], Any]
+ 
+ 
++ALLOWABLE_LAYOUT_CONFIG_KEYS = (
++    "spacing_before",
++    "spacing_after",
++    "spacing_within",
++    "line_position",
++    "align_within",
++    "align_scope",
++)
++
++
+ @dataclass
+ class _RemovedConfig:
+     old_path: Tuple[str, ...]
+@@ -501,13 +511,19 @@ def _incorporate_vals(ctx: dict, vals: List[ConfigElemType]) -> dict:
+     def _validate_configs(
+         configs: Iterable[ConfigElemType], file_path
+     ) -> List[ConfigElemType]:
+-        """Validate config elements against removed list."""
++        """Validate config elements.
++
++        We validate in two ways:
++        1. Are these config settings removed or deprecated.
++        2. Are these config elements in the layout section _valid_.
++        """
+         config_map = {cfg.old_path: cfg for cfg in REMOVED_CONFIGS}
+         # Materialise the configs into a list to we can iterate twice.
+         new_configs = list(configs)
+         defined_keys = {k for k, _ in new_configs}
+         validated_configs = []
+         for k, v in new_configs:
++            # First validate against the removed option list.
+             if k in config_map.keys():
+                 formatted_key = ":".join(k)
+                 removed_option = config_map[k]
+@@ -549,12 +565,37 @@ def _validate_configs(
+                 else:
+                     # Raise an error.
+                     raise SQLFluffUserError(
+-                        f"Config file {file_path} set an outdated config "
++                        f"Config file {file_path!r} set an outdated config "
+                         f"value {formatted_key}.\n\n{removed_option.warning}\n\n"
+                         "See https://docs.sqlfluff.com/en/stable/configuration.html"
+                         " for more details."
+                     )
+ 
++            # Second validate any layout configs for validity.
++            # NOTE: For now we don't check that the "type" is a valid one
++            # to reference, or that the values are valid. For the values,
++            # these are likely to be rejected by the layout routines at
++            # runtime. The last risk area is validating that the type is
++            # a valid one.
++            if k and k[0] == "layout":
++                # Check for:
++                # - Key length
++                # - Key values
++                if (
++                    # Key length must be 4
++                    (len(k) != 4)
++                    # Second value must (currently) be "type"
++                    or (k[1] != "type")
++                    # Last key value must be one of the allowable options.
++                    or (k[3] not in ALLOWABLE_LAYOUT_CONFIG_KEYS)
++                ):
++                    raise SQLFluffUserError(
++                        f"Config file {file_path!r} set an invalid `layout` option "
++                        f"value {':'.join(k)}.\n"
++                        "See https://docs.sqlfluff.com/en/stable/layout.html"
++                        "#configuring-layout for more details."
++                    )
++
+             validated_configs.append((k, v))
+         return validated_configs
+ 
+@@ -1094,7 +1135,7 @@ def iter_vals(self, cfg: Optional[dict] = None) -> Iterable[tuple]:
+                 for idnt, key, val in self.iter_vals(cfg=cfg[k]):
+                     yield (idnt + 1, key, val)
+ 
+-    def process_inline_config(self, config_line: str):
++    def process_inline_config(self, config_line: str, fname: str):
+         """Process an inline config command and update self."""
+         # Strip preceding comment marks
+         if config_line.startswith("--"):
+@@ -1108,19 +1149,23 @@ def process_inline_config(self, config_line: str):
+         config_line = config_line[9:].strip()
+         # Divide on colons
+         config_path = [elem.strip() for elem in config_line.split(":")]
++        config_val = (tuple(config_path[:-1]), config_path[-1])
++        # Validate the value
++        ConfigLoader._validate_configs([config_val], fname)
+         # Set the value
+-        self.set_value(config_path[:-1], config_path[-1])
++        self.set_value(*config_val)
+         # If the config is for dialect, initialise the dialect
+         if config_path[:-1] == ["dialect"]:
+             self._initialise_dialect(config_path[-1])
+ 
+-    def process_raw_file_for_config(self, raw_str: str):
++    def process_raw_file_for_config(self, raw_str: str, fname: str):
+         """Process a full raw file for inline config and update self."""
+         # Scan the raw file for config commands.
+         for raw_line in raw_str.splitlines():
+-            if raw_line.startswith("-- sqlfluff"):
++            # With or without a space.
++            if raw_line.startswith(("-- sqlfluff", "--sqlfluff")):
+                 # Found a in-file config command
+-                self.process_inline_config(raw_line)
++                self.process_inline_config(raw_line, fname)
+ 
+ 
+ class ProgressBarConfiguration:
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -141,7 +141,7 @@ def load_raw_file_and_config(
+         with open(fname, encoding=encoding, errors="backslashreplace") as target_file:
+             raw_file = target_file.read()
+         # Scan the raw file for config commands.
+-        file_config.process_raw_file_for_config(raw_file)
++        file_config.process_raw_file_for_config(raw_file, fname)
+         # Return the raw file and config
+         return raw_file, file_config, encoding
+ 
+@@ -897,7 +897,7 @@ def parse_string(
+         config = config or self.config
+ 
+         # Scan the raw file for config commands.
+-        config.process_raw_file_for_config(in_str)
++        config.process_raw_file_for_config(in_str, fname)
+         rendered = self.render_string(in_str, fname, config, encoding)
+         violations += rendered.templater_violations
+ 

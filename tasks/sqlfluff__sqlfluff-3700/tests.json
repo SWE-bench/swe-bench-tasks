@@ -1,0 +1,9 @@
+{
+  "FAIL_TO_PASS": [
+    "test/utils/analysis/test_select_crawler.py::test_select_crawler_constructor[select",
+    "test/utils/analysis/test_select_crawler.py::test_select_crawler_constructor[with",
+    "test/utils/analysis/test_select_crawler.py::test_select_crawler_constructor[\\n",
+    "test/utils/analysis/test_select_crawler.py::test_select_crawler_nested"
+  ],
+  "PASS_TO_PASS": []
+}

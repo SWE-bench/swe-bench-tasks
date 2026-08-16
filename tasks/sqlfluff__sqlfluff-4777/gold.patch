@@ -1,0 +1,336 @@
+diff --git a/src/sqlfluff/cli/commands.py b/src/sqlfluff/cli/commands.py
+--- a/src/sqlfluff/cli/commands.py
++++ b/src/sqlfluff/cli/commands.py
+@@ -693,12 +693,16 @@ def lint(
+ 
+ 
+ def do_fixes(
+-    result: LintingResult, formatter: Optional[OutputStreamFormatter] = None, **kwargs
++    result: LintingResult,
++    formatter: Optional[OutputStreamFormatter] = None,
++    fixed_file_suffix: str = "",
+ ):
+     """Actually do the fixes."""
+     if formatter and formatter.verbosity >= 0:
+         click.echo("Persisting Changes...")
+-    res = result.persist_changes(formatter=formatter, **kwargs)
++    res = result.persist_changes(
++        formatter=formatter, fixed_file_suffix=fixed_file_suffix
++    )
+     if all(res.values()):
+         if formatter and formatter.verbosity >= 0:
+             click.echo("Done. Please check your files to confirm.")
+@@ -774,12 +778,22 @@ def _paths_fix(
+         click.echo("==== finding fixable violations ====")
+     exit_code = EXIT_SUCCESS
+ 
++    if force and warn_force and formatter.verbosity >= 0:
++        click.echo(
++            f"{formatter.colorize('FORCE MODE', Color.red)}: " "Attempting fixes..."
++        )
++
+     with PathAndUserErrorHandler(formatter):
+         result: LintingResult = linter.lint_paths(
+             paths,
+             fix=True,
+             ignore_non_existent_files=False,
+             processes=processes,
++            # If --force is set, then apply the changes as we go rather
++            # than waiting until the end.
++            apply_fixes=force,
++            fixed_file_suffix=fixed_suffix,
++            fix_even_unparsable=fix_even_unparsable,
+         )
+ 
+     if not fix_even_unparsable:
+@@ -788,25 +802,14 @@ def _paths_fix(
+     # NB: We filter to linting violations here, because they're
+     # the only ones which can be potentially fixed.
+     num_fixable = result.num_violations(types=SQLLintError, fixable=True)
++
+     if num_fixable > 0:
+-        if formatter.verbosity >= 0:
++        if not force and formatter.verbosity >= 0:
+             click.echo("==== fixing violations ====")
++
+         click.echo(f"{num_fixable} " "fixable linting violations found")
+-        if force:
+-            if warn_force and formatter.verbosity >= 0:
+-                click.echo(
+-                    f"{formatter.colorize('FORCE MODE', Color.red)}: "
+-                    "Attempting fixes..."
+-                )
+-            success = do_fixes(
+-                result,
+-                formatter,
+-                types=SQLLintError,
+-                fixed_file_suffix=fixed_suffix,
+-            )
+-            if not success:
+-                sys.exit(EXIT_FAIL)  # pragma: no cover
+-        else:
++
++        if not force:
+             click.echo(
+                 "Are you sure you wish to attempt to fix these? [Y/n] ", nl=False
+             )
+@@ -818,7 +821,6 @@ def _paths_fix(
+                 success = do_fixes(
+                     result,
+                     formatter,
+-                    types=SQLLintError,
+                     fixed_file_suffix=fixed_suffix,
+                 )
+                 if not success:
+@@ -886,7 +888,9 @@ def _paths_fix(
+     is_flag=True,
+     help=(
+         "Skip the confirmation prompt and go straight to applying "
+-        "fixes. **Use this with caution.**"
++        "fixes. Fixes will also be applied file by file, during the "
++        "linting process, rather than waiting until all files are "
++        "linted before fixing. **Use this with caution.**"
+     ),
+ )
+ @click.option(
+diff --git a/src/sqlfluff/core/linter/linted_dir.py b/src/sqlfluff/core/linter/linted_dir.py
+--- a/src/sqlfluff/core/linter/linted_dir.py
++++ b/src/sqlfluff/core/linter/linted_dir.py
+@@ -106,7 +106,7 @@ def stats(self) -> Dict[str, int]:
+         )
+ 
+     def persist_changes(
+-        self, formatter: Any = None, fixed_file_suffix: str = "", **kwargs
++        self, formatter: Any = None, fixed_file_suffix: str = ""
+     ) -> Dict[str, Union[bool, str]]:
+         """Persist changes to files in the given path.
+ 
+@@ -115,19 +115,9 @@ def persist_changes(
+         # Run all the fixes for all the files and return a dict
+         buffer: Dict[str, Union[bool, str]] = {}
+         for file in self.files:
+-            if file.num_violations(fixable=True, **kwargs) > 0:
+-                buffer[file.path] = file.persist_tree(suffix=fixed_file_suffix)
+-                result: Union[bool, str]
+-                if buffer[file.path] is True:
+-                    result = "FIXED"
+-                else:  # pragma: no cover
+-                    result = buffer[file.path]
+-            else:  # pragma: no cover TODO?
+-                buffer[file.path] = True
+-                result = "SKIP"
+-
+-            if formatter:
+-                formatter.dispatch_persist_filename(filename=file.path, result=result)
++            buffer[file.path] = file.persist_tree(
++                suffix=fixed_file_suffix, formatter=formatter
++            )
+         return buffer
+ 
+     @property
+diff --git a/src/sqlfluff/core/linter/linted_file.py b/src/sqlfluff/core/linter/linted_file.py
+--- a/src/sqlfluff/core/linter/linted_file.py
++++ b/src/sqlfluff/core/linter/linted_file.py
+@@ -28,6 +28,8 @@
+ from sqlfluff.core.errors import (
+     SQLBaseError,
+     SQLLintError,
++    SQLParseError,
++    SQLTemplaterError,
+     CheckTuple,
+ )
+ from sqlfluff.core.templaters import TemplatedFile, RawFileSlice
+@@ -40,6 +42,8 @@
+ # Instantiate the linter logger
+ linter_logger: logging.Logger = logging.getLogger("sqlfluff.linter")
+ 
++TMP_PRS_ERROR_TYPES = (SQLTemplaterError, SQLParseError)
++
+ 
+ @dataclass
+ class FileTimings:
+@@ -556,19 +560,46 @@ def _build_up_fixed_source_string(
+                 str_buff += raw_source_string[source_slice]
+         return str_buff
+ 
+-    def persist_tree(self, suffix: str = "") -> bool:
++    def persist_tree(self, suffix: str = "", formatter: Any = None) -> bool:
+         """Persist changes to the given path."""
+-        write_buff, success = self.fix_string()
+-
+-        if success:
+-            fname = self.path
+-            # If there is a suffix specified, then use it.s
+-            if suffix:
+-                root, ext = os.path.splitext(fname)
+-                fname = root + suffix + ext
+-            self._safe_create_replace_file(self.path, fname, write_buff, self.encoding)
++        if self.num_violations(fixable=True) > 0:
++            write_buff, success = self.fix_string()
++
++            if success:
++                fname = self.path
++                # If there is a suffix specified, then use it.s
++                if suffix:
++                    root, ext = os.path.splitext(fname)
++                    fname = root + suffix + ext
++                self._safe_create_replace_file(
++                    self.path, fname, write_buff, self.encoding
++                )
++                result_label = "FIXED"
++            else:  # pragma: no cover
++                result_label = "FAIL"
++        else:
++            result_label = "SKIP"
++            success = True
++
++        if formatter:
++            formatter.dispatch_persist_filename(filename=self.path, result=result_label)
++
+         return success
+ 
++    def discard_fixes_if_tmp_or_prs_errors(self) -> None:
++        """Discard lint fixes for files with templating or parse errors."""
++        num_errors = self.num_violations(
++            types=TMP_PRS_ERROR_TYPES,
++            filter_ignore=False,
++            filter_warning=False,
++        )
++        if num_errors:
++            # File has errors. Discard all the SQLLintError fixes:
++            # they are potentially unsafe.
++            for violation in self.violations:
++                if isinstance(violation, SQLLintError):
++                    violation.fixes = []
++
+     @staticmethod
+     def _safe_create_replace_file(
+         input_path: str, output_path: str, write_buff: str, encoding: str
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -48,7 +48,11 @@
+     NoQaDirective,
+     RenderedFile,
+ )
+-from sqlfluff.core.linter.linted_file import LintedFile, FileTimings
++from sqlfluff.core.linter.linted_file import (
++    LintedFile,
++    FileTimings,
++    TMP_PRS_ERROR_TYPES,
++)
+ from sqlfluff.core.linter.linted_dir import LintedDir
+ from sqlfluff.core.linter.linting_result import LintingResult
+ 
+@@ -1149,6 +1153,9 @@ def lint_paths(
+         ignore_non_existent_files: bool = False,
+         ignore_files: bool = True,
+         processes: Optional[int] = None,
++        apply_fixes: bool = False,
++        fixed_file_suffix: str = "",
++        fix_even_unparsable: bool = False,
+     ) -> LintingResult:
+         """Lint an iterable of paths."""
+         # If no paths specified - assume local
+@@ -1204,6 +1211,18 @@ def lint_paths(
+                 linter_logger.error("Fatal linting error. Halting further linting.")
+                 break
+ 
++            # If we're applying fixes, then do that here.
++            if apply_fixes:
++                num_tmp_prs_errors = linted_file.num_violations(
++                    types=TMP_PRS_ERROR_TYPES,
++                    filter_ignore=False,
++                    filter_warning=False,
++                )
++                if fix_even_unparsable or num_tmp_prs_errors == 0:
++                    linted_file.persist_tree(
++                        suffix=fixed_file_suffix, formatter=self.formatter
++                    )
++
+             # Progress bar for files is rendered only when there is more than one file.
+             # Additionally, as it's updated after each loop, we need to get file name
+             # from the next loop. This is why `enumerate` starts with `1` and there
+diff --git a/src/sqlfluff/core/linter/linting_result.py b/src/sqlfluff/core/linter/linting_result.py
+--- a/src/sqlfluff/core/linter/linting_result.py
++++ b/src/sqlfluff/core/linter/linting_result.py
+@@ -18,9 +18,6 @@
+ 
+ from sqlfluff.core.errors import (
+     CheckTuple,
+-    SQLLintError,
+-    SQLParseError,
+-    SQLTemplaterError,
+ )
+ 
+ from sqlfluff.core.timing import TimingSummary, RuleTimingSummary
+@@ -28,6 +25,7 @@
+ # Classes needed only for type checking
+ from sqlfluff.core.parser.segments.base import BaseSegment
+ from sqlfluff.core.linter.linted_dir import LintedDir
++from sqlfluff.core.linter.linted_file import TMP_PRS_ERROR_TYPES
+ 
+ 
+ class LintingResult:
+@@ -237,11 +235,13 @@ def as_records(self) -> List[dict]:
+             if violations
+         ]
+ 
+-    def persist_changes(self, formatter, **kwargs) -> dict:
++    def persist_changes(self, formatter, fixed_file_suffix: str = "") -> dict:
+         """Run all the fixes for all the files and return a dict."""
+         return self.combine_dicts(
+             *(
+-                path.persist_changes(formatter=formatter, **kwargs)
++                path.persist_changes(
++                    formatter=formatter, fixed_file_suffix=fixed_file_suffix
++                )
+                 for path in self.paths
+             )
+         )
+@@ -256,37 +256,29 @@ def tree(self) -> Optional[BaseSegment]:  # pragma: no cover
+             )
+         return self.paths[0].tree
+ 
+-    TMP_PRS_ERROR_TYPES = (SQLTemplaterError, SQLParseError)
+-
+     def count_tmp_prs_errors(self) -> Tuple[int, int]:
+         """Count templating or parse errors before and after filtering."""
+         total_errors = self.num_violations(
+-            types=self.TMP_PRS_ERROR_TYPES, filter_ignore=False, filter_warning=False
++            types=TMP_PRS_ERROR_TYPES,
++            filter_ignore=False,
++            filter_warning=False,
+         )
+         num_filtered_errors = 0
+         for linted_dir in self.paths:
+             for linted_file in linted_dir.files:
+                 num_filtered_errors += linted_file.num_violations(
+-                    types=self.TMP_PRS_ERROR_TYPES
++                    types=TMP_PRS_ERROR_TYPES
+                 )
+         return total_errors, num_filtered_errors
+ 
+     def discard_fixes_for_lint_errors_in_files_with_tmp_or_prs_errors(self) -> None:
+         """Discard lint fixes for files with templating or parse errors."""
+         total_errors = self.num_violations(
+-            types=self.TMP_PRS_ERROR_TYPES, filter_ignore=False, filter_warning=False
++            types=TMP_PRS_ERROR_TYPES,
++            filter_ignore=False,
++            filter_warning=False,
+         )
+         if total_errors:
+             for linted_dir in self.paths:
+                 for linted_file in linted_dir.files:
+-                    num_errors = linted_file.num_violations(
+-                        types=self.TMP_PRS_ERROR_TYPES,
+-                        filter_ignore=False,
+-                        filter_warning=False,
+-                    )
+-                    if num_errors:
+-                        # File has errors. Discard all the SQLLintError fixes:
+-                        # they are potentially unsafe.
+-                        for violation in linted_file.violations:
+-                            if isinstance(violation, SQLLintError):
+-                                violation.fixes = []
++                    linted_file.discard_fixes_if_tmp_or_prs_errors()

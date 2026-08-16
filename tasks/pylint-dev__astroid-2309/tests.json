@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/brain/test_typing.py::test_infer_typevar"
+  ],
+  "PASS_TO_PASS": []
+}

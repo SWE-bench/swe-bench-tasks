@@ -1,0 +1,13 @@
+base_commit: b40a0f4e33823e6d0f341f7e8684e359a99060d1
+created_at: '2019-08-21T15:45:13Z'
+datasets:
+- SWE-bench/SWE-bench
+- SWE-bench/SWE-bench_Lite
+environment_setup_commit: 8b3a32614fd4a74e93e9a63a042e74c1fea34466
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.marshmallow-code_1776_marshmallow-1359:latest
+instance_id: marshmallow-code__marshmallow-1359
+log_parser: parse_log_marshmallow
+repo: marshmallow-code/marshmallow
+split: dev
+version: '3.0'

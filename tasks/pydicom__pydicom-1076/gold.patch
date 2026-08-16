@@ -1,0 +1,24 @@
+diff --git a/pydicom/filewriter.py b/pydicom/filewriter.py
+--- a/pydicom/filewriter.py
++++ b/pydicom/filewriter.py
+@@ -1004,7 +1004,7 @@ def dcmwrite(filename, dataset, write_like_original=True):
+     'LT': (write_text, None),
+     'OB': (write_OBvalue, None),
+     'OD': (write_OWvalue, None),
+-    'OF': (write_numbers, 'f'),
++    'OF': (write_OWvalue, None),
+     'OL': (write_OWvalue, None),
+     'OW': (write_OWvalue, None),
+     'OV': (write_OWvalue, None),
+diff --git a/pydicom/values.py b/pydicom/values.py
+--- a/pydicom/values.py
++++ b/pydicom/values.py
+@@ -634,7 +634,7 @@ def convert_value(VR, raw_data_element, encodings=None):
+     'LT': convert_single_string,
+     'OB': convert_OBvalue,
+     'OD': convert_OBvalue,
+-    'OF': (convert_numbers, 'f'),
++    'OF': convert_OWvalue,
+     'OL': convert_OBvalue,
+     'OW': convert_OWvalue,
+     'OV': convert_OVvalue,

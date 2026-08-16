@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_exception"
+  ],
+  "PASS_TO_PASS": []
+}

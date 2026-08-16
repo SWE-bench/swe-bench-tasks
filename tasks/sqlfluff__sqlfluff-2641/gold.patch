@@ -1,0 +1,102 @@
+diff --git a/src/sqlfluff/core/rules/analysis/select_crawler.py b/src/sqlfluff/core/rules/analysis/select_crawler.py
+--- a/src/sqlfluff/core/rules/analysis/select_crawler.py
++++ b/src/sqlfluff/core/rules/analysis/select_crawler.py
+@@ -129,6 +129,7 @@ class Query:
+     parent: Optional["Query"] = field(default=None)
+     # Children (could be CTE, subselect, or other).
+     children: List["Query"] = field(default_factory=list)
++    cte_name_segment: Optional[BaseSegment] = field(default=None)
+ 
+     def lookup_cte(self, name: str, pop: bool = True) -> Optional["Query"]:
+         """Look up a CTE by name, in the current or any parent scope."""
+@@ -233,7 +234,7 @@ def finish_segment():
+ 
+         # Stores the last CTE name we saw, so we can associate it with the
+         # corresponding Query.
+-        cte_name = None
++        cte_name_segment: Optional[BaseSegment] = None
+ 
+         # Visit segment and all its children
+         for event, path in SelectCrawler.visit_segments(segment):
+@@ -273,10 +274,14 @@ def finish_segment():
+                                 append_query(query)
+                     else:
+                         # We're processing a "with" statement.
+-                        if cte_name:
++                        if cte_name_segment:
+                             # If we have a CTE name, this is the Query for that
+                             # name.
+-                            query = self.query_class(QueryType.Simple, dialect)
++                            query = self.query_class(
++                                QueryType.Simple,
++                                dialect,
++                                cte_name_segment=cte_name_segment,
++                            )
+                             if path[-1].is_type("select_statement", "values_clause"):
+                                 # Add to the Query object we just created.
+                                 query.selectables.append(Selectable(path[-1], dialect))
+@@ -286,8 +291,8 @@ def finish_segment():
+                                 # to the Query later when we encounter those
+                                 # child segments.
+                                 pass
+-                            query_stack[-1].ctes[cte_name] = query
+-                            cte_name = None
++                            query_stack[-1].ctes[cte_name_segment.raw] = query
++                            cte_name_segment = None
+                             append_query(query)
+                         else:
+                             # There's no CTE name, so we're probably processing
+@@ -313,13 +318,13 @@ def finish_segment():
+                 elif path[-1].is_type("with_compound_statement"):
+                     # Beginning a "with" statement, i.e. a block of CTEs.
+                     query = self.query_class(QueryType.WithCompound, dialect)
+-                    if cte_name:
+-                        query_stack[-1].ctes[cte_name] = query
+-                        cte_name = None
++                    if cte_name_segment:
++                        query_stack[-1].ctes[cte_name_segment.raw] = query
++                        cte_name_segment = None
+                     append_query(query)
+                 elif path[-1].is_type("common_table_expression"):
+                     # This is a "<<cte name>> AS". Grab the name for later.
+-                    cte_name = path[-1].segments[0].raw
++                    cte_name_segment = path[-1].segments[0]
+             elif event == "end":
+                 finish_segment()
+ 
+diff --git a/src/sqlfluff/rules/L045.py b/src/sqlfluff/rules/L045.py
+--- a/src/sqlfluff/rules/L045.py
++++ b/src/sqlfluff/rules/L045.py
+@@ -1,7 +1,5 @@
+ """Implementation of Rule L045."""
+-from typing import Optional
+-
+-from sqlfluff.core.rules.base import BaseRule, LintResult, RuleContext
++from sqlfluff.core.rules.base import BaseRule, EvalResultType, LintResult, RuleContext
+ from sqlfluff.core.rules.analysis.select_crawler import Query, SelectCrawler
+ 
+ 
+@@ -49,12 +47,21 @@ def _visit_sources(cls, query: Query):
+                 if isinstance(source, Query):
+                     cls._visit_sources(source)
+ 
+-    def _eval(self, context: RuleContext) -> Optional[LintResult]:
++    def _eval(self, context: RuleContext) -> EvalResultType:
+         if context.segment.is_type("statement"):
+             crawler = SelectCrawler(context.segment, context.dialect)
+             if crawler.query_tree:
+                 # Begin analysis at the final, outer query (key=None).
+                 self._visit_sources(crawler.query_tree)
+                 if crawler.query_tree.ctes:
+-                    return LintResult(anchor=context.segment)
++                    return [
++                        LintResult(
++                            anchor=query.cte_name_segment,
++                            description=f"Query defines CTE "
++                            f'"{query.cte_name_segment.raw}" '
++                            f"but does not use it.",
++                        )
++                        for query in crawler.query_tree.ctes.values()
++                        if query.cte_name_segment
++                    ]
+         return None

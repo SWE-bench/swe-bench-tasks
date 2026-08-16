@@ -1,0 +1,165 @@
+diff --git a/pvlib/location.py b/pvlib/location.py
+--- a/pvlib/location.py
++++ b/pvlib/location.py
+@@ -5,11 +5,13 @@
+ # Will Holmgren, University of Arizona, 2014-2016.
+ 
+ import datetime
++import warnings
+ 
+ import pandas as pd
+ import pytz
+ 
+ from pvlib import solarposition, clearsky, atmosphere, irradiance
++from pvlib._deprecation import pvlibDeprecationWarning
+ 
+ 
+ class Location:
+@@ -48,10 +50,6 @@ class Location:
+     name : None or string, default None.
+         Sets the name attribute of the Location object.
+ 
+-    **kwargs
+-        Arbitrary keyword arguments.
+-        Included for compatibility, but not used.
+-
+     See also
+     --------
+     pvlib.pvsystem.PVSystem
+@@ -82,6 +80,12 @@ def __init__(self, latitude, longitude, tz='UTC', altitude=0,
+ 
+         self.name = name
+ 
++        if kwargs:
++            warnings.warn(
++                'Arbitrary Location kwargs are deprecated and will be '
++                'removed in v0.9', pvlibDeprecationWarning
++            )
++
+     def __repr__(self):
+         attrs = ['name', 'latitude', 'longitude', 'altitude', 'tz']
+         return ('Location: \n  ' + '\n  '.join(
+diff --git a/pvlib/modelchain.py b/pvlib/modelchain.py
+--- a/pvlib/modelchain.py
++++ b/pvlib/modelchain.py
+@@ -333,10 +333,6 @@ class ModelChain:
+ 
+     name: None or str, default None
+         Name of ModelChain instance.
+-
+-    **kwargs
+-        Arbitrary keyword arguments. Included for compatibility, but not
+-        used.
+     """
+ 
+     def __init__(self, system, location,
+@@ -372,6 +368,12 @@ def __init__(self, system, location,
+         self.times = None
+         self.solar_position = None
+ 
++        if kwargs:
++            warnings.warn(
++                'Arbitrary ModelChain kwargs are deprecated and will be '
++                'removed in v0.9', pvlibDeprecationWarning
++            )
++
+     @classmethod
+     def with_pvwatts(cls, system, location,
+                      orientation_strategy=None,
+diff --git a/pvlib/pvsystem.py b/pvlib/pvsystem.py
+--- a/pvlib/pvsystem.py
++++ b/pvlib/pvsystem.py
+@@ -79,9 +79,6 @@ class PVSystem:
+     :py:class:`~pvlib.modelchain.ModelChain`
+     objects.
+ 
+-    See the :py:class:`LocalizedPVSystem` class for an object model that
+-    describes an installed PV system.
+-
+     The class supports basic system topologies consisting of:
+ 
+         * `N` total modules arranged in series
+@@ -164,7 +161,6 @@ class PVSystem:
+     --------
+     pvlib.location.Location
+     pvlib.tracking.SingleAxisTracker
+-    pvlib.pvsystem.LocalizedPVSystem
+     """
+ 
+     def __init__(self,
+@@ -220,6 +216,12 @@ def __init__(self,
+ 
+         self.name = name
+ 
++        if kwargs:
++            warnings.warn(
++                'Arbitrary PVSystem kwargs are deprecated and will be '
++                'removed in v0.9', pvlibDeprecationWarning
++            )
++
+     def __repr__(self):
+         attrs = ['name', 'surface_tilt', 'surface_azimuth', 'module',
+                  'inverter', 'albedo', 'racking_model', 'module_type',
+@@ -819,9 +821,12 @@ def pvwatts_ac(self, pdc):
+         return inverter.pvwatts(pdc, self.inverter_parameters['pdc0'],
+                                 **kwargs)
+ 
++    @deprecated('0.8', alternative='PVSystem, Location, and ModelChain',
++                name='PVSystem.localize', removal='0.9')
+     def localize(self, location=None, latitude=None, longitude=None,
+                  **kwargs):
+-        """Creates a LocalizedPVSystem object using this object
++        """
++        Creates a LocalizedPVSystem object using this object
+         and location data. Must supply either location object or
+         latitude, longitude, and any location kwargs
+ 
+@@ -843,6 +848,8 @@ def localize(self, location=None, latitude=None, longitude=None,
+         return LocalizedPVSystem(pvsystem=self, location=location)
+ 
+ 
++@deprecated('0.8', alternative='PVSystem, Location, and ModelChain',
++            name='LocalizedPVSystem', removal='0.9')
+ class LocalizedPVSystem(PVSystem, Location):
+     """
+     The LocalizedPVSystem class defines a standard set of installed PV
+diff --git a/pvlib/tracking.py b/pvlib/tracking.py
+--- a/pvlib/tracking.py
++++ b/pvlib/tracking.py
+@@ -6,6 +6,7 @@
+ from pvlib.pvsystem import PVSystem
+ from pvlib.location import Location
+ from pvlib import irradiance, atmosphere
++from pvlib._deprecation import deprecated
+ 
+ 
+ class SingleAxisTracker(PVSystem):
+@@ -55,6 +56,9 @@ class SingleAxisTracker(PVSystem):
+         :func:`~pvlib.tracking.calc_cross_axis_tilt` to calculate
+         `cross_axis_tilt`. [degrees]
+ 
++    **kwargs
++        Passed to :py:class:`~pvlib.pvsystem.PVSystem`.
++
+     See also
+     --------
+     pvlib.tracking.singleaxis
+@@ -112,6 +116,9 @@ def singleaxis(self, apparent_zenith, apparent_azimuth):
+ 
+         return tracking_data
+ 
++    @deprecated('0.8',
++                alternative='SingleAxisTracker, Location, and ModelChain',
++                name='SingleAxisTracker.localize', removal='0.9')
+     def localize(self, location=None, latitude=None, longitude=None,
+                  **kwargs):
+         """
+@@ -232,6 +239,8 @@ def get_irradiance(self, surface_tilt, surface_azimuth,
+                                                **kwargs)
+ 
+ 
++@deprecated('0.8', alternative='SingleAxisTracker, Location, and ModelChain',
++            name='LocalizedSingleAxisTracker', removal='0.9')
+ class LocalizedSingleAxisTracker(SingleAxisTracker, Location):
+     """
+     The :py:class:`~pvlib.tracking.LocalizedSingleAxisTracker` class defines a

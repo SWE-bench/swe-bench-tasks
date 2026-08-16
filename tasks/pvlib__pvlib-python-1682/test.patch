@@ -1,0 +1,82 @@
+diff --git a/pvlib/tests/bifacial/test_infinite_sheds.py b/pvlib/tests/bifacial/test_infinite_sheds.py
+--- a/pvlib/tests/bifacial/test_infinite_sheds.py
++++ b/pvlib/tests/bifacial/test_infinite_sheds.py
+@@ -42,7 +42,8 @@ def test_system():
+     return syst, pts, vfs_ground_sky
+ 
+ 
+-def test__vf_ground_sky_integ(test_system):
++@pytest.mark.parametrize("vectorize", [True, False])
++def test__vf_ground_sky_integ(test_system, vectorize):
+     ts, pts, vfs_gnd_sky = test_system
+     # pass rotation here since max_rows=1 for the hand-solved case in
+     # the fixture test_system, which means the ground-to-sky view factor
+@@ -50,7 +51,7 @@ def test__vf_ground_sky_integ(test_system):
+     vf_integ = infinite_sheds._vf_ground_sky_integ(
+         ts['rotation'], ts['surface_azimuth'],
+         ts['gcr'], ts['height'], ts['pitch'],
+-        max_rows=1, npoints=3)
++        max_rows=1, npoints=3, vectorize=vectorize)
+     expected_vf_integ = np.trapz(vfs_gnd_sky, pts)
+     assert np.isclose(vf_integ, expected_vf_integ, rtol=0.1)
+ 
+@@ -262,7 +263,8 @@ def test__backside_tilt():
+     assert np.allclose(back_az, np.array([0., 330., 90., 180.]))
+ 
+ 
+-def test_get_irradiance():
++@pytest.mark.parametrize("vectorize", [True, False])
++def test_get_irradiance(vectorize):
+     # singleton inputs
+     solar_zenith = 0.
+     solar_azimuth = 180.
+@@ -282,7 +284,7 @@ def test_get_irradiance():
+         surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+         gcr, height, pitch, ghi, dhi, dni, albedo, iam_front, iam_back,
+         bifaciality=0.8, shade_factor=-0.02, transmission_factor=0,
+-        npoints=npoints)
++        npoints=npoints, vectorize=vectorize)
+     expected_front_diffuse = np.array([300.])
+     expected_front_direct = np.array([700.])
+     expected_front_global = expected_front_diffuse + expected_front_direct
+@@ -300,11 +302,11 @@ def test_get_irradiance():
+         surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+         gcr, height, pitch, ghi, dhi, dni, albedo, iam_front, iam_back,
+         bifaciality=0.8, shade_factor=-0.02, transmission_factor=0,
+-        npoints=npoints)
++        npoints=npoints, vectorize=vectorize)
+     result_front = infinite_sheds.get_irradiance_poa(
+         surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+         gcr, height, pitch, ghi, dhi, dni,
+-        albedo, iam=iam_front)
++        albedo, iam=iam_front, vectorize=vectorize)
+     assert isinstance(result, pd.DataFrame)
+     expected_poa_global = pd.Series(
+         [1000., 500., result_front['poa_global'][2] * (1 + 0.8 * 0.98),
+diff --git a/pvlib/tests/bifacial/test_utils.py b/pvlib/tests/bifacial/test_utils.py
+--- a/pvlib/tests/bifacial/test_utils.py
++++ b/pvlib/tests/bifacial/test_utils.py
+@@ -35,7 +35,7 @@ def test_system_fixed_tilt():
+     c22 = (-2 - sqr3) / np.sqrt(1.25**2 + (2 + sqr3)**2)  # right edge row 0
+     c23 = (0 - sqr3) / np.sqrt(1.25**2 + (0 - sqr3)**2)  # right edge row 1
+     vf_2 = 0.5 * (c23 - c22 + c21 - c20)  # vf at point 1
+-    vfs_ground_sky = np.array([vf_0, vf_1, vf_2])
++    vfs_ground_sky = np.array([[vf_0], [vf_1], [vf_2]])
+     return syst, pts, vfs_ground_sky
+ 
+ 
+@@ -79,10 +79,10 @@ def test__unshaded_ground_fraction(
+ def test__vf_ground_sky_2d(test_system_fixed_tilt):
+     # vector input
+     ts, pts, vfs_gnd_sky = test_system_fixed_tilt
+-    vfs, _ = utils._vf_ground_sky_2d(pts, ts['rotation'], ts['gcr'],
+-                                     ts['pitch'], ts['height'], max_rows=1)
++    vfs = utils._vf_ground_sky_2d(pts, ts['rotation'], ts['gcr'],
++                                  ts['pitch'], ts['height'], max_rows=1)
+     assert np.allclose(vfs, vfs_gnd_sky, rtol=0.1)  # middle point vf is off
+     # test with singleton x
+-    vf, _ = utils._vf_ground_sky_2d(pts[0], ts['rotation'], ts['gcr'],
+-                                    ts['pitch'], ts['height'], max_rows=1)
++    vf = utils._vf_ground_sky_2d(pts[0], ts['rotation'], ts['gcr'],
++                                 ts['pitch'], ts['height'], max_rows=1)
+     assert np.isclose(vf, vfs_gnd_sky[0])

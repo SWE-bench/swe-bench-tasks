@@ -1,0 +1,97 @@
+diff --git a/pvlib/modelchain.py b/pvlib/modelchain.py
+--- a/pvlib/modelchain.py
++++ b/pvlib/modelchain.py
+@@ -323,9 +323,9 @@ class ModelChain:
+         as the first argument to a user-defined function.
+ 
+     temperature_model: None, str or function, default None
+-        Valid strings are 'sapm', 'pvsyst', and 'faiman'. The ModelChain
+-        instance will be passed as the first argument to a user-defined
+-        function.
++        Valid strings are 'sapm', 'pvsyst', 'faiman', and 'fuentes'.
++        The ModelChain instance will be passed as the first argument to a
++        user-defined function.
+ 
+     losses_model: str or function, default 'no_loss'
+         Valid strings are 'pvwatts', 'no_loss'. The ModelChain instance
+@@ -866,6 +866,8 @@ def temperature_model(self, model):
+                 self._temperature_model = self.pvsyst_temp
+             elif model == 'faiman':
+                 self._temperature_model = self.faiman_temp
++            elif model == 'fuentes':
++                self._temperature_model = self.fuentes_temp
+             else:
+                 raise ValueError(model + ' is not a valid temperature model')
+             # check system.temperature_model_parameters for consistency
+@@ -891,6 +893,8 @@ def infer_temperature_model(self):
+             return self.pvsyst_temp
+         elif {'u0', 'u1'} <= params:
+             return self.faiman_temp
++        elif {'noct_installed'} <= params:
++            return self.fuentes_temp
+         else:
+             raise ValueError('could not infer temperature model from '
+                              'system.temperature_module_parameters {}.'
+@@ -914,6 +918,12 @@ def faiman_temp(self):
+             self.weather['wind_speed'])
+         return self
+ 
++    def fuentes_temp(self):
++        self.cell_temperature = self.system.fuentes_celltemp(
++            self.total_irrad['poa_global'], self.weather['temp_air'],
++            self.weather['wind_speed'])
++        return self
++
+     @property
+     def losses_model(self):
+         return self._losses_model
+diff --git a/pvlib/pvsystem.py b/pvlib/pvsystem.py
+--- a/pvlib/pvsystem.py
++++ b/pvlib/pvsystem.py
+@@ -609,6 +609,46 @@ def faiman_celltemp(self, poa_global, temp_air, wind_speed=1.0):
+         return temperature.faiman(poa_global, temp_air, wind_speed,
+                                   **kwargs)
+ 
++    def fuentes_celltemp(self, poa_global, temp_air, wind_speed):
++        """
++        Use :py:func:`temperature.fuentes` to calculate cell temperature.
++
++        Parameters
++        ----------
++        poa_global : pandas Series
++            Total incident irradiance [W/m^2]
++
++        temp_air : pandas Series
++            Ambient dry bulb temperature [C]
++
++        wind_speed : pandas Series
++            Wind speed [m/s]
++
++        Returns
++        -------
++        temperature_cell : pandas Series
++            The modeled cell temperature [C]
++
++        Notes
++        -----
++        The Fuentes thermal model uses the module surface tilt for convection
++        modeling. The SAM implementation of PVWatts hardcodes the surface tilt
++        value at 30 degrees, ignoring whatever value is used for irradiance
++        transposition. This method defaults to using ``self.surface_tilt``, but
++        if you want to match the PVWatts behavior, you can override it by
++        including a ``surface_tilt`` value in ``temperature_model_parameters``.
++        """
++        # default to using the PVSystem attribute, but allow user to
++        # override with a custom surface_tilt value
++        kwargs = {'surface_tilt': self.surface_tilt}
++        temp_model_kwargs = _build_kwargs([
++            'noct_installed', 'module_height', 'wind_height', 'emissivity',
++            'absorption', 'surface_tilt', 'module_width', 'module_length'],
++            self.temperature_model_parameters)
++        kwargs.update(temp_model_kwargs)
++        return temperature.fuentes(poa_global, temp_air, wind_speed,
++                                   **kwargs)
++
+     def first_solar_spectral_loss(self, pw, airmass_absolute):
+ 
+         """

@@ -1,0 +1,45 @@
+diff --git a/pvlib/tests/test_pvsystem.py b/pvlib/tests/test_pvsystem.py
+--- a/pvlib/tests/test_pvsystem.py
++++ b/pvlib/tests/test_pvsystem.py
+@@ -2422,6 +2422,15 @@ def test_SingleAxisTrackerMount_get_orientation(single_axis_tracker_mount):
+         assert actual[key] == pytest.approx(expected_value), err_msg
+ 
+ 
++def test_SingleAxisTrackerMount_get_orientation_asymmetric_max():
++    mount = pvsystem.SingleAxisTrackerMount(max_angle=(-30, 45))
++    expected = {'surface_tilt': [45, 30], 'surface_azimuth': [90, 270]}
++    actual = mount.get_orientation([60, 60], [90, 270])
++    for key, expected_value in expected.items():
++        err_msg = f"{key} value incorrect"
++        assert actual[key] == pytest.approx(expected_value), err_msg
++
++
+ def test_dc_ohms_from_percent():
+     expected = .1425
+     out = pvsystem.dc_ohms_from_percent(38, 8, 3, 1, 1)
+diff --git a/pvlib/tests/test_tracking.py b/pvlib/tests/test_tracking.py
+--- a/pvlib/tests/test_tracking.py
++++ b/pvlib/tests/test_tracking.py
+@@ -151,6 +151,22 @@ def test_max_angle():
+     assert_frame_equal(expect, tracker_data)
+ 
+ 
++def test_min_angle():
++    apparent_zenith = pd.Series([60])
++    apparent_azimuth = pd.Series([270])
++    tracker_data = tracking.singleaxis(apparent_zenith, apparent_azimuth,
++                                       axis_tilt=0, axis_azimuth=0,
++                                       max_angle=(-45, 50), backtrack=True,
++                                       gcr=2.0/7.0)
++
++    expect = pd.DataFrame({'aoi': 15, 'surface_azimuth': 270,
++                           'surface_tilt': 45, 'tracker_theta': -45},
++                          index=[0], dtype=np.float64)
++    expect = expect[SINGLEAXIS_COL_ORDER]
++
++    assert_frame_equal(expect, tracker_data)
++
++
+ def test_backtrack():
+     apparent_zenith = pd.Series([80])
+     apparent_azimuth = pd.Series([90])

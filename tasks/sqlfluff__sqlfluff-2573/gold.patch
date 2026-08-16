@@ -1,0 +1,78 @@
+diff --git a/src/sqlfluff/core/config.py b/src/sqlfluff/core/config.py
+--- a/src/sqlfluff/core/config.py
++++ b/src/sqlfluff/core/config.py
+@@ -395,7 +395,7 @@ def load_config_up_to_path(
+ 
+     @classmethod
+     def find_ignore_config_files(
+-        cls, path, working_path=os.getcwd(), ignore_file_name=".sqlfluffignore"
++        cls, path, working_path=Path.cwd(), ignore_file_name=".sqlfluffignore"
+     ):
+         """Finds sqlfluff ignore files from both the path and its parent paths."""
+         return set(
+@@ -417,8 +417,8 @@ def iter_config_locations_up_to_path(path, working_path=Path.cwd()):
+         The lowest priority is the user appdir, then home dir, then increasingly
+         the configs closest to the file being directly linted.
+         """
+-        given_path = Path(path).resolve()
+-        working_path = Path(working_path).resolve()
++        given_path = Path(path).absolute()
++        working_path = Path(working_path).absolute()
+ 
+         # If we've been passed a file and not a directory,
+         # then go straight to the directory.
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -843,6 +843,7 @@ def paths_from_path(
+         # matched, but we warn the users when that happens
+         is_exact_file = os.path.isfile(path)
+ 
++        path_walk: WalkableType
+         if is_exact_file:
+             # When the exact file to lint is passed, we
+             # fill path_walk with an input that follows
+@@ -850,24 +851,26 @@ def paths_from_path(
+             #   (root, directories, files)
+             dirpath = os.path.dirname(path)
+             files = [os.path.basename(path)]
+-            ignore_file_paths = ConfigLoader.find_ignore_config_files(
+-                path=path, working_path=working_path, ignore_file_name=ignore_file_name
+-            )
+-            # Add paths that could contain "ignore files"
+-            # to the path_walk list
+-            path_walk_ignore_file = [
+-                (
+-                    os.path.dirname(ignore_file_path),
+-                    None,
+-                    # Only one possible file, since we only
+-                    # have one "ignore file name"
+-                    [os.path.basename(ignore_file_path)],
+-                )
+-                for ignore_file_path in ignore_file_paths
+-            ]
+-            path_walk: WalkableType = [(dirpath, None, files)] + path_walk_ignore_file
++            path_walk = [(dirpath, None, files)]
+         else:
+-            path_walk = os.walk(path)
++            path_walk = list(os.walk(path))
++
++        ignore_file_paths = ConfigLoader.find_ignore_config_files(
++            path=path, working_path=working_path, ignore_file_name=ignore_file_name
++        )
++        # Add paths that could contain "ignore files"
++        # to the path_walk list
++        path_walk_ignore_file = [
++            (
++                os.path.dirname(ignore_file_path),
++                None,
++                # Only one possible file, since we only
++                # have one "ignore file name"
++                [os.path.basename(ignore_file_path)],
++            )
++            for ignore_file_path in ignore_file_paths
++        ]
++        path_walk += path_walk_ignore_file
+ 
+         # If it's a directory then expand the path!
+         buffer = []

@@ -1,0 +1,88 @@
+diff --git a/src/sqlfluff/cli/commands.py b/src/sqlfluff/cli/commands.py
+--- a/src/sqlfluff/cli/commands.py
++++ b/src/sqlfluff/cli/commands.py
+@@ -137,24 +137,14 @@ def red_log_filter(record: logging.LogRecord) -> bool:
+ class PathAndUserErrorHandler:
+     """Make an API call but with error handling for the CLI."""
+ 
+-    def __init__(self, formatter, paths):
++    def __init__(self, formatter):
+         self.formatter = formatter
+-        self.paths = paths
+ 
+     def __enter__(self):
+         return self
+ 
+     def __exit__(self, exc_type, exc_val, exc_tb):
+-        if exc_type is OSError:
+-            click.echo(
+-                self.formatter.colorize(
+-                    f"The path(s) { self.paths } could not be "
+-                    "accessed. Check it/they exist(s).",
+-                    Color.red,
+-                )
+-            )
+-            sys.exit(EXIT_ERROR)
+-        elif exc_type is SQLFluffUserError:
++        if exc_type is SQLFluffUserError:
+             click.echo(
+                 "\nUser Error: "
+                 + self.formatter.colorize(
+@@ -584,7 +574,7 @@ def lint(
+     if verbose >= 1:
+         click.echo(format_linting_result_header())
+ 
+-    with PathAndUserErrorHandler(formatter, paths):
++    with PathAndUserErrorHandler(formatter):
+         # add stdin if specified via lone '-'
+         if ("-",) == paths:
+             result = lnt.lint_string_wrapped(sys.stdin.read(), fname="stdin")
+@@ -833,7 +823,7 @@ def fix(
+     # Lint the paths (not with the fix argument at this stage), outputting as we go.
+     click.echo("==== finding fixable violations ====")
+ 
+-    with PathAndUserErrorHandler(formatter, paths):
++    with PathAndUserErrorHandler(formatter):
+         result = lnt.lint_paths(
+             paths,
+             fix=True,
+@@ -1051,7 +1041,7 @@ def parse(
+     t0 = time.monotonic()
+ 
+     # handle stdin if specified via lone '-'
+-    with PathAndUserErrorHandler(formatter, path):
++    with PathAndUserErrorHandler(formatter):
+         if "-" == path:
+             parsed_strings = [
+                 lnt.parse_string(
+@@ -1156,7 +1146,7 @@ def render(
+     )
+ 
+     # handle stdin if specified via lone '-'
+-    with PathAndUserErrorHandler(formatter, path):
++    with PathAndUserErrorHandler(formatter):
+         if "-" == path:
+             raw_sql = sys.stdin.read()
+             fname = "stdin"
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -27,6 +27,7 @@
+     SQLLintError,
+     SQLParseError,
+     SQLFluffSkipFile,
++    SQLFluffUserError,
+ )
+ from sqlfluff.core.parser import Lexer, Parser, RegexLexer
+ from sqlfluff.core.file_helpers import get_encoding
+@@ -969,7 +970,9 @@ def paths_from_path(
+             if ignore_non_existent_files:
+                 return []
+             else:
+-                raise OSError("Specified path does not exist")
++                raise SQLFluffUserError(
++                    f"Specified path does not exist. Check it/they exist(s): {path}."
++                )
+ 
+         # Files referred to exactly are also ignored if
+         # matched, but we warn the users when that happens

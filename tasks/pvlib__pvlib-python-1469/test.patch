@@ -1,0 +1,223 @@
+diff --git a/pvlib/tests/test_clearsky.py b/pvlib/tests/test_clearsky.py
+--- a/pvlib/tests/test_clearsky.py
++++ b/pvlib/tests/test_clearsky.py
+@@ -756,6 +756,30 @@ def test_bird():
+     assert np.allclose(
+         testdata['Dif Hz'].where(dusk, 0.), diffuse_horz[1:48], rtol=1e-3
+     )
++    # repeat test with albedo as a Series
++    alb_series = pd.Series(0.2, index=times)
++    irrads = clearsky.bird(
++        zenith, airmass, aod_380nm, aod_500nm, h2o_cm, o3_cm, press_mB * 100.,
++        etr, b_a, alb_series
++    )
++    Eb, Ebh, Gh, Dh = (irrads[_] for _ in field_names)
++    direct_beam = pd.Series(np.where(dawn, Eb, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Direct Beam'].where(dusk, 0.), direct_beam[1:48], rtol=1e-3
++    )
++    direct_horz = pd.Series(np.where(dawn, Ebh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Direct Hz'].where(dusk, 0.), direct_horz[1:48], rtol=1e-3
++    )
++    global_horz = pd.Series(np.where(dawn, Gh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Global Hz'].where(dusk, 0.), global_horz[1:48], rtol=1e-3
++    )
++    diffuse_horz = pd.Series(np.where(dawn, Dh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Dif Hz'].where(dusk, 0.), diffuse_horz[1:48], rtol=1e-3
++    )
++
+     # test keyword parameters
+     irrads2 = clearsky.bird(
+         zenith, airmass, aod_380nm, aod_500nm, h2o_cm, dni_extra=etr
+diff --git a/pvlib/tests/test_irradiance.py b/pvlib/tests/test_irradiance.py
+--- a/pvlib/tests/test_irradiance.py
++++ b/pvlib/tests/test_irradiance.py
+@@ -120,29 +120,38 @@ def test_get_extra_radiation_invalid():
+         irradiance.get_extra_radiation(300, method='invalid')
+ 
+ 
+-def test_grounddiffuse_simple_float():
++def test_get_ground_diffuse_simple_float():
+     result = irradiance.get_ground_diffuse(40, 900)
+     assert_allclose(result, 26.32000014911496)
+ 
+ 
+-def test_grounddiffuse_simple_series(irrad_data):
++def test_get_ground_diffuse_simple_series(irrad_data):
+     ground_irrad = irradiance.get_ground_diffuse(40, irrad_data['ghi'])
+     assert ground_irrad.name == 'diffuse_ground'
+ 
+ 
+-def test_grounddiffuse_albedo_0(irrad_data):
++def test_get_ground_diffuse_albedo_0(irrad_data):
+     ground_irrad = irradiance.get_ground_diffuse(
+         40, irrad_data['ghi'], albedo=0)
+     assert 0 == ground_irrad.all()
+ 
+ 
++def test_get_ground_diffuse_albedo_series(times):
++    albedo = pd.Series(0.2, index=times)
++    ground_irrad = irradiance.get_ground_diffuse(
++        45, pd.Series(1000, index=times), albedo)
++    expected = albedo * 0.5 * (1 - np.sqrt(2) / 2.) * 1000
++    expected.name = 'diffuse_ground'
++    assert_series_equal(ground_irrad, expected)
++
++
+ def test_grounddiffuse_albedo_invalid_surface(irrad_data):
+     with pytest.raises(KeyError):
+         irradiance.get_ground_diffuse(
+             40, irrad_data['ghi'], surface_type='invalid')
+ 
+ 
+-def test_grounddiffuse_albedo_surface(irrad_data):
++def test_get_ground_diffuse_albedo_surface(irrad_data):
+     result = irradiance.get_ground_diffuse(40, irrad_data['ghi'],
+                                            surface_type='sand')
+     assert_allclose(result, [0, 3.731058, 48.778813, 12.035025], atol=1e-4)
+@@ -387,6 +396,26 @@ def test_get_total_irradiance(irrad_data, ephem_data, dni_et,
+                                           'poa_ground_diffuse']
+ 
+ 
++def test_get_total_irradiance_albedo(
++        irrad_data, ephem_data, dni_et, relative_airmass):
++    models = ['isotropic', 'klucher',
++              'haydavies', 'reindl', 'king', 'perez']
++    albedo = pd.Series(0.2, index=ephem_data.index)
++    for model in models:
++        total = irradiance.get_total_irradiance(
++            32, 180,
++            ephem_data['apparent_zenith'], ephem_data['azimuth'],
++            dni=irrad_data['dni'], ghi=irrad_data['ghi'],
++            dhi=irrad_data['dhi'],
++            dni_extra=dni_et, airmass=relative_airmass,
++            model=model,
++            albedo=albedo)
++
++        assert total.columns.tolist() == ['poa_global', 'poa_direct',
++                                          'poa_diffuse', 'poa_sky_diffuse',
++                                          'poa_ground_diffuse']
++
++
+ @pytest.mark.parametrize('model', ['isotropic', 'klucher',
+                                    'haydavies', 'reindl', 'king', 'perez'])
+ def test_get_total_irradiance_scalars(model):
+@@ -698,6 +727,14 @@ def test_gti_dirint():
+ 
+     assert_frame_equal(output, expected)
+ 
++    # test with albedo as a Series
++    albedo = pd.Series(0.05, index=times)
++    output = irradiance.gti_dirint(
++        poa_global, aoi, zenith, azimuth, times, surface_tilt, surface_azimuth,
++        albedo=albedo)
++
++    assert_frame_equal(output, expected)
++
+     # test temp_dew input
+     temp_dew = np.array([70, 80, 20])
+     output = irradiance.gti_dirint(
+diff --git a/pvlib/tests/test_modelchain.py b/pvlib/tests/test_modelchain.py
+--- a/pvlib/tests/test_modelchain.py
++++ b/pvlib/tests/test_modelchain.py
+@@ -497,6 +497,24 @@ def test_prepare_inputs_multi_weather(
+     assert len(mc.results.total_irrad) == num_arrays
+ 
+ 
++@pytest.mark.parametrize("input_type", [tuple, list])
++def test_prepare_inputs_albedo_in_weather(
++        sapm_dc_snl_ac_system_Array, location, input_type):
++    times = pd.date_range(start='20160101 1200-0700',
++                          end='20160101 1800-0700', freq='6H')
++    mc = ModelChain(sapm_dc_snl_ac_system_Array, location)
++    weather = pd.DataFrame({'ghi': 1, 'dhi': 1, 'dni': 1, 'albedo': 0.5},
++                           index=times)
++    # weather as a single DataFrame
++    mc.prepare_inputs(weather)
++    num_arrays = sapm_dc_snl_ac_system_Array.num_arrays
++    assert len(mc.results.total_irrad) == num_arrays
++    # repeat with tuple of weather
++    mc.prepare_inputs(input_type((weather, weather)))
++    num_arrays = sapm_dc_snl_ac_system_Array.num_arrays
++    assert len(mc.results.total_irrad) == num_arrays
++
++
+ def test_prepare_inputs_no_irradiance(sapm_dc_snl_ac_system, location):
+     mc = ModelChain(sapm_dc_snl_ac_system, location)
+     weather = pd.DataFrame()
+diff --git a/pvlib/tests/test_pvsystem.py b/pvlib/tests/test_pvsystem.py
+--- a/pvlib/tests/test_pvsystem.py
++++ b/pvlib/tests/test_pvsystem.py
+@@ -1689,14 +1689,37 @@ def test_PVSystem_get_irradiance():
+                                        irrads['dhi'])
+ 
+     expected = pd.DataFrame(data=np.array(
+-        [[ 883.65494055,  745.86141676,  137.79352379,  126.397131  ,
+-              11.39639279],
+-           [   0.        ,   -0.        ,    0.        ,    0.        ,    0.        ]]),
++        [[883.65494055, 745.86141676, 137.79352379, 126.397131, 11.39639279],
++         [0., -0., 0., 0., 0.]]),
+                             columns=['poa_global', 'poa_direct',
+                                      'poa_diffuse', 'poa_sky_diffuse',
+                                      'poa_ground_diffuse'],
+                             index=times)
++    assert_frame_equal(irradiance, expected, check_less_precise=2)
++
+ 
++def test_PVSystem_get_irradiance_albedo():
++    system = pvsystem.PVSystem(surface_tilt=32, surface_azimuth=135)
++    times = pd.date_range(start='20160101 1200-0700',
++                          end='20160101 1800-0700', freq='6H')
++    location = Location(latitude=32, longitude=-111)
++    solar_position = location.get_solarposition(times)
++    irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0],
++                           'albedo': [0.5, 0.5]},
++                          index=times)
++    # albedo as a Series
++    irradiance = system.get_irradiance(solar_position['apparent_zenith'],
++                                       solar_position['azimuth'],
++                                       irrads['dni'],
++                                       irrads['ghi'],
++                                       irrads['dhi'],
++                                       albedo=irrads['albedo'])
++    expected = pd.DataFrame(data=np.array(
++        [[895.05134334, 745.86141676, 149.18992658, 126.397131, 22.79279558],
++         [0., -0., 0., 0., 0.]]),
++        columns=['poa_global', 'poa_direct', 'poa_diffuse', 'poa_sky_diffuse',
++                 'poa_ground_diffuse'],
++        index=times)
+     assert_frame_equal(irradiance, expected, check_less_precise=2)
+ 
+ 
+diff --git a/pvlib/tests/test_tracking.py b/pvlib/tests/test_tracking.py
+--- a/pvlib/tests/test_tracking.py
++++ b/pvlib/tests/test_tracking.py
+@@ -393,6 +393,25 @@ def test_get_irradiance():
+ 
+     assert_frame_equal(irradiance, expected, check_less_precise=2)
+ 
++    # test with albedo as a Series
++    irrads['albedo'] = [0.5, 0.5]
++    with np.errstate(invalid='ignore'):
++        irradiance = system.get_irradiance(tracker_data['surface_tilt'],
++                                           tracker_data['surface_azimuth'],
++                                           solar_zenith,
++                                           solar_azimuth,
++                                           irrads['dni'],
++                                           irrads['ghi'],
++                                           irrads['dhi'],
++                                           albedo=irrads['albedo'])
++
++    expected = pd.Series(data=[21.05514984, nan], index=times,
++                         name='poa_ground_diffuse')
++
++    assert_series_equal(irradiance['poa_ground_diffuse'], expected,
++                        check_less_precise=2)
++
++
+ 
+ def test_SingleAxisTracker___repr__():
+     with pytest.warns(pvlibDeprecationWarning):

@@ -1,0 +1,23 @@
+{
+  "FAIL_TO_PASS": [
+    "pydicom/tests/test_dictionary.py::TestDict::test_dict_has_tag"
+  ],
+  "PASS_TO_PASS": [
+    "pydicom/tests/test_dictionary.py::TestDict::test_tag_not_found",
+    "pydicom/tests/test_dictionary.py::TestDict::test_repeaters",
+    "pydicom/tests/test_dictionary.py::TestDict::test_repeater_has_tag",
+    "pydicom/tests/test_dictionary.py::TestDict::test_repeater_has_keyword",
+    "pydicom/tests/test_dictionary.py::TestDict::test_get_private_entry",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_entry",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_entry_raises_for_private_tag",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_entries",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_entries_raises_for_private_tags",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_private_entry",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_private_entry_raises_for_non_private_tag",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_private_entries",
+    "pydicom/tests/test_dictionary.py::TestDict::test_add_private_entries_raises_for_non_private_tags",
+    "pydicom/tests/test_dictionary.py::TestDict::test_dictionary_VM",
+    "pydicom/tests/test_dictionary.py::TestDict::test_private_dict_VR",
+    "pydicom/tests/test_dictionary.py::TestDict::test_private_dict_VM"
+  ]
+}

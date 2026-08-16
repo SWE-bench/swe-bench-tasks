@@ -1,0 +1,3 @@
+Not bugs per se, the algorithm handles non-convergence when looping through the IV curves by continuing, although the rattling and squeaks are audible. I'd prefer to keep that behavior and silencing divide by 0 and invalid (nan) value warnings in place, if that's OK.
+No problem with the algorithm, just its rattles and squeaks. Does it need to emit its own more useful warnings?
+It could, but the causes for non-convergence may not be easy to identify and state. The returned dict includes a Boolean array that is False for IV curves for which it didn't get parameters. It could warn that the array is non-empty, but that seems unnecessary to me.

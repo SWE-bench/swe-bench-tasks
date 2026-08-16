@@ -1,0 +1,7 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/test/test_ivtools.py::test_fit_sde_sandia",
+    "pvlib/test/test_ivtools.py::test_fit_sde_sandia_bad_iv"
+  ],
+  "PASS_TO_PASS": []
+}

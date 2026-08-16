@@ -1,0 +1,42 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_test.py::test__rules__std_file[L027-column_references.sql-violations16]"
+  ],
+  "PASS_TO_PASS": [
+    "test/rules/std_test.py::test__rules__std_file[L001-indentation_errors.sql-violations0]",
+    "test/rules/std_test.py::test__rules__std_file[L002-indentation_errors.sql-violations1]",
+    "test/rules/std_test.py::test__rules__std_file[L003-indentation_errors.sql-violations2]",
+    "test/rules/std_test.py::test__rules__std_file[L004-indentation_errors.sql-violations3]",
+    "test/rules/std_test.py::test__rules__std_file[L005-whitespace_errors.sql-violations4]",
+    "test/rules/std_test.py::test__rules__std_file[L019-whitespace_errors.sql-violations5]",
+    "test/rules/std_test.py::test__rules__std_file[L008-whitespace_errors.sql-violations6]",
+    "test/rules/std_test.py::test__rules__std_file[L006-operator_errors.sql-violations7]",
+    "test/rules/std_test.py::test__rules__std_file[L039-operator_errors.sql-violations8]",
+    "test/rules/std_test.py::test__rules__std_file[L007-operator_errors.sql-violations9]",
+    "test/rules/std_test.py::test__rules__std_file[L006-operator_errors_negative.sql-violations10]",
+    "test/rules/std_test.py::test__rules__std_file[L039-operator_errors_negative.sql-violations11]",
+    "test/rules/std_test.py::test__rules__std_file[L003-indentation_error_hard.sql-violations12]",
+    "test/rules/std_test.py::test__rules__std_file[L003-indentation_error_contained.sql-violations13]",
+    "test/rules/std_test.py::test__rules__std_file[L016-block_comment_errors.sql-violations14]",
+    "test/rules/std_test.py::test__rules__std_file[L016-block_comment_errors_2.sql-violations15]",
+    "test/rules/std_test.py::test__rules__std_file[L027-column_references_bare_function.sql-violations17]",
+    "test/rules/std_test.py::test__rules__std_file[L026-column_references.sql-violations18]",
+    "test/rules/std_test.py::test__rules__std_file[L025-column_references.sql-violations19]",
+    "test/rules/std_test.py::test__rules__std_file[L021-select_distinct_group_by.sql-violations20]",
+    "test/rules/std_test.py::test__rules__std_file[L006-operator_errors_ignore.sql-violations21]",
+    "test/rules/std_test.py::test__rules__std_file[L031-aliases_in_join_error.sql-violations22]",
+    "test/rules/std_test.py::test__rules__std_file[L046-heavy_templating.sql-violations23]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict0]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict1]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict2]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict3]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict4]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict5]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict6]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict7]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict8]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict9]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict10]",
+    "test/rules/std_test.py::test_improper_configs_are_rejected[rule_config_dict11]"
+  ]
+}

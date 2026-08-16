@@ -1,0 +1,1 @@
+Sounds good, do you want to do the PR? Just change `FileSet.find_values` to support an element or iterable of elements.

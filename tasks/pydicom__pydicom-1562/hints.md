@@ -1,0 +1,3 @@
+Yeah, it should be plain old `int`. Not sure how I missed that one...
+
+The keyword to tag conversion is actually kind of (relatively) expensive, and this function is used in our initial dataset parsing so we want it to be fast.

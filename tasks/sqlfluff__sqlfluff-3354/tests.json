@@ -1,0 +1,23 @@
+{
+  "FAIL_TO_PASS": [
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[colon_nospaces]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[pyformat]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[dollar]"
+  ],
+  "PASS_TO_PASS": [
+    "test/core/templaters/placeholder_test.py::test__templater_raw",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[no_changes]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[colon_simple_substitution]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[colon_accept_block_at_end]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[colon_tuple_substitution]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[question_mark]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[numeric_colon]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[numeric_dollar]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[percent]",
+    "test/core/templaters/placeholder_test.py::test__templater_param_style[ampersand]",
+    "test/core/templaters/placeholder_test.py::test__templater_custom_regex",
+    "test/core/templaters/placeholder_test.py::test__templater_exception",
+    "test/core/templaters/placeholder_test.py::test__templater_setup",
+    "test/core/templaters/placeholder_test.py::test__templater_styles"
+  ]
+}

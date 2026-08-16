@@ -1,0 +1,3 @@
+Confirmed. This appears to be an oversight in `pvlib.tools._golden_section_DataFrame` involving error messaging, likely introduced with #1089 .
+
+In this code when processing the content of `data`, photocurrent is 0., hence the shunt resistance is infinite and v_oc is 0. That sets the range for the golden section search to be [0., 0.]. [iterlimit](https://github.com/pvlib/pvlib-python/blob/582b956c63c463e5178fbb7a88fa545fa5b1c257/pvlib/tools.py#L358) is then -infinity, which skips the loop (`iterations <= iterlimit`) but since `iterations > iterlimit` raises the "Iterations exceeded..." exception.

@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_plotting.py::test_invalid_color",
+    "tests/test_plotting.py::test_invalid_font",
+    "tests/test_plotting.py::test_themes",
+    "tests/test_utilities.py::test_createvectorpolydata_error",
+    "tests/test_utilities.py::test_createvectorpolydata_1D",
+    "tests/test_utilities.py::test_createvectorpolydata",
+    "tests/test_utilities.py::test_read",
+    "tests/test_utilities.py::test_is_inside_bounds",
+    "tests/test_utilities.py::test_get_sg_image_scraper",
+    "tests/test_utilities.py::test_report",
+    "tests/test_utilities.py::test_grid_from_sph_coords",
+    "tests/test_utilities.py::test_transform_vectors_sph_to_cart",
+    "tests/test_utilities.py::test_assert_empty_kwargs"
+  ],
+  "PASS_TO_PASS": []
+}

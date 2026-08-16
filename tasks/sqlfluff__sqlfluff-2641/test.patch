@@ -1,0 +1,68 @@
+diff --git a/test/fixtures/rules/std_rule_cases/L045.yml b/test/fixtures/rules/std_rule_cases/L045.yml
+--- a/test/fixtures/rules/std_rule_cases/L045.yml
++++ b/test/fixtures/rules/std_rule_cases/L045.yml
+@@ -224,3 +224,13 @@ test_pass_spark3_values_clause_cte_2:
+   configs:
+     core:
+       dialect: spark3
++
++test_fail_query_uses_templating:
++  fail_str: |
++    WITH
++    random_gibberish AS (
++        SELECT 1
++    )
++
++    SELECT var_bar
++    FROM {{ ref('issue_2235') }}
+diff --git a/test/rules/std_L045_test.py b/test/rules/std_L045_test.py
+new file mode 100644
+--- /dev/null
++++ b/test/rules/std_L045_test.py
+@@ -0,0 +1,46 @@
++"""Tests the python routines within L045."""
++
++import sqlfluff
++
++
++def test__rules__std_L045_multiple_unused_ctes():
++    """Verify that L045 returns multiple lint issues, one per unused CTE."""
++    sql = """
++    WITH
++    cte_1 AS (
++        SELECT 1
++    ),
++    cte_2 AS (
++        SELECT 2
++    ),
++    cte_3 AS (
++        SELECT 3
++    ),
++    cte_4 AS (
++        SELECT 4
++    )
++
++    SELECT var_bar
++    FROM cte_3
++    """
++    result = sqlfluff.lint(sql, rules=["L045"])
++    assert result == [
++        {
++            "code": "L045",
++            "description": 'Query defines CTE "cte_1" but does not use it.',
++            "line_no": 3,
++            "line_pos": 5,
++        },
++        {
++            "code": "L045",
++            "description": 'Query defines CTE "cte_2" but does not use it.',
++            "line_no": 6,
++            "line_pos": 5,
++        },
++        {
++            "code": "L045",
++            "description": 'Query defines CTE "cte_4" but does not use it.',
++            "line_no": 12,
++            "line_pos": 5,
++        },
++    ]

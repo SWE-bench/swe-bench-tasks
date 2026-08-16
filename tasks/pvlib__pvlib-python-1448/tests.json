@@ -1,0 +1,26 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_crn.py::test_read_crn_problems"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/iotools/test_crn.py::test_read_crn",
+    "pvlib/tests/iotools/test_crn.py::test_read_crn_map_variables",
+    "pvlib/tests/iotools/test_psm3.py::test_parse_psm3",
+    "pvlib/tests/iotools/test_psm3.py::test_read_psm3",
+    "pvlib/tests/iotools/test_psm3.py::test_read_psm3_map_variables",
+    "pvlib/tests/test_conftest.py::test_fail_on_pvlib_version_pass",
+    "pvlib/tests/test_conftest.py::test_use_fixture_with_decorator",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.0.0-assert_index_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.0.0-assert_series_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.0.0-assert_frame_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.1.0-assert_index_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.1.0-assert_series_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[True-1.1.0-assert_frame_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.0.0-assert_index_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.0.0-assert_series_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.0.0-assert_frame_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.1.0-assert_index_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.1.0-assert_series_equal]",
+    "pvlib/tests/test_conftest.py::test__check_pandas_assert_kwargs[False-1.1.0-assert_frame_equal]"
+  ]
+}

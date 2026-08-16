@@ -1,0 +1,178 @@
+diff --git a/test/fixtures/rules/std_rule_cases/L065.yml b/test/fixtures/rules/std_rule_cases/L065.yml
+new file mode 100644
+--- /dev/null
++++ b/test/fixtures/rules/std_rule_cases/L065.yml
+@@ -0,0 +1,122 @@
++rule: L065
++
++test_fail_simple_fix_union_all_before:
++  fail_str: |
++      SELECT 'a' UNION ALL
++      SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      UNION ALL
++      SELECT 'b'
++
++test_fail_simple_fix_union_all_after:
++  fail_str: |
++      SELECT 'a'
++      UNION ALL SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      UNION ALL
++      SELECT 'b'
++
++test_fail_simple_fix_union_all_before_and_after:
++  fail_str: |
++      SELECT 'a' UNION ALL SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      UNION ALL
++      SELECT 'b'
++
++test_pass_multiple_newlines_are_allowed:
++  pass_str: |
++      SELECT 'a'
++
++
++      UNION ALL
++
++
++      SELECT 'b'
++
++# The autofix of L065 doesn't respect indentation of the surrounding query.
++# Hence, the fix result of only L065 looks ugly. But L003 will fix the indentation
++# in a second step.
++# See the test blow.
++test_fail_fix_works_in_subqueries:
++  fail_str: |
++      SELECT * FROM (
++          SELECT 'g' UNION ALL
++          SELECT 'h'
++          UNION ALL SELECT 'j'
++      )
++  fix_str: |
++      SELECT * FROM (
++          SELECT 'g'
++      UNION ALL
++          SELECT 'h'
++          UNION ALL
++      SELECT 'j'
++      )
++
++# Test autofix after L003 passes L065
++test_pass_fix_works_in_subqueries_after_L003_fix:
++  pass_str: |
++      SELECT * FROM (
++          SELECT 'g'
++          UNION ALL
++          SELECT 'h'
++          UNION ALL
++          SELECT 'j'
++      )
++
++test_fail_simple_fix_union_before_and_after:
++  fail_str: |
++      SELECT 'a' UNION SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      UNION
++      SELECT 'b'
++
++test_fail_simple_fix_intersect_before_and_after:
++  fail_str: |
++      SELECT 'a' INTERSECT SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      INTERSECT
++      SELECT 'b'
++
++test_fail_simple_fix_except_before_and_after:
++  fail_str: |
++      SELECT 'a' EXCEPT SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      EXCEPT
++      SELECT 'b'
++
++test_fail_simple_fix_minus_before_and_after:
++  fail_str: |
++      SELECT 'a' EXCEPT SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      EXCEPT
++      SELECT 'b'
++
++test_fail_simple_fix_bigquery_intersect_distinct_before_and_after:
++  fail_str: |
++      SELECT 'a' INTERSECT DISTINCT SELECT 'b'
++  fix_str: |
++      SELECT 'a'
++      INTERSECT DISTINCT
++      SELECT 'b'
++  configs:
++    core:
++      dialect: bigquery
++
++test_fail_autofix_in_tsql_disabled:
++  fail_str: |
++    SELECT supplyID, supplier
++    FROM dbo.SUPPLY1
++    UNION ALL
++    SELECT supplyID, supplier
++    FROM dbo.SUPPLY2
++  configs:
++    core:
++      dialect: tsql
+diff --git a/test/rules/std_L003_L065_combo_test.py b/test/rules/std_L003_L065_combo_test.py
+new file mode 100644
+--- /dev/null
++++ b/test/rules/std_L003_L065_combo_test.py
+@@ -0,0 +1,46 @@
++"""Tests the combination of L003 and L065.
++
++L003: Indentation not consistent with previous lines
++L065: Set operators should be surrounded by newlines
++
++Auto fix of L065 does not insert correct indentation but just Newlines. It relies on
++L003 to sort out the indentation later. This is what is getting tested here.
++"""
++
++import sqlfluff
++
++
++def test__rules__std_L003_L065_union_all_in_subquery_lint():
++    """Verify a that L065 reports lint errors in subqueries."""
++    sql = (
++        "SELECT * FROM (\n"
++        "    SELECT 'g' UNION ALL\n"
++        "    SELECT 'h'\n"
++        "    UNION ALL SELECT 'j'\n"
++        ")\n"
++    )
++    result = sqlfluff.lint(sql)
++
++    assert "L065" in [r["code"] for r in result]
++
++
++def test__rules__std_L003_L065_union_all_in_subquery_fix():
++    """Verify combination of rules L003 and L065 produces a correct indentation."""
++    sql = (
++        "SELECT * FROM (\n"
++        "    SELECT 'g' UNION ALL\n"
++        "    SELECT 'h'\n"
++        "    UNION ALL SELECT 'j'\n"
++        ")\n"
++    )
++    fixed_sql = (
++        "SELECT * FROM (\n"
++        "    SELECT 'g'\n"
++        "    UNION ALL\n"
++        "    SELECT 'h'\n"
++        "    UNION ALL\n"
++        "    SELECT 'j'\n"
++        ")\n"
++    )
++    result = sqlfluff.fix(sql)
++    assert result == fixed_sql

@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_L060_test.py::test__rules__std_L060_raised"
+  ],
+  "PASS_TO_PASS": []
+}

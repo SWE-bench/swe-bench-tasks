@@ -1,0 +1,34 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_RF01_LT09_test.py::test__rules__std_RF01_LT09_copy"
+  ],
+  "PASS_TO_PASS": [
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_type",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_class_types",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_descendant_type_set",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_direct_descendant_type_set",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_to_tuple_a",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_to_tuple_b",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_to_tuple_c",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_as_record_a",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_as_record_b",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_as_record_c",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_count_segments",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in0-None]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in1--1]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in2-0]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in3-0]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in4-0]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_find_start_or_end_non_code[list_in5-None]",
+    "test/core/parser/segments/segments_base_test.py::test__parser_base_segments_compute_anchor_edit_info",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_path_to",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_stubs",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_raw",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_base",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_raw_compare",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_base_compare",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_pickle_safe",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_copy_isolation",
+    "test/core/parser/segments/segments_base_test.py::test__parser__base_segments_parent_ref"
+  ]
+}

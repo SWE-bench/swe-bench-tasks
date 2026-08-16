@@ -1,0 +1,21 @@
+diff --git a/astroid/nodes/as_string.py b/astroid/nodes/as_string.py
+--- a/astroid/nodes/as_string.py
++++ b/astroid/nodes/as_string.py
+@@ -36,6 +36,7 @@
+         MatchSingleton,
+         MatchStar,
+         MatchValue,
++        Unknown,
+     )
+ 
+ # pylint: disable=unused-argument
+@@ -643,6 +644,9 @@ def visit_property(self, node):
+     def visit_evaluatedobject(self, node):
+         return node.original.accept(self)
+ 
++    def visit_unknown(self, node: "Unknown") -> str:
++        return str(node)
++
+ 
+ def _import_string(names):
+     """return a list of (name, asname) formatted as a string"""

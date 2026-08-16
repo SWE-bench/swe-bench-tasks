@@ -1,0 +1,3 @@
+Hm, in this case `PixelPadding` doesn't make sense, as there is no `PixelData` present, so we could just ignore it (e.g. use some default VR). With `PixelData` present, a missing `PixelRepresentation` would be a real DICOM violation, that would justify an exception as with the current behavior in my opinion. 
+The same is true for all tags with ambiguous VR dependent on `PixelRepresentation`.
+If this is sufficient, I can put together a respective PR.  

@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_crn.py::test_read_crn"
+  ],
+  "PASS_TO_PASS": []
+}

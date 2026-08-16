@@ -1,0 +1,65 @@
+diff --git a/tests/testdata/python3/data/fake_module_with_warnings.py b/tests/testdata/python3/data/fake_module_with_warnings.py
+new file mode 100644
+--- /dev/null
++++ b/tests/testdata/python3/data/fake_module_with_warnings.py
+@@ -0,0 +1,22 @@
++'''
++This is a mock of a module like Pandas, which can throw warnings for deprecated attributes
++'''
++import warnings
++
++
++def __dir__():
++    # GH43028
++    # Int64Index etc. are deprecated, but we still want them to be available in the dir.
++    # Remove in Pandas 2.0, when we remove Int64Index etc. from the code base.
++    return list(globals().keys()) + ["Float64Index"]
++
++
++def __getattr__(name):
++    if name == "Float64Index":
++        warnings.warn("This is what pandas would do", FutureWarning, stacklevel=2)
++        return 5
++    raise AttributeError(f"module 'pandas' has no attribute '{name}'")
++
++
++__all__ = ["Float64Index"]  # pylint: disable=E0603
++__doc__ = ""
+diff --git a/tests/unittest_raw_building.py b/tests/unittest_raw_building.py
+--- a/tests/unittest_raw_building.py
++++ b/tests/unittest_raw_building.py
+@@ -2,11 +2,14 @@
+ # For details: https://github.com/PyCQA/astroid/blob/main/LICENSE
+ # Copyright (c) https://github.com/PyCQA/astroid/blob/main/CONTRIBUTORS.txt
+ 
++import types
+ import unittest
+ 
+ import _io
+ import pytest
+ 
++# A fake module to simulate pandas in unittest below
++import tests.testdata.python3.data.fake_module_with_warnings as fm
+ from astroid.builder import AstroidBuilder
+ from astroid.const import IS_PYPY
+ from astroid.raw_building import (
+@@ -86,6 +89,19 @@ def test_io_is__io(self):
+         buffered_reader = module.getattr("BufferedReader")[0]
+         self.assertEqual(buffered_reader.root().name, "io")
+ 
++    def test_build_function_deepinspect_deprecation(self) -> None:
++        # Tests https://github.com/PyCQA/astroid/issues/1717
++        # When astroid deep inspection of modules raises
++        # attribute errors when getting all attributes
++        # Create a mock module to simulate a Cython module
++        m = types.ModuleType("test")
++
++        # Attach a mock of pandas with the same behavior
++        m.pd = fm
++
++        # This should not raise an exception
++        AstroidBuilder().module_build(m, "test")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

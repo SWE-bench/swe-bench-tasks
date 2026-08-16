@@ -1,0 +1,359 @@
+diff --git a/pvlib/ivtools/sdm.py b/pvlib/ivtools/sdm.py
+--- a/pvlib/ivtools/sdm.py
++++ b/pvlib/ivtools/sdm.py
+@@ -942,7 +942,7 @@ def _update_io(voc, iph, io, rs, rsh, nnsvth):
+ 
+     while maxerr > eps and k < niter:
+         # Predict Voc
+-        pvoc = v_from_i(rsh, rs, nnsvth, 0., tio, iph)
++        pvoc = v_from_i(0., iph, tio, rs, rsh, nnsvth)
+ 
+         # Difference in Voc
+         dvoc = pvoc - voc
+diff --git a/pvlib/pvsystem.py b/pvlib/pvsystem.py
+--- a/pvlib/pvsystem.py
++++ b/pvlib/pvsystem.py
+@@ -944,14 +944,17 @@ def singlediode(self, photocurrent, saturation_current,
+                            resistance_series, resistance_shunt, nNsVth,
+                            ivcurve_pnts=ivcurve_pnts)
+ 
+-    def i_from_v(self, resistance_shunt, resistance_series, nNsVth, voltage,
+-                 saturation_current, photocurrent):
++    def i_from_v(self, voltage, photocurrent, saturation_current,
++                 resistance_series, resistance_shunt, nNsVth):
+         """Wrapper around the :py:func:`pvlib.pvsystem.i_from_v` function.
+ 
+-        See :py:func:`pvsystem.i_from_v` for details
++        See :py:func:`pvlib.pvsystem.i_from_v` for details.
++
++        .. versionchanged:: 0.10.0
++           The function's arguments have been reordered.
+         """
+-        return i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+-                        saturation_current, photocurrent)
++        return i_from_v(voltage, photocurrent, saturation_current,
++                        resistance_series, resistance_shunt, nNsVth)
+ 
+     def get_ac(self, model, p_dc, v_dc=None):
+         r"""Calculates AC power from p_dc using the inverter model indicated
+@@ -2962,8 +2965,8 @@ def max_power_point(photocurrent, saturation_current, resistance_series,
+     return out
+ 
+ 
+-def v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+-             saturation_current, photocurrent, method='lambertw'):
++def v_from_i(current, photocurrent, saturation_current, resistance_series,
++             resistance_shunt, nNsVth, method='lambertw'):
+     '''
+     Device voltage at the given device current for the single diode model.
+ 
+@@ -2977,18 +2980,34 @@ def v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+     the caller's responsibility to ensure that the arguments are all float64
+     and within the proper ranges.
+ 
++    .. versionchanged:: 0.10.0
++       The function's arguments have been reordered.
++
+     Parameters
+     ----------
+-    resistance_shunt : numeric
+-        Shunt resistance in ohms under desired IV curve conditions.
+-        Often abbreviated ``Rsh``.
+-        0 < resistance_shunt <= numpy.inf
++    current : numeric
++        The current in amperes under desired IV curve conditions.
++
++    photocurrent : numeric
++        Light-generated current (photocurrent) in amperes under desired
++        IV curve conditions. Often abbreviated ``I_L``.
++        0 <= photocurrent
++
++    saturation_current : numeric
++        Diode saturation current in amperes under desired IV curve
++        conditions. Often abbreviated ``I_0``.
++        0 < saturation_current
+ 
+     resistance_series : numeric
+         Series resistance in ohms under desired IV curve conditions.
+         Often abbreviated ``Rs``.
+         0 <= resistance_series < numpy.inf
+ 
++    resistance_shunt : numeric
++        Shunt resistance in ohms under desired IV curve conditions.
++        Often abbreviated ``Rsh``.
++        0 < resistance_shunt <= numpy.inf
++
+     nNsVth : numeric
+         The product of three components. 1) The usual diode ideal factor
+         (n), 2) the number of cells in series (Ns), and 3) the cell
+@@ -2999,19 +3018,6 @@ def v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+         q is the charge of an electron (coulombs).
+         0 < nNsVth
+ 
+-    current : numeric
+-        The current in amperes under desired IV curve conditions.
+-
+-    saturation_current : numeric
+-        Diode saturation current in amperes under desired IV curve
+-        conditions. Often abbreviated ``I_0``.
+-        0 < saturation_current
+-
+-    photocurrent : numeric
+-        Light-generated current (photocurrent) in amperes under desired
+-        IV curve conditions. Often abbreviated ``I_L``.
+-        0 <= photocurrent
+-
+     method : str
+         Method to use: ``'lambertw'``, ``'newton'``, or ``'brentq'``. *Note*:
+         ``'brentq'`` is limited to 1st quadrant only.
+@@ -3028,8 +3034,8 @@ def v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+     '''
+     if method.lower() == 'lambertw':
+         return _singlediode._lambertw_v_from_i(
+-            resistance_shunt, resistance_series, nNsVth, current,
+-            saturation_current, photocurrent
++            current, photocurrent, saturation_current, resistance_series,
++            resistance_shunt, nNsVth
+         )
+     else:
+         # Calculate points on the IV curve using either 'newton' or 'brentq'
+@@ -3050,33 +3056,49 @@ def v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+         return V
+ 
+ 
+-def i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+-             saturation_current, photocurrent, method='lambertw'):
++def i_from_v(voltage, photocurrent, saturation_current, resistance_series,
++             resistance_shunt, nNsVth, method='lambertw'):
+     '''
+     Device current at the given device voltage for the single diode model.
+ 
+     Uses the single diode model (SDM) as described in, e.g.,
+-     Jain and Kapoor 2004 [1]_.
++    Jain and Kapoor 2004 [1]_.
+     The solution is per Eq 2 of [1] except when resistance_series=0,
+-     in which case the explict solution for current is used.
++    in which case the explict solution for current is used.
+     Ideal device parameters are specified by resistance_shunt=np.inf and
+-     resistance_series=0.
++    resistance_series=0.
+     Inputs to this function can include scalars and pandas.Series, but it is
+-     the caller's responsibility to ensure that the arguments are all float64
+-     and within the proper ranges.
++    the caller's responsibility to ensure that the arguments are all float64
++    and within the proper ranges.
++
++    .. versionchanged:: 0.10.0
++       The function's arguments have been reordered.
+ 
+     Parameters
+     ----------
+-    resistance_shunt : numeric
+-        Shunt resistance in ohms under desired IV curve conditions.
+-        Often abbreviated ``Rsh``.
+-        0 < resistance_shunt <= numpy.inf
++    voltage : numeric
++        The voltage in Volts under desired IV curve conditions.
++
++    photocurrent : numeric
++        Light-generated current (photocurrent) in amperes under desired
++        IV curve conditions. Often abbreviated ``I_L``.
++        0 <= photocurrent
++
++    saturation_current : numeric
++        Diode saturation current in amperes under desired IV curve
++        conditions. Often abbreviated ``I_0``.
++        0 < saturation_current
+ 
+     resistance_series : numeric
+         Series resistance in ohms under desired IV curve conditions.
+         Often abbreviated ``Rs``.
+         0 <= resistance_series < numpy.inf
+ 
++    resistance_shunt : numeric
++        Shunt resistance in ohms under desired IV curve conditions.
++        Often abbreviated ``Rsh``.
++        0 < resistance_shunt <= numpy.inf
++
+     nNsVth : numeric
+         The product of three components. 1) The usual diode ideal factor
+         (n), 2) the number of cells in series (Ns), and 3) the cell
+@@ -3087,19 +3109,6 @@ def i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+         q is the charge of an electron (coulombs).
+         0 < nNsVth
+ 
+-    voltage : numeric
+-        The voltage in Volts under desired IV curve conditions.
+-
+-    saturation_current : numeric
+-        Diode saturation current in amperes under desired IV curve
+-        conditions. Often abbreviated ``I_0``.
+-        0 < saturation_current
+-
+-    photocurrent : numeric
+-        Light-generated current (photocurrent) in amperes under desired
+-        IV curve conditions. Often abbreviated ``I_L``.
+-        0 <= photocurrent
+-
+     method : str
+         Method to use: ``'lambertw'``, ``'newton'``, or ``'brentq'``. *Note*:
+         ``'brentq'`` is limited to 1st quadrant only.
+@@ -3116,8 +3125,8 @@ def i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+     '''
+     if method.lower() == 'lambertw':
+         return _singlediode._lambertw_i_from_v(
+-            resistance_shunt, resistance_series, nNsVth, voltage,
+-            saturation_current, photocurrent
++            voltage, photocurrent, saturation_current, resistance_series,
++            resistance_shunt, nNsVth
+         )
+     else:
+         # Calculate points on the IV curve using either 'newton' or 'brentq'
+diff --git a/pvlib/singlediode.py b/pvlib/singlediode.py
+--- a/pvlib/singlediode.py
++++ b/pvlib/singlediode.py
+@@ -495,12 +495,12 @@ def _prepare_newton_inputs(i_or_v_tup, args, v0):
+     return args, v0
+ 
+ 
+-def _lambertw_v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+-                       saturation_current, photocurrent):
++def _lambertw_v_from_i(current, photocurrent, saturation_current,
++                       resistance_series, resistance_shunt, nNsVth):
+     # Record if inputs were all scalar
+     output_is_scalar = all(map(np.isscalar,
+-                               [resistance_shunt, resistance_series, nNsVth,
+-                                current, saturation_current, photocurrent]))
++                               (current, photocurrent, saturation_current,
++                                resistance_series, resistance_shunt, nNsVth)))
+ 
+     # This transforms Gsh=1/Rsh, including ideal Rsh=np.inf into Gsh=0., which
+     #  is generally more numerically stable
+@@ -509,9 +509,9 @@ def _lambertw_v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+     # Ensure that we are working with read-only views of numpy arrays
+     # Turns Series into arrays so that we don't have to worry about
+     #  multidimensional broadcasting failing
+-    Gsh, Rs, a, I, I0, IL = \
+-        np.broadcast_arrays(conductance_shunt, resistance_series, nNsVth,
+-                            current, saturation_current, photocurrent)
++    I, IL, I0, Rs, Gsh, a = \
++        np.broadcast_arrays(current, photocurrent, saturation_current,
++                            resistance_series, conductance_shunt, nNsVth)
+ 
+     # Intitalize output V (I might not be float64)
+     V = np.full_like(I, np.nan, dtype=np.float64)
+@@ -572,12 +572,12 @@ def _lambertw_v_from_i(resistance_shunt, resistance_series, nNsVth, current,
+         return V
+ 
+ 
+-def _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+-                       saturation_current, photocurrent):
++def _lambertw_i_from_v(voltage, photocurrent, saturation_current,
++                       resistance_series, resistance_shunt, nNsVth):
+     # Record if inputs were all scalar
+     output_is_scalar = all(map(np.isscalar,
+-                               [resistance_shunt, resistance_series, nNsVth,
+-                                voltage, saturation_current, photocurrent]))
++                               (voltage, photocurrent, saturation_current,
++                                resistance_series, resistance_shunt, nNsVth)))
+ 
+     # This transforms Gsh=1/Rsh, including ideal Rsh=np.inf into Gsh=0., which
+     #  is generally more numerically stable
+@@ -586,9 +586,9 @@ def _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+     # Ensure that we are working with read-only views of numpy arrays
+     # Turns Series into arrays so that we don't have to worry about
+     #  multidimensional broadcasting failing
+-    Gsh, Rs, a, V, I0, IL = \
+-        np.broadcast_arrays(conductance_shunt, resistance_series, nNsVth,
+-                            voltage, saturation_current, photocurrent)
++    V, IL, I0, Rs, Gsh, a = \
++        np.broadcast_arrays(voltage, photocurrent, saturation_current,
++                            resistance_series, conductance_shunt, nNsVth)
+ 
+     # Intitalize output I (V might not be float64)
+     I = np.full_like(V, np.nan, dtype=np.float64)           # noqa: E741, N806
+@@ -632,36 +632,29 @@ def _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth, voltage,
+ 
+ def _lambertw(photocurrent, saturation_current, resistance_series,
+               resistance_shunt, nNsVth, ivcurve_pnts=None):
++    # collect args
++    params = {'photocurrent': photocurrent,
++              'saturation_current': saturation_current,
++              'resistance_series': resistance_series,
++              'resistance_shunt': resistance_shunt, 'nNsVth': nNsVth}
++
+     # Compute short circuit current
+-    i_sc = _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth, 0.,
+-                              saturation_current, photocurrent)
++    i_sc = _lambertw_i_from_v(0., **params)
+ 
+     # Compute open circuit voltage
+-    v_oc = _lambertw_v_from_i(resistance_shunt, resistance_series, nNsVth, 0.,
+-                              saturation_current, photocurrent)
+-
+-    params = {'r_sh': resistance_shunt,
+-              'r_s': resistance_series,
+-              'nNsVth': nNsVth,
+-              'i_0': saturation_current,
+-              'i_l': photocurrent}
++    v_oc = _lambertw_v_from_i(0., **params)
+ 
+     # Find the voltage, v_mp, where the power is maximized.
+     # Start the golden section search at v_oc * 1.14
+-    p_mp, v_mp = _golden_sect_DataFrame(params, 0., v_oc * 1.14,
+-                                        _pwr_optfcn)
++    p_mp, v_mp = _golden_sect_DataFrame(params, 0., v_oc * 1.14, _pwr_optfcn)
+ 
+     # Find Imp using Lambert W
+-    i_mp = _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth,
+-                              v_mp, saturation_current, photocurrent)
++    i_mp = _lambertw_i_from_v(v_mp, **params)
+ 
+     # Find Ix and Ixx using Lambert W
+-    i_x = _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth,
+-                             0.5 * v_oc, saturation_current, photocurrent)
++    i_x = _lambertw_i_from_v(0.5 * v_oc, **params)
+ 
+-    i_xx = _lambertw_i_from_v(resistance_shunt, resistance_series, nNsVth,
+-                              0.5 * (v_oc + v_mp), saturation_current,
+-                              photocurrent)
++    i_xx = _lambertw_i_from_v(0.5 * (v_oc + v_mp), **params)
+ 
+     out = (i_sc, v_oc, i_mp, v_mp, p_mp, i_x, i_xx)
+ 
+@@ -670,9 +663,7 @@ def _lambertw(photocurrent, saturation_current, resistance_series,
+         ivcurve_v = (np.asarray(v_oc)[..., np.newaxis] *
+                      np.linspace(0, 1, ivcurve_pnts))
+ 
+-        ivcurve_i = _lambertw_i_from_v(resistance_shunt, resistance_series,
+-                                       nNsVth, ivcurve_v.T, saturation_current,
+-                                       photocurrent).T
++        ivcurve_i = _lambertw_i_from_v(ivcurve_v.T, **params).T
+ 
+         out += (ivcurve_i, ivcurve_v)
+ 
+@@ -684,7 +675,9 @@ def _pwr_optfcn(df, loc):
+     Function to find power from ``i_from_v``.
+     '''
+ 
+-    I = _lambertw_i_from_v(df['r_sh'], df['r_s'],           # noqa: E741, N806
+-                           df['nNsVth'], df[loc], df['i_0'], df['i_l'])
++    current = _lambertw_i_from_v(df[loc], df['photocurrent'],
++                                 df['saturation_current'],
++                                 df['resistance_series'],
++                                 df['resistance_shunt'], df['nNsVth'])
+ 
+-    return I * df[loc]
++    return current * df[loc]
+diff --git a/pvlib/tools.py b/pvlib/tools.py
+--- a/pvlib/tools.py
++++ b/pvlib/tools.py
+@@ -346,7 +346,7 @@ def _golden_sect_DataFrame(params, lower, upper, func, atol=1e-8):
+ 
+     phim1 = (np.sqrt(5) - 1) / 2
+ 
+-    df = params
++    df = params.copy()  # shallow copy to avoid modifying caller's dict
+     df['VH'] = upper
+     df['VL'] = lower
+ 

@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "test/core/rules/docstring_test.py::test_backtick_replace",
+    "test/rules/std_L054_test.py::test__rules__std_L054_raised"
+  ],
+  "PASS_TO_PASS": [
+    "test/core/rules/docstring_test.py::test_content_count[\\n",
+    "test/core/rules/docstring_test.py::test_keyword_anti_before_best",
+    "test/rules/std_L054_test.py::test__rules__std_L054_unparsable",
+    "test/rules/std_L054_test.py::test__rules__std_L054_noqa"
+  ]
+}

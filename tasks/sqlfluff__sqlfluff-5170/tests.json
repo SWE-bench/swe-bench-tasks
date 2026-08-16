@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__longest_trimmed_match__basic[seg_list_slice0-matcher_keywords0-False-result_slice0]",
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__longest_trimmed_match__basic[seg_list_slice1-matcher_keywords1-True-result_slice1]",
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__longest_trimmed_match__basic[seg_list_slice2-matcher_keywords2-False-None]",
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__longest_trimmed_match__basic[seg_list_slice3-matcher_keywords3-True-result_slice3]",
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__longest_trimmed_match__adv",
+    "test/core/parser/grammar/grammar_base_test.py::test__parser__grammar__base__ephemeral_segment",
+    "test/core/parser/grammar/grammar_ref_test.py::test__parser__grammar__ref_eq",
+    "test/core/parser/grammar/grammar_ref_test.py::test__parser__grammar__ref_repr",
+    "test/core/parser/grammar/grammar_ref_test.py::test__parser__grammar_ref_exclude",
+    "test/core/parser/match_algorithms_test.py::test__parser__algorithms__look_ahead_match[seg_list_slice0-matcher_keywords0-result_slice0-bar-None]",
+    "test/core/parser/match_algorithms_test.py::test__parser__algorithms__look_ahead_match[seg_list_slice1-matcher_keywords1-result_slice1-foo-pre_match_slice1]",
+    "test/core/parser/match_algorithms_test.py::test__parser__algorithms__bracket_sensitive_look_ahead_match",
+    "test/core/parser/match_algorithms_test.py::test__parser__algorithms__bracket_fail_with_open_paren_close_square_mismatch",
+    "test/core/parser/match_algorithms_test.py::test__parser__algorithms__bracket_fail_with_unexpected_end_bracket"
+  ],
+  "PASS_TO_PASS": []
+}

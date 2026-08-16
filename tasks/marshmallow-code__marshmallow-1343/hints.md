@@ -1,0 +1,1 @@
+Thanks for reporting. I was able to reproduce this on 2.20.0. This is likely a regression from https://github.com/marshmallow-code/marshmallow/pull/1323 . I don't have time to look into it now. Would appreciate a PR.

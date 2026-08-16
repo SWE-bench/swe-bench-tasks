@@ -1,0 +1,1 @@
+Good catch! There is actually a test for this, but it tests a byte stream instead of a file, and seeking back past begin in a byte stream seems not to be a problem.

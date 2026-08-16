@@ -1,0 +1,181 @@
+diff --git a/pydicom/dataelem.py b/pydicom/dataelem.py
+--- a/pydicom/dataelem.py
++++ b/pydicom/dataelem.py
+@@ -231,7 +231,12 @@ def from_json(
+         vr: str,
+         value: object,
+         value_key: Union[str, None],
+-        bulk_data_uri_handler: Optional[Callable[[str], object]] = None
++        bulk_data_uri_handler: Optional[
++            Union[
++                Callable[[BaseTag, str, str], object],
++                Callable[[str], object]
++            ]
++        ] = None
+     ) -> _DataElement:
+         """Return a :class:`DataElement` from JSON.
+ 
+@@ -251,7 +256,8 @@ def from_json(
+             Key of the data element that contains the value
+             (options: ``{"Value", "InlineBinary", "BulkDataURI"}``)
+         bulk_data_uri_handler: callable or None
+-            Callable function that accepts the "BulkDataURI" of the JSON
++            Callable function that accepts either the tag, vr and "BulkDataURI"
++            or just the "BulkDataURI" of the JSON
+             representation of a data element and returns the actual value of
+             that data element (retrieved via DICOMweb WADO-RS)
+ 
+@@ -260,8 +266,14 @@ def from_json(
+         DataElement
+         """
+         # TODO: test wado-rs retrieve wrapper
+-        converter = JsonDataElementConverter(dataset_class, tag, vr, value,
+-                                             value_key, bulk_data_uri_handler)
++        converter = JsonDataElementConverter(
++            dataset_class,
++            tag,
++            vr,
++            value,
++            value_key,
++            bulk_data_uri_handler
++        )
+         elem_value = converter.get_element_values()
+         try:
+             return cls(tag=tag, value=elem_value, VR=vr)
+diff --git a/pydicom/dataset.py b/pydicom/dataset.py
+--- a/pydicom/dataset.py
++++ b/pydicom/dataset.py
+@@ -2218,7 +2218,12 @@ def walk(
+     def from_json(
+         cls: Type[_Dataset],
+         json_dataset: Union[Dict[str, bytes], str],
+-        bulk_data_uri_handler: Optional[Callable[[bytes], object]] = None
++        bulk_data_uri_handler: Optional[
++            Union[
++                Callable[[BaseTag, str, str], object],
++                Callable[[str], object]
++            ]
++        ] = None
+     ) -> _Dataset:
+         """Add elements to the :class:`Dataset` from DICOM JSON format.
+ 
+@@ -2232,7 +2237,8 @@ def from_json(
+             :class:`dict` or :class:`str` representing a DICOM Data Set
+             formatted based on the DICOM JSON Model.
+         bulk_data_uri_handler : callable, optional
+-            Callable function that accepts the "BulkDataURI" of the JSON
++            Callable function that accepts either the tag, vr and "BulkDataURI"
++            or just the "BulkDataURI" of the JSON
+             representation of a data element and returns the actual value of
+             data element (retrieved via DICOMweb WADO-RS).
+ 
+@@ -2263,7 +2269,7 @@ def from_json(
+     def to_json_dict(
+         self,
+         bulk_data_threshold: int = 1024,
+-        bulk_data_element_handler: Optional[Callable[[DataElement], bytes]] = None  # noqa
++        bulk_data_element_handler: Optional[Callable[[DataElement], str]] = None  # noqa
+     ) -> _Dataset:
+         """Return a dictionary representation of the :class:`Dataset`
+         conforming to the DICOM JSON Model as described in the DICOM
+@@ -2301,7 +2307,7 @@ def to_json_dict(
+     def to_json(
+         self,
+         bulk_data_threshold: int = 1024,
+-        bulk_data_element_handler: Optional[Callable[[DataElement], bytes]] = None,  # noqa
++        bulk_data_element_handler: Optional[Callable[[DataElement], str]] = None,  # noqa
+         dump_handler: Optional[Callable[["Dataset"], str]] = None
+     ) -> str:
+         """Return a JSON representation of the :class:`Dataset`.
+diff --git a/pydicom/jsonrep.py b/pydicom/jsonrep.py
+--- a/pydicom/jsonrep.py
++++ b/pydicom/jsonrep.py
+@@ -2,9 +2,12 @@
+ """Methods for converting Datasets and DataElements to/from json"""
+ 
+ import base64
++from inspect import signature
++import inspect
++from typing import Callable, Optional, Union
+ import warnings
+ 
+-from pydicom.valuerep import PersonName
++from pydicom.tag import BaseTag
+ 
+ # Order of keys is significant!
+ JSON_VALUE_KEYS = ('Value', 'BulkDataURI', 'InlineBinary',)
+@@ -54,8 +57,20 @@ class JsonDataElementConverter:
+     .. versionadded:: 1.4
+     """
+ 
+-    def __init__(self, dataset_class, tag, vr, value, value_key,
+-                 bulk_data_uri_handler):
++    def __init__(
++        self,
++        dataset_class,
++        tag,
++        vr,
++        value,
++        value_key,
++        bulk_data_uri_handler: Optional[
++            Union[
++                Callable[[BaseTag, str, str], object],
++                Callable[[str], object]
++            ]
++        ] = None
++    ):
+         """Create a new converter instance.
+ 
+         Parameters
+@@ -63,7 +78,7 @@ def __init__(self, dataset_class, tag, vr, value, value_key,
+         dataset_class : dataset.Dataset derived class
+             Class used to create sequence items.
+         tag : BaseTag
+-            The data element tag.
++            The data element tag or int.
+         vr : str
+             The data element value representation.
+         value : list
+@@ -72,7 +87,8 @@ def __init__(self, dataset_class, tag, vr, value, value_key,
+             Key of the data element that contains the value
+             (options: ``{"Value", "InlineBinary", "BulkDataURI"}``)
+         bulk_data_uri_handler: callable or None
+-            Callable function that accepts the "BulkDataURI" of the JSON
++            Callable function that accepts either the tag, vr and "BulkDataURI"
++            or just the "BulkDataURI" of the JSON
+             representation of a data element and returns the actual value of
+             that data element (retrieved via DICOMweb WADO-RS)
+         """
+@@ -81,7 +97,15 @@ def __init__(self, dataset_class, tag, vr, value, value_key,
+         self.vr = vr
+         self.value = value
+         self.value_key = value_key
+-        self.bulk_data_uri_handler = bulk_data_uri_handler
++        if (
++            bulk_data_uri_handler and
++            len(signature(bulk_data_uri_handler).parameters) == 1
++        ):
++            def wrapped_bulk_data_handler(tag, vr, value):
++                return bulk_data_uri_handler(value)
++            self.bulk_data_element_handler = wrapped_bulk_data_handler
++        else:
++            self.bulk_data_element_handler = bulk_data_uri_handler
+ 
+     def get_element_values(self):
+         """Return a the data element value or list of values.
+@@ -124,13 +148,13 @@ def get_element_values(self):
+             if not isinstance(value, str):
+                 fmt = '"{}" of data element "{}" must be a string.'
+                 raise TypeError(fmt.format(self.value_key, self.tag))
+-            if self.bulk_data_uri_handler is None:
++            if self.bulk_data_element_handler is None:
+                 warnings.warn(
+                     'no bulk data URI handler provided for retrieval '
+                     'of value of data element "{}"'.format(self.tag)
+                 )
+                 return empty_value_for_VR(self.vr, raw=True)
+-            return self.bulk_data_uri_handler(value)
++            return self.bulk_data_element_handler(self.tag, self.vr, value)
+         return empty_value_for_VR(self.vr)
+ 
+     def get_regular_element_value(self, value):

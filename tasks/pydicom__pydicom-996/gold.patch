@@ -1,0 +1,82 @@
+diff --git a/pydicom/dataset.py b/pydicom/dataset.py
+--- a/pydicom/dataset.py
++++ b/pydicom/dataset.py
+@@ -769,13 +769,7 @@ def __getattr__(self, name):
+         if tag is not None:  # `name` isn't a DICOM element keyword
+             tag = Tag(tag)
+             if tag in self._dict:  # DICOM DataElement not in the Dataset
+-                data_elem = self[tag]
+-                value = data_elem.value
+-                if data_elem.VR == 'SQ':
+-                    # let a sequence know its parent dataset, as sequence items
+-                    # may need parent dataset tags to resolve ambiguous tags
+-                    value.parent = self
+-                return value
++                return self[tag].value
+ 
+         # no tag or tag not contained in the dataset
+         if name == '_dict':
+@@ -854,6 +848,10 @@ def __getitem__(self, key):
+         data_elem = self._dict[tag]
+ 
+         if isinstance(data_elem, DataElement):
++            if data_elem.VR == 'SQ' and data_elem.value:
++                # let a sequence know its parent dataset, as sequence items
++                # may need parent dataset tags to resolve ambiguous tags
++                data_elem.value.parent = self
+             return data_elem
+         elif isinstance(data_elem, tuple):
+             # If a deferred read, then go get the value now
+@@ -1289,7 +1287,7 @@ def convert_pixel_data(self, handler_name=''):
+         Raises
+         ------
+         ValueError
+-            If `name` is not a valid handler name.
++            If `handler_name` is not a valid handler name.
+         NotImplementedError
+             If the given handler or any handler, if none given, is able to
+             decompress pixel data with the current transfer syntax
+diff --git a/pydicom/filewriter.py b/pydicom/filewriter.py
+--- a/pydicom/filewriter.py
++++ b/pydicom/filewriter.py
+@@ -70,8 +70,8 @@ def _correct_ambiguous_vr_element(elem, ds, is_little_endian):
+         #   For references, see the list at
+         #   https://github.com/darcymason/pydicom/pull/298
+         # PixelRepresentation is usually set in the root dataset
+-        while 'PixelRepresentation' not in ds and ds.parent:
+-            ds = ds.parent
++        while 'PixelRepresentation' not in ds and ds.parent and ds.parent():
++            ds = ds.parent()
+         # if no pixel data is present, none if these tags is used,
+         # so we can just ignore a missing PixelRepresentation in this case
+         if ('PixelRepresentation' not in ds and 'PixelData' not in ds or
+diff --git a/pydicom/sequence.py b/pydicom/sequence.py
+--- a/pydicom/sequence.py
++++ b/pydicom/sequence.py
+@@ -3,6 +3,7 @@
+ 
+ Sequence is a list of pydicom Dataset objects.
+ """
++import weakref
+ 
+ from pydicom.dataset import Dataset
+ from pydicom.multival import MultiValue
+@@ -57,7 +58,8 @@ def __init__(self, iterable=None):
+ 
+     @property
+     def parent(self):
+-        """Return the parent :class:`~pydicom.dataset.Dataset`."""
++        """Return a weak reference to the parent
++        :class:`~pydicom.dataset.Dataset`."""
+         return self._parent
+ 
+     @parent.setter
+@@ -66,7 +68,7 @@ def parent(self, value):
+         :class:`Sequence` items.
+         """
+         if value != self._parent:
+-            self._parent = value
++            self._parent = weakref.ref(value)
+             for item in self._list:
+                 item.parent = self._parent
+ 

@@ -1,0 +1,25 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly[testfile0-expected_radiation_csv-args0-False-https://re.jrc.ec.europa.eu/api/seriescalc?lat=45&lon=8&outputformat=csv&angle=30&aspect=0&usehorizon=0&pvtechchoice=crystSi&mountingplace=free&trackingtype=0&components=1&raddatabase=PVGIS-SARAH&startyear=2016&endyear=2016]",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly[testfile1-expected_radiation_csv_mapped-args1-True-https://re.jrc.ec.europa.eu/api/seriescalc?lat=45&lon=8&outputformat=csv&angle=30&aspect=0&usehorizon=0&pvtechchoice=crystSi&mountingplace=free&trackingtype=0&components=1&raddatabase=PVGIS-SARAH&startyear=2016&endyear=2016]",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly[testfile2-expected_pv_json-args2-False-https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=45&lon=8&outputformat=json&angle=30&aspect=0&pvtechchoice=CIS&mountingplace=free&trackingtype=2&components=0&usehorizon=1&raddatabase=PVGIS-SARAH2&startyear=2013&endyear=2014&pvcalculation=1&peakpower=10&loss=5&optimalangles=1]",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly[testfile3-expected_pv_json_mapped-args3-True-https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=45&lon=8&outputformat=json&angle=30&aspect=0&pvtechchoice=CIS&mountingplace=free&trackingtype=2&components=0&usehorizon=1&raddatabase=PVGIS-SARAH2&startyear=2013&endyear=2014&pvcalculation=1&peakpower=10&loss=5&optimalangles=1]",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly_bad_status_code"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly[testfile0-expected_radiation_csv-metadata_exp0-inputs_exp0-False-None]",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly[testfile1-expected_radiation_csv_mapped-metadata_exp1-inputs_exp1-True-csv]",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly[testfile2-expected_pv_json-metadata_exp2-inputs_exp2-False-None]",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly[testfile3-expected_pv_json_mapped-metadata_exp3-inputs_exp3-True-json]",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly_bad_extension",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly_bad_outputformat",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly_additional_inputs",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly_empty_file",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_map_variables",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_json",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_epw",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_csv",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_basic",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_exception"
+  ]
+}

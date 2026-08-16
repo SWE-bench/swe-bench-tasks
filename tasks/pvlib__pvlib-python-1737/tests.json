@@ -1,0 +1,17 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_tmy.py::test_solaranywhere_tmy3"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_recolumn",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_norecolumn",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_raise_valueerror",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_map_variables",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_map_variables_deprecating_warning",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_coerce_year",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy3_no_coerce_year",
+    "pvlib/tests/iotools/test_tmy.py::test_read_tmy2",
+    "pvlib/tests/iotools/test_tmy.py::test_gh865_read_tmy3_feb_leapyear_hr24"
+  ]
+}

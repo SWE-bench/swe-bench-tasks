@@ -1,0 +1,5 @@
+Thanks for this - I agree that the print output should be consistent, and that the class should work correctly for json.
+
+I think that the problem is in the _DateTimeBase method __str__ - there is no 'original_string' so it's calling the __str__ method if the object's superclass and the default for datetime.date puts in the hyphens.  The 'DT' class has a similar problem - it's not formatting the time the DICOM way.
+The easiest way to handle this is probably to add an `original_string` attribute to `DA`, `TM` and `DT`, and set this attribute to the canonical DICOM representation if initialized with a date or time. This would only change the behavior of `__str__` and `__repr__` for these types, and I think that this is indeed the expected behavior.
+@darcymason , what do you think? This would actually be a small change, that could make it into the next release.

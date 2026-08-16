@@ -1,0 +1,448 @@
+diff --git a/pvlib/tests/test_clearsky.py b/pvlib/tests/test_clearsky.py
+--- a/pvlib/tests/test_clearsky.py
++++ b/pvlib/tests/test_clearsky.py
+@@ -756,6 +756,30 @@ def test_bird():
+     assert np.allclose(
+         testdata['Dif Hz'].where(dusk, 0.), diffuse_horz[1:48], rtol=1e-3
+     )
++    # repeat test with albedo as a Series
++    alb_series = pd.Series(0.2, index=times)
++    irrads = clearsky.bird(
++        zenith, airmass, aod_380nm, aod_500nm, h2o_cm, o3_cm, press_mB * 100.,
++        etr, b_a, alb_series
++    )
++    Eb, Ebh, Gh, Dh = (irrads[_] for _ in field_names)
++    direct_beam = pd.Series(np.where(dawn, Eb, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Direct Beam'].where(dusk, 0.), direct_beam[1:48], rtol=1e-3
++    )
++    direct_horz = pd.Series(np.where(dawn, Ebh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Direct Hz'].where(dusk, 0.), direct_horz[1:48], rtol=1e-3
++    )
++    global_horz = pd.Series(np.where(dawn, Gh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Global Hz'].where(dusk, 0.), global_horz[1:48], rtol=1e-3
++    )
++    diffuse_horz = pd.Series(np.where(dawn, Dh, 0.), index=times).fillna(0.)
++    assert np.allclose(
++        testdata['Dif Hz'].where(dusk, 0.), diffuse_horz[1:48], rtol=1e-3
++    )
++
+     # test keyword parameters
+     irrads2 = clearsky.bird(
+         zenith, airmass, aod_380nm, aod_500nm, h2o_cm, dni_extra=etr
+diff --git a/pvlib/tests/test_irradiance.py b/pvlib/tests/test_irradiance.py
+--- a/pvlib/tests/test_irradiance.py
++++ b/pvlib/tests/test_irradiance.py
+@@ -120,29 +120,38 @@ def test_get_extra_radiation_invalid():
+         irradiance.get_extra_radiation(300, method='invalid')
+ 
+ 
+-def test_grounddiffuse_simple_float():
++def test_get_ground_diffuse_simple_float():
+     result = irradiance.get_ground_diffuse(40, 900)
+     assert_allclose(result, 26.32000014911496)
+ 
+ 
+-def test_grounddiffuse_simple_series(irrad_data):
++def test_get_ground_diffuse_simple_series(irrad_data):
+     ground_irrad = irradiance.get_ground_diffuse(40, irrad_data['ghi'])
+     assert ground_irrad.name == 'diffuse_ground'
+ 
+ 
+-def test_grounddiffuse_albedo_0(irrad_data):
++def test_get_ground_diffuse_albedo_0(irrad_data):
+     ground_irrad = irradiance.get_ground_diffuse(
+         40, irrad_data['ghi'], albedo=0)
+     assert 0 == ground_irrad.all()
+ 
+ 
++def test_get_ground_diffuse_albedo_series(times):
++    albedo = pd.Series(0.2, index=times)
++    ground_irrad = irradiance.get_ground_diffuse(
++        45, pd.Series(1000, index=times), albedo)
++    expected = albedo * 0.5 * (1 - np.sqrt(2) / 2.) * 1000
++    expected.name = 'diffuse_ground'
++    assert_series_equal(ground_irrad, expected)
++
++
+ def test_grounddiffuse_albedo_invalid_surface(irrad_data):
+     with pytest.raises(KeyError):
+         irradiance.get_ground_diffuse(
+             40, irrad_data['ghi'], surface_type='invalid')
+ 
+ 
+-def test_grounddiffuse_albedo_surface(irrad_data):
++def test_get_ground_diffuse_albedo_surface(irrad_data):
+     result = irradiance.get_ground_diffuse(40, irrad_data['ghi'],
+                                            surface_type='sand')
+     assert_allclose(result, [0, 3.731058, 48.778813, 12.035025], atol=1e-4)
+@@ -387,6 +396,25 @@ def test_get_total_irradiance(irrad_data, ephem_data, dni_et,
+                                           'poa_ground_diffuse']
+ 
+ 
++@pytest.mark.parametrize('model', ['isotropic', 'klucher',
++                                   'haydavies', 'reindl', 'king', 'perez'])
++def test_get_total_irradiance_albedo(
++        irrad_data, ephem_data, dni_et, relative_airmass, model):
++    albedo = pd.Series(0.2, index=ephem_data.index)
++    total = irradiance.get_total_irradiance(
++        32, 180,
++        ephem_data['apparent_zenith'], ephem_data['azimuth'],
++        dni=irrad_data['dni'], ghi=irrad_data['ghi'],
++        dhi=irrad_data['dhi'],
++        dni_extra=dni_et, airmass=relative_airmass,
++        model=model,
++        albedo=albedo)
++
++    assert total.columns.tolist() == ['poa_global', 'poa_direct',
++                                      'poa_diffuse', 'poa_sky_diffuse',
++                                      'poa_ground_diffuse']
++
++
+ @pytest.mark.parametrize('model', ['isotropic', 'klucher',
+                                    'haydavies', 'reindl', 'king', 'perez'])
+ def test_get_total_irradiance_scalars(model):
+@@ -698,6 +726,14 @@ def test_gti_dirint():
+ 
+     assert_frame_equal(output, expected)
+ 
++    # test with albedo as a Series
++    albedo = pd.Series(0.05, index=times)
++    output = irradiance.gti_dirint(
++        poa_global, aoi, zenith, azimuth, times, surface_tilt, surface_azimuth,
++        albedo=albedo)
++
++    assert_frame_equal(output, expected)
++
+     # test temp_dew input
+     temp_dew = np.array([70, 80, 20])
+     output = irradiance.gti_dirint(
+diff --git a/pvlib/tests/test_modelchain.py b/pvlib/tests/test_modelchain.py
+--- a/pvlib/tests/test_modelchain.py
++++ b/pvlib/tests/test_modelchain.py
+@@ -495,6 +495,26 @@ def test_prepare_inputs_multi_weather(
+     mc.prepare_inputs(input_type((weather, weather)))
+     num_arrays = sapm_dc_snl_ac_system_Array.num_arrays
+     assert len(mc.results.total_irrad) == num_arrays
++    # check that albedo is transfered to mc.results from mc.system.arrays
++    assert mc.results.albedo == (0.2, 0.2)
++
++
++@pytest.mark.parametrize("input_type", [tuple, list])
++def test_prepare_inputs_albedo_in_weather(
++        sapm_dc_snl_ac_system_Array, location, input_type):
++    times = pd.date_range(start='20160101 1200-0700',
++                          end='20160101 1800-0700', freq='6H')
++    mc = ModelChain(sapm_dc_snl_ac_system_Array, location)
++    weather = pd.DataFrame({'ghi': 1, 'dhi': 1, 'dni': 1, 'albedo': 0.5},
++                           index=times)
++    # weather as a single DataFrame
++    mc.prepare_inputs(weather)
++    num_arrays = sapm_dc_snl_ac_system_Array.num_arrays
++    assert len(mc.results.albedo) == num_arrays
++    # repeat with tuple of weather
++    mc.prepare_inputs(input_type((weather, weather)))
++    num_arrays = sapm_dc_snl_ac_system_Array.num_arrays
++    assert len(mc.results.albedo) == num_arrays
+ 
+ 
+ def test_prepare_inputs_no_irradiance(sapm_dc_snl_ac_system, location):
+diff --git a/pvlib/tests/test_pvsystem.py b/pvlib/tests/test_pvsystem.py
+--- a/pvlib/tests/test_pvsystem.py
++++ b/pvlib/tests/test_pvsystem.py
+@@ -18,6 +18,7 @@
+ from pvlib.pvsystem import FixedMount
+ from pvlib import temperature
+ from pvlib._deprecation import pvlibDeprecationWarning
++from pvlib.tools import cosd
+ 
+ 
+ @pytest.mark.parametrize('iam_model,model_params', [
+@@ -1673,51 +1674,70 @@ def test_PVSystem_multiple_array_get_aoi():
+     assert aoi_one > 0
+ 
+ 
+-def test_PVSystem_get_irradiance():
+-    system = pvsystem.PVSystem(surface_tilt=32, surface_azimuth=135)
++@pytest.fixture
++def solar_pos():
+     times = pd.date_range(start='20160101 1200-0700',
+                           end='20160101 1800-0700', freq='6H')
+     location = Location(latitude=32, longitude=-111)
+-    solar_position = location.get_solarposition(times)
++    return location.get_solarposition(times)
++
++
++def test_PVSystem_get_irradiance(solar_pos):
++    system = pvsystem.PVSystem(surface_tilt=32, surface_azimuth=135)
+     irrads = pd.DataFrame({'dni':[900,0], 'ghi':[600,0], 'dhi':[100,0]},
+-                          index=times)
++                          index=solar_pos.index)
+ 
+-    irradiance = system.get_irradiance(solar_position['apparent_zenith'],
+-                                       solar_position['azimuth'],
++    irradiance = system.get_irradiance(solar_pos['apparent_zenith'],
++                                       solar_pos['azimuth'],
+                                        irrads['dni'],
+                                        irrads['ghi'],
+                                        irrads['dhi'])
+ 
+     expected = pd.DataFrame(data=np.array(
+-        [[ 883.65494055,  745.86141676,  137.79352379,  126.397131  ,
+-              11.39639279],
+-           [   0.        ,   -0.        ,    0.        ,    0.        ,    0.        ]]),
++        [[883.65494055, 745.86141676, 137.79352379, 126.397131, 11.39639279],
++         [0., -0., 0., 0., 0.]]),
+                             columns=['poa_global', 'poa_direct',
+                                      'poa_diffuse', 'poa_sky_diffuse',
+                                      'poa_ground_diffuse'],
+-                            index=times)
++                            index=solar_pos.index)
++    assert_frame_equal(irradiance, expected, check_less_precise=2)
++
+ 
++def test_PVSystem_get_irradiance_albedo(solar_pos):
++    system = pvsystem.PVSystem(surface_tilt=32, surface_azimuth=135)
++    irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0],
++                           'albedo': [0.5, 0.5]},
++                          index=solar_pos.index)
++    # albedo as a Series
++    irradiance = system.get_irradiance(solar_pos['apparent_zenith'],
++                                       solar_pos['azimuth'],
++                                       irrads['dni'],
++                                       irrads['ghi'],
++                                       irrads['dhi'],
++                                       albedo=irrads['albedo'])
++    expected = pd.DataFrame(data=np.array(
++        [[895.05134334, 745.86141676, 149.18992658, 126.397131, 22.79279558],
++         [0., -0., 0., 0., 0.]]),
++        columns=['poa_global', 'poa_direct', 'poa_diffuse', 'poa_sky_diffuse',
++                 'poa_ground_diffuse'],
++        index=solar_pos.index)
+     assert_frame_equal(irradiance, expected, check_less_precise=2)
+ 
+ 
+-def test_PVSystem_get_irradiance_model(mocker):
++def test_PVSystem_get_irradiance_model(mocker, solar_pos):
+     spy_perez = mocker.spy(irradiance, 'perez')
+     spy_haydavies = mocker.spy(irradiance, 'haydavies')
+     system = pvsystem.PVSystem(surface_tilt=32, surface_azimuth=135)
+-    times = pd.date_range(start='20160101 1200-0700',
+-                          end='20160101 1800-0700', freq='6H')
+-    location = Location(latitude=32, longitude=-111)
+-    solar_position = location.get_solarposition(times)
+     irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0]},
+-                          index=times)
+-    system.get_irradiance(solar_position['apparent_zenith'],
+-                          solar_position['azimuth'],
++                          index=solar_pos.index)
++    system.get_irradiance(solar_pos['apparent_zenith'],
++                          solar_pos['azimuth'],
+                           irrads['dni'],
+                           irrads['ghi'],
+                           irrads['dhi'])
+     spy_haydavies.assert_called_once()
+-    system.get_irradiance(solar_position['apparent_zenith'],
+-                          solar_position['azimuth'],
++    system.get_irradiance(solar_pos['apparent_zenith'],
++                          solar_pos['azimuth'],
+                           irrads['dni'],
+                           irrads['ghi'],
+                           irrads['dhi'],
+@@ -1725,31 +1745,28 @@ def test_PVSystem_get_irradiance_model(mocker):
+     spy_perez.assert_called_once()
+ 
+ 
+-def test_PVSystem_multi_array_get_irradiance():
++def test_PVSystem_multi_array_get_irradiance(solar_pos):
+     array_one = pvsystem.Array(pvsystem.FixedMount(surface_tilt=32,
+                                                    surface_azimuth=135))
+     array_two = pvsystem.Array(pvsystem.FixedMount(surface_tilt=5,
+                                                    surface_azimuth=150))
+     system = pvsystem.PVSystem(arrays=[array_one, array_two])
+-    location = Location(latitude=32, longitude=-111)
+-    times = pd.date_range(start='20160101 1200-0700',
+-                          end='20160101 1800-0700', freq='6H')
+-    solar_position = location.get_solarposition(times)
++
+     irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0]},
+-                          index=times)
++                          index=solar_pos.index)
+     array_one_expected = array_one.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         irrads['dni'], irrads['ghi'], irrads['dhi']
+     )
+     array_two_expected = array_two.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         irrads['dni'], irrads['ghi'], irrads['dhi']
+     )
+     array_one_irrad, array_two_irrad = system.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         irrads['dni'], irrads['ghi'], irrads['dhi']
+     )
+     assert_frame_equal(
+@@ -1760,7 +1777,7 @@ def test_PVSystem_multi_array_get_irradiance():
+     )
+ 
+ 
+-def test_PVSystem_multi_array_get_irradiance_multi_irrad():
++def test_PVSystem_multi_array_get_irradiance_multi_irrad(solar_pos):
+     """Test a system with two identical arrays but different irradiance.
+ 
+     Because only the irradiance is different we expect the same output
+@@ -1771,39 +1788,36 @@ def test_PVSystem_multi_array_get_irradiance_multi_irrad():
+     array_one = pvsystem.Array(pvsystem.FixedMount(0, 180))
+     array_two = pvsystem.Array(pvsystem.FixedMount(0, 180))
+     system = pvsystem.PVSystem(arrays=[array_one, array_two])
+-    location = Location(latitude=32, longitude=-111)
+-    times = pd.date_range(start='20160101 1200-0700',
+-                          end='20160101 1800-0700', freq='6H')
+-    solar_position = location.get_solarposition(times)
++
+     irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0]},
+-                          index=times)
++                          index=solar_pos.index)
+     irrads_two = pd.DataFrame(
+         {'dni': [0, 900], 'ghi': [0, 600], 'dhi': [0, 100]},
+-        index=times
++        index=solar_pos.index
+     )
+     array_irrad = system.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         (irrads['dhi'], irrads['dhi']),
+         (irrads['ghi'], irrads['ghi']),
+         (irrads['dni'], irrads['dni'])
+     )
+     assert_frame_equal(array_irrad[0], array_irrad[1])
+     array_irrad = system.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         (irrads['dhi'], irrads_two['dhi']),
+         (irrads['ghi'], irrads_two['ghi']),
+         (irrads['dni'], irrads_two['dni'])
+     )
+     array_one_expected = array_one.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         irrads['dhi'], irrads['ghi'], irrads['dni']
+     )
+     array_two_expected = array_two.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         irrads_two['dhi'], irrads_two['ghi'], irrads_two['dni']
+     )
+     assert not array_irrad[0].equals(array_irrad[1])
+@@ -1812,15 +1826,15 @@ def test_PVSystem_multi_array_get_irradiance_multi_irrad():
+     with pytest.raises(ValueError,
+                        match="Length mismatch for per-array parameter"):
+         system.get_irradiance(
+-            solar_position['apparent_zenith'],
+-            solar_position['azimuth'],
++            solar_pos['apparent_zenith'],
++            solar_pos['azimuth'],
+             (irrads['dhi'], irrads_two['dhi'], irrads['dhi']),
+             (irrads['ghi'], irrads_two['ghi']),
+             irrads['dni']
+         )
+     array_irrad = system.get_irradiance(
+-        solar_position['apparent_zenith'],
+-        solar_position['azimuth'],
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
+         (irrads['dhi'], irrads_two['dhi']),
+         irrads['ghi'],
+         irrads['dni']
+@@ -1829,6 +1843,44 @@ def test_PVSystem_multi_array_get_irradiance_multi_irrad():
+     assert not array_irrad[0].equals(array_irrad[1])
+ 
+ 
++def test_Array_get_irradiance(solar_pos):
++    array = pvsystem.Array(pvsystem.FixedMount(surface_tilt=32,
++                                               surface_azimuth=135))
++    irrads = pd.DataFrame({'dni': [900, 0], 'ghi': [600, 0], 'dhi': [100, 0]},
++                          index=solar_pos.index)
++    # defaults for kwargs
++    modeled = array.get_irradiance(
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
++        irrads['dni'], irrads['ghi'], irrads['dhi']
++    )
++    expected = pd.DataFrame(
++        data=np.array(
++            [[883.65494055, 745.86141676, 137.79352379, 126.397131,
++              11.39639279],
++             [0., -0., 0., 0., 0.]]),
++        columns=['poa_global', 'poa_direct', 'poa_diffuse', 'poa_sky_diffuse',
++                 'poa_ground_diffuse'],
++        index=solar_pos.index
++    )
++    assert_frame_equal(modeled, expected, check_less_precise=5)
++    # with specified kwargs, use isotropic sky diffuse because it's easier
++    modeled = array.get_irradiance(
++        solar_pos['apparent_zenith'],
++        solar_pos['azimuth'],
++        irrads['dni'], irrads['ghi'], irrads['dhi'],
++        albedo=0.5, model='isotropic'
++    )
++    sky_diffuse = irradiance.isotropic(array.mount.surface_tilt, irrads['dhi'])
++    ground_diff = irradiance.get_ground_diffuse(
++        array.mount.surface_tilt, irrads['ghi'], 0.5, surface_type=None)
++    aoi = irradiance.aoi(array.mount.surface_tilt, array.mount.surface_azimuth,
++                         solar_pos['apparent_zenith'], solar_pos['azimuth'])
++    direct = irrads['dni'] * cosd(aoi)
++    expected = sky_diffuse + ground_diff + direct
++    assert_series_equal(expected, expected, check_less_precise=5)
++
++
+ @fail_on_pvlib_version('0.10')
+ @pytest.mark.parametrize('attr', ['module_parameters', 'module', 'module_type',
+                                   'temperature_model_parameters', 'albedo',
+diff --git a/pvlib/tests/test_tracking.py b/pvlib/tests/test_tracking.py
+--- a/pvlib/tests/test_tracking.py
++++ b/pvlib/tests/test_tracking.py
+@@ -393,6 +393,25 @@ def test_get_irradiance():
+ 
+     assert_frame_equal(irradiance, expected, check_less_precise=2)
+ 
++    # test with albedo as a Series
++    irrads['albedo'] = [0.5, 0.5]
++    with np.errstate(invalid='ignore'):
++        irradiance = system.get_irradiance(tracker_data['surface_tilt'],
++                                           tracker_data['surface_azimuth'],
++                                           solar_zenith,
++                                           solar_azimuth,
++                                           irrads['dni'],
++                                           irrads['ghi'],
++                                           irrads['dhi'],
++                                           albedo=irrads['albedo'])
++
++    expected = pd.Series(data=[21.05514984, nan], index=times,
++                         name='poa_ground_diffuse')
++
++    assert_series_equal(irradiance['poa_ground_diffuse'], expected,
++                        check_less_precise=2)
++
++
+ 
+ def test_SingleAxisTracker___repr__():
+     with pytest.warns(pvlibDeprecationWarning):

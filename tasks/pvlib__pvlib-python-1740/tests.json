@@ -1,0 +1,15 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_sodapro.py::test_get_cams[testfile0-index0-columns0-values0-dtypes0-mcclear]",
+    "pvlib/tests/iotools/test_sodapro.py::test_get_cams[testfile1-index1-columns1-values1-dtypes1-cams_radiation]"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams[testfile0-index0-columns0-values0-dtypes0]",
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams[testfile1-index1-columns1-values1-dtypes1]",
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams[testfile2-index2-columns2-values2-dtypes2]",
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams[testfile3-index3-columns3-values3-dtypes3]",
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams_integrated_unmapped_label",
+    "pvlib/tests/iotools/test_sodapro.py::test_read_cams_metadata",
+    "pvlib/tests/iotools/test_sodapro.py::test_get_cams_bad_request"
+  ]
+}

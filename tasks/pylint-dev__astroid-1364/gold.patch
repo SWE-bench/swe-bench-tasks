@@ -1,0 +1,12 @@
+diff --git a/astroid/const.py b/astroid/const.py
+--- a/astroid/const.py
++++ b/astroid/const.py
+@@ -8,6 +8,8 @@
+ PY310_PLUS = sys.version_info >= (3, 10)
+ BUILTINS = "builtins"  # TODO Remove in 2.8
+ 
++WIN32 = sys.platform == "win32"
++
+ 
+ class Context(enum.Enum):
+     Load = 1

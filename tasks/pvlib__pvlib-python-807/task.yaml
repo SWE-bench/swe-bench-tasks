@@ -1,0 +1,12 @@
+base_commit: e326fa53038f616d949e4f981dab6187d2ca9470
+created_at: '2019-11-01T14:54:52Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: b91d178868d193afd56f8e3b013661a473d699c3
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pvlib_1776_pvlib-python-807:latest
+instance_id: pvlib__pvlib-python-807
+log_parser: parse_log_pvlib
+repo: pvlib/pvlib-python
+split: dev
+version: '0.6'

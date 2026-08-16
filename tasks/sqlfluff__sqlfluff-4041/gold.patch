@@ -1,0 +1,120 @@
+diff --git a/src/sqlfluff/core/errors.py b/src/sqlfluff/core/errors.py
+--- a/src/sqlfluff/core/errors.py
++++ b/src/sqlfluff/core/errors.py
+@@ -1,5 +1,5 @@
+ """Errors - these are closely linked to what used to be called violations."""
+-from typing import Optional, Tuple, List
++from typing import Optional, Tuple, Any, List
+ 
+ CheckTuple = Tuple[str, int, int]
+ 
+@@ -85,6 +85,18 @@ def get_info_dict(self):
+             "description": self.desc(),
+         }
+ 
++    def check_tuple(self) -> CheckTuple:
++        """Get a tuple representing this error. Mostly for testing."""
++        return (
++            self.rule_code(),
++            self.line_no,
++            self.line_pos,
++        )
++
++    def source_signature(self) -> Tuple[Any, ...]:
++        """Return hashable source signature for deduplication."""
++        return (self.check_tuple(), self.desc())
++
+     def ignore_if_in(self, ignore_iterable: List[str]):
+         """Ignore this violation if it matches the iterable."""
+         if self._identifier in ignore_iterable:
+@@ -189,13 +201,21 @@ def fixable(self):
+             return True
+         return False
+ 
+-    def check_tuple(self) -> CheckTuple:
+-        """Get a tuple representing this error. Mostly for testing."""
+-        return (
+-            self.rule.code,
+-            self.line_no,
+-            self.line_pos,
++    def source_signature(self) -> Tuple[Any, ...]:
++        """Return hashable source signature for deduplication.
++
++        For linting errors we need to dedupe on more than just location and
++        description, we also need to check the edits potentially made, both
++        in the templated file but also in the source.
++        """
++        fix_raws = tuple(
++            tuple(e.raw for e in f.edit) if f.edit else None for f in self.fixes
++        )
++        source_fixes = tuple(
++            tuple(tuple(e.source_fixes) for e in f.edit) if f.edit else None
++            for f in self.fixes
+         )
++        return (self.check_tuple(), self.description, fix_raws, source_fixes)
+ 
+     def __repr__(self):
+         return "<SQLLintError: rule {} pos:{!r}, #fixes: {}, description: {}>".format(
+diff --git a/src/sqlfluff/core/linter/linted_file.py b/src/sqlfluff/core/linter/linted_file.py
+--- a/src/sqlfluff/core/linter/linted_file.py
++++ b/src/sqlfluff/core/linter/linted_file.py
+@@ -54,18 +54,43 @@ def check_tuples(self, raise_on_non_linting_violations=True) -> List[CheckTuple]
+         """Make a list of check_tuples.
+ 
+         This assumes that all the violations found are
+-        linting violations (and therefore implement `check_tuple()`).
+-        If they don't then this function raises that error.
++        linting violations. If they don't then this function
++        raises that error.
+         """
+         vs: List[CheckTuple] = []
+         v: SQLLintError
+         for v in self.get_violations():
+-            if hasattr(v, "check_tuple"):
++            if isinstance(v, SQLLintError):
+                 vs.append(v.check_tuple())
+             elif raise_on_non_linting_violations:
+                 raise v
+         return vs
+ 
++    @staticmethod
++    def deduplicate_in_source_space(
++        violations: List[SQLBaseError],
++    ) -> List[SQLBaseError]:
++        """Removes duplicates in the source space.
++
++        This is useful for templated files with loops, where we'll
++        get a violation for each pass around the loop, but the user
++        only cares about it once and we're only going to fix it once.
++
++        By filtering them early we get a more a more helpful CLI
++        output *and* and more efficient fixing routine (by handling
++        fewer fixes).
++        """
++        new_violations = []
++        dedupe_buffer = set()
++        for v in violations:
++            signature = v.source_signature()
++            if signature not in dedupe_buffer:
++                new_violations.append(v)
++                dedupe_buffer.add(signature)
++            else:
++                linter_logger.debug("Removing duplicate source violation: %s", v)
++        return new_violations
++
+     def get_violations(
+         self,
+         rules: Optional[Union[str, Tuple[str, ...]]] = None,
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -736,7 +736,8 @@ def lint_parsed(
+ 
+         linted_file = LintedFile(
+             parsed.fname,
+-            violations,
++            # Deduplicate violations
++            LintedFile.deduplicate_in_source_space(violations),
+             time_dict,
+             tree,
+             ignore_mask=ignore_buff,

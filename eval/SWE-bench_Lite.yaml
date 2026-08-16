@@ -1,0 +1,8 @@
+name: SWE-Bench Lite
+description: "SWE-bench Lite is a subset of SWE-bench, a dataset that tests systems' ability to solve GitHub issues automatically. It contains 300 test instances drawn from issue-pull request pairs in 11 popular Python repositories, verified with unit tests, and is meant as a more manageable evaluation set than the full SWE-bench."
+evaluation_framework: swe-bench
+
+tasks:
+  - id: swe_bench_lite_%_resolved
+    config: default
+    split: test

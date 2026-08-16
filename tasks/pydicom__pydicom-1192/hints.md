@@ -1,0 +1,1 @@
+As you wrote, an empty string is not allowed as Specific Character Set, but I agree that this is a case that we shall handle gracefully (e.g. just handle as if the tag were absent). I will have a look.

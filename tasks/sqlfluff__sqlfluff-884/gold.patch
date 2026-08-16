@@ -1,0 +1,75 @@
+diff --git a/src/sqlfluff/core/dialects/dialect_ansi.py b/src/sqlfluff/core/dialects/dialect_ansi.py
+--- a/src/sqlfluff/core/dialects/dialect_ansi.py
++++ b/src/sqlfluff/core/dialects/dialect_ansi.py
+@@ -50,7 +50,7 @@
+ ansi_dialect.set_lexer_struct(
+     [
+         # name, type, pattern, kwargs
+-        ("whitespace", "regex", r"[\t ]+", dict(type="whitespace")),
++        ("whitespace", "regex", r"[\t ]+", dict(type="whitespace", is_whitespace=True)),
+         (
+             "inline_comment",
+             "regex",
+@@ -64,9 +64,14 @@
+             dict(
+                 is_comment=True,
+                 type="comment",
+-                subdivide=dict(type="newline", name="newline", regex=r"\r\n|\n"),
++                subdivide=dict(
++                    type="newline", name="newline", regex=r"\r\n|\n", is_whitespace=True
++                ),
+                 trim_post_subdivide=dict(
+-                    type="whitespace", name="whitespace", regex=r"[\t ]+"
++                    type="whitespace",
++                    name="whitespace",
++                    regex=r"[\t ]+",
++                    is_whitespace=True,
+                 ),
+             ),
+         ),
+@@ -83,7 +88,7 @@
+         ("not_equal", "regex", r"!=|<>", dict(is_code=True)),
+         ("greater_than_or_equal", "regex", r">=", dict(is_code=True)),
+         ("less_than_or_equal", "regex", r"<=", dict(is_code=True)),
+-        ("newline", "regex", r"\r\n|\n", dict(type="newline")),
++        ("newline", "regex", r"\r\n|\n", dict(type="newline", is_whitespace=True)),
+         ("casting_operator", "regex", r"::", dict(is_code=True)),
+         ("concat_operator", "regex", r"\|\|", dict(is_code=True)),
+         ("equals", "singleton", "=", dict(is_code=True)),
+diff --git a/src/sqlfluff/core/parser/lexer.py b/src/sqlfluff/core/parser/lexer.py
+--- a/src/sqlfluff/core/parser/lexer.py
++++ b/src/sqlfluff/core/parser/lexer.py
+@@ -74,12 +74,10 @@ def _trim(self, matched, start_pos):
+         idx = 0
+ 
+         if self.trim_post_subdivide:
+-            trimmer = re.compile(self.trim_post_subdivide["regex"], re.DOTALL)
+-            TrimClass = RawSegment.make(
+-                self.trim_post_subdivide["regex"],
+-                name=self.trim_post_subdivide["name"],
+-                type=self.trim_post_subdivide["type"],
+-            )
++            class_kwargs = self.trim_post_subdivide.copy()
++            pattern = class_kwargs.pop("regex")
++            trimmer = re.compile(pattern, re.DOTALL)
++            TrimClass = RawSegment.make(pattern, **class_kwargs)
+ 
+             for trim_mat in trimmer.finditer(matched):
+                 trim_span = trim_mat.span()
+@@ -132,12 +130,10 @@ def _subdivide(self, matched, start_pos):
+             seg_buff = ()
+             str_buff = matched
+             pos_buff = start_pos
+-            divider = re.compile(self.subdivide["regex"], re.DOTALL)
+-            DividerClass = RawSegment.make(
+-                self.subdivide["regex"],
+-                name=self.subdivide["name"],
+-                type=self.subdivide["type"],
+-            )
++            class_kwargs = self.subdivide.copy()
++            pattern = class_kwargs.pop("regex")
++            divider = re.compile(pattern, re.DOTALL)
++            DividerClass = RawSegment.make(pattern, **class_kwargs)
+ 
+             while True:
+                 # Iterate through subdividing as appropriate

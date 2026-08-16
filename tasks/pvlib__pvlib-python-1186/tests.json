@@ -1,0 +1,14 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly_bad_extension",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly_bad_status_code",
+    "pvlib/tests/iotools/test_pvgis.py::test_get_pvgis_hourly_bad_outputformat",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_hourly_empty_file",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_json",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_epw",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_csv",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_basic",
+    "pvlib/tests/iotools/test_pvgis.py::test_read_pvgis_tmy_exception"
+  ],
+  "PASS_TO_PASS": []
+}

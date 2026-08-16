@@ -1,0 +1,43 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_geometric_objects.py::test_circle"
+  ],
+  "PASS_TO_PASS": [
+    "tests/test_geometric_objects.py::test_cylinder",
+    "tests/test_geometric_objects.py::test_cylinder_structured",
+    "tests/test_geometric_objects.py::test_arrow[None]",
+    "tests/test_geometric_objects.py::test_arrow[2.0]",
+    "tests/test_geometric_objects.py::test_arrow[4]",
+    "tests/test_geometric_objects.py::test_arrow[auto]",
+    "tests/test_geometric_objects.py::test_arrow_raises_error",
+    "tests/test_geometric_objects.py::test_sphere",
+    "tests/test_geometric_objects.py::test_plane",
+    "tests/test_geometric_objects.py::test_line",
+    "tests/test_geometric_objects.py::test_multiple_lines",
+    "tests/test_geometric_objects.py::test_tube",
+    "tests/test_geometric_objects.py::test_cube",
+    "tests/test_geometric_objects.py::test_cone",
+    "tests/test_geometric_objects.py::test_box",
+    "tests/test_geometric_objects.py::test_polygon",
+    "tests/test_geometric_objects.py::test_disc",
+    "tests/test_geometric_objects.py::test_superquadric",
+    "tests/test_geometric_objects.py::test_text_3d",
+    "tests/test_geometric_objects.py::test_wavelet",
+    "tests/test_geometric_objects.py::test_circular_arc",
+    "tests/test_geometric_objects.py::test_circular_arc_from_normal",
+    "tests/test_geometric_objects.py::test_pyramid",
+    "tests/test_geometric_objects.py::test_triangle",
+    "tests/test_geometric_objects.py::test_rectangle",
+    "tests/test_geometric_objects.py::test_ellipse",
+    "tests/test_geometric_objects.py::test_platonic_solids[tetrahedron-0-4-4]",
+    "tests/test_geometric_objects.py::test_platonic_solids[cube-1-8-6]",
+    "tests/test_geometric_objects.py::test_platonic_solids[octahedron-2-6-8]",
+    "tests/test_geometric_objects.py::test_platonic_solids[icosahedron-3-12-20]",
+    "tests/test_geometric_objects.py::test_platonic_solids[dodecahedron-4-20-12]",
+    "tests/test_geometric_objects.py::test_platonic_invalids",
+    "tests/test_geometric_objects.py::test_tetrahedron",
+    "tests/test_geometric_objects.py::test_octahedron",
+    "tests/test_geometric_objects.py::test_dodecahedron",
+    "tests/test_geometric_objects.py::test_icosahedron"
+  ]
+}

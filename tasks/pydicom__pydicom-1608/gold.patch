@@ -1,0 +1,17 @@
+diff --git a/pydicom/dataelem.py b/pydicom/dataelem.py
+--- a/pydicom/dataelem.py
++++ b/pydicom/dataelem.py
+@@ -512,9 +512,10 @@ def _convert_value(self, val: Any) -> Any:
+             val.append
+         except AttributeError:  # not a list
+             return self._convert(val)
+-        else:
+-            return MultiValue(self._convert, val,
+-                              validation_mode=self.validation_mode)
++        if len(val) == 1:
++            return self._convert(val[0])
++        return MultiValue(self._convert, val,
++                          validation_mode=self.validation_mode)
+ 
+     def _convert(self, val: Any) -> Any:
+         """Convert `val` to an appropriate type for the element's VR."""

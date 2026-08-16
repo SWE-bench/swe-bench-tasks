@@ -1,0 +1,27 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__ground_angle_zero_gcr",
+    "pvlib/tests/test_shading.py::test_masking_angle_zero_gcr"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__vf_ground_sky_integ",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__vf_row_sky_integ",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__poa_sky_diffuse_pv",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__ground_angle",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__vf_row_ground",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__vf_row_ground_integ",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__poa_ground_shadows",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__shaded_fraction_floats",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__shaded_fraction_array",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test_get_irradiance_poa",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test__backside_tilt",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test_get_irradiance",
+    "pvlib/tests/bifacial/test_infinite_sheds.py::test_get_irradiance_limiting_gcr",
+    "pvlib/tests/test_shading.py::test_masking_angle_series",
+    "pvlib/tests/test_shading.py::test_masking_angle_scalar",
+    "pvlib/tests/test_shading.py::test_masking_angle_passias_series",
+    "pvlib/tests/test_shading.py::test_masking_angle_passias_scalar",
+    "pvlib/tests/test_shading.py::test_sky_diffuse_passias_series",
+    "pvlib/tests/test_shading.py::test_sky_diffuse_passias_scalar"
+  ]
+}

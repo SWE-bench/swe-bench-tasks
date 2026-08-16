@@ -1,0 +1,671 @@
+diff --git a/astroid/brain/brain_datetime.py b/astroid/brain/brain_datetime.py
+new file mode 100644
+--- /dev/null
++++ b/astroid/brain/brain_datetime.py
+@@ -0,0 +1,31 @@
++# Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
++# For details: https://github.com/pylint-dev/astroid/blob/main/LICENSE
++# Copyright (c) https://github.com/pylint-dev/astroid/blob/main/CONTRIBUTORS.txt
++
++import textwrap
++
++from astroid.brain.helpers import register_module_extender
++from astroid.builder import AstroidBuilder
++from astroid.const import PY312_PLUS
++from astroid.manager import AstroidManager
++
++
++def datetime_transform():
++    """The datetime module was C-accelerated in Python 3.12, so we
++    lack a Python source."""
++    return AstroidBuilder(AstroidManager()).string_build(
++        textwrap.dedent(
++            """
++    class date: ...
++    class time: ...
++    class datetime(date): ...
++    class timedelta: ...
++    class tzinfo: ...
++    class timezone(tzinfo): ...
++    """
++        )
++    )
++
++
++if PY312_PLUS:
++    register_module_extender(AstroidManager(), "datetime", datetime_transform)
+diff --git a/astroid/brain/brain_typing.py b/astroid/brain/brain_typing.py
+--- a/astroid/brain/brain_typing.py
++++ b/astroid/brain/brain_typing.py
+@@ -6,14 +6,16 @@
+ 
+ from __future__ import annotations
+ 
++import textwrap
+ import typing
+ from collections.abc import Iterator
+ from functools import partial
+ from typing import Final
+ 
+ from astroid import context, extract_node, inference_tip
+-from astroid.builder import _extract_single_node
+-from astroid.const import PY39_PLUS
++from astroid.brain.helpers import register_module_extender
++from astroid.builder import AstroidBuilder, _extract_single_node
++from astroid.const import PY39_PLUS, PY312_PLUS
+ from astroid.exceptions import (
+     AttributeInferenceError,
+     InferenceError,
+@@ -231,7 +233,8 @@ def _looks_like_typing_alias(node: Call) -> bool:
+     """
+     return (
+         isinstance(node.func, Name)
+-        and node.func.name == "_alias"
++        # TODO: remove _DeprecatedGenericAlias when Py3.14 min
++        and node.func.name in {"_alias", "_DeprecatedGenericAlias"}
+         and (
+             # _alias function works also for builtins object such as list and dict
+             isinstance(node.args[0], (Attribute, Name))
+@@ -273,6 +276,8 @@ def infer_typing_alias(
+ 
+     :param node: call node
+     :param context: inference context
++
++    # TODO: evaluate if still necessary when Py3.12 is minimum
+     """
+     if (
+         not isinstance(node.parent, Assign)
+@@ -415,6 +420,29 @@ def infer_typing_cast(
+     return node.args[1].infer(context=ctx)
+ 
+ 
++def _typing_transform():
++    return AstroidBuilder(AstroidManager()).string_build(
++        textwrap.dedent(
++            """
++    class Generic:
++        @classmethod
++        def __class_getitem__(cls, item):  return cls
++    class ParamSpec: ...
++    class ParamSpecArgs: ...
++    class ParamSpecKwargs: ...
++    class TypeAlias: ...
++    class Type:
++        @classmethod
++        def __class_getitem__(cls, item):  return cls
++    class TypeVar:
++        @classmethod
++        def __class_getitem__(cls, item):  return cls
++    class TypeVarTuple: ...
++    """
++        )
++    )
++
++
+ AstroidManager().register_transform(
+     Call,
+     inference_tip(infer_typing_typevar_or_newtype),
+@@ -442,3 +470,6 @@ def infer_typing_cast(
+ AstroidManager().register_transform(
+     Call, inference_tip(infer_special_alias), _looks_like_special_alias
+ )
++
++if PY312_PLUS:
++    register_module_extender(AstroidManager(), "typing", _typing_transform)
+diff --git a/astroid/const.py b/astroid/const.py
+--- a/astroid/const.py
++++ b/astroid/const.py
+@@ -10,6 +10,7 @@
+ PY39_PLUS = sys.version_info >= (3, 9)
+ PY310_PLUS = sys.version_info >= (3, 10)
+ PY311_PLUS = sys.version_info >= (3, 11)
++PY312_PLUS = sys.version_info >= (3, 12)
+ 
+ WIN32 = sys.platform == "win32"
+ 
+diff --git a/astroid/inference.py b/astroid/inference.py
+--- a/astroid/inference.py
++++ b/astroid/inference.py
+@@ -92,6 +92,10 @@ def infer_end(
+ nodes.Lambda._infer = infer_end  # type: ignore[assignment]
+ nodes.Const._infer = infer_end  # type: ignore[assignment]
+ nodes.Slice._infer = infer_end  # type: ignore[assignment]
++nodes.TypeAlias._infer = infer_end  # type: ignore[assignment]
++nodes.TypeVar._infer = infer_end  # type: ignore[assignment]
++nodes.ParamSpec._infer = infer_end  # type: ignore[assignment]
++nodes.TypeVarTuple._infer = infer_end  # type: ignore[assignment]
+ 
+ 
+ def _infer_sequence_helper(
+diff --git a/astroid/nodes/__init__.py b/astroid/nodes/__init__.py
+--- a/astroid/nodes/__init__.py
++++ b/astroid/nodes/__init__.py
+@@ -71,6 +71,7 @@
+     NamedExpr,
+     NodeNG,
+     Nonlocal,
++    ParamSpec,
+     Pass,
+     Pattern,
+     Raise,
+@@ -83,6 +84,9 @@
+     TryFinally,
+     TryStar,
+     Tuple,
++    TypeAlias,
++    TypeVar,
++    TypeVarTuple,
+     UnaryOp,
+     Unknown,
+     While,
+@@ -180,6 +184,8 @@
+     NamedExpr,
+     NodeNG,
+     Nonlocal,
++    ParamSpec,
++    TypeVarTuple,
+     Pass,
+     Pattern,
+     Raise,
+@@ -193,6 +199,8 @@
+     TryFinally,
+     TryStar,
+     Tuple,
++    TypeAlias,
++    TypeVar,
+     UnaryOp,
+     Unknown,
+     While,
+@@ -271,6 +279,7 @@
+     "NamedExpr",
+     "NodeNG",
+     "Nonlocal",
++    "ParamSpec",
+     "Pass",
+     "Position",
+     "Raise",
+@@ -285,6 +294,9 @@
+     "TryFinally",
+     "TryStar",
+     "Tuple",
++    "TypeAlias",
++    "TypeVar",
++    "TypeVarTuple",
+     "UnaryOp",
+     "Unknown",
+     "unpack_infer",
+diff --git a/astroid/nodes/as_string.py b/astroid/nodes/as_string.py
+--- a/astroid/nodes/as_string.py
++++ b/astroid/nodes/as_string.py
+@@ -178,6 +178,7 @@ def visit_classdef(self, node) -> str:
+         args += [n.accept(self) for n in node.keywords]
+         args_str = f"({', '.join(args)})" if args else ""
+         docs = self._docs_dedent(node.doc_node)
++        # TODO: handle type_params
+         return "\n\n{}class {}{}:{}\n{}\n".format(
+             decorate, node.name, args_str, docs, self._stmt_list(node.body)
+         )
+@@ -330,6 +331,7 @@ def handle_functiondef(self, node, keyword) -> str:
+         if node.returns:
+             return_annotation = " -> " + node.returns.as_string()
+             trailer = return_annotation + ":"
++        # TODO: handle type_params
+         def_format = "\n%s%s %s(%s)%s%s\n%s"
+         return def_format % (
+             decorate,
+@@ -431,6 +433,10 @@ def visit_nonlocal(self, node) -> str:
+         """return an astroid.Nonlocal node as string"""
+         return f"nonlocal {', '.join(node.names)}"
+ 
++    def visit_paramspec(self, node: nodes.ParamSpec) -> str:
++        """return an astroid.ParamSpec node as string"""
++        return node.name.accept(self)
++
+     def visit_pass(self, node) -> str:
+         """return an astroid.Pass node as string"""
+         return "pass"
+@@ -517,6 +523,18 @@ def visit_tuple(self, node) -> str:
+             return f"({node.elts[0].accept(self)}, )"
+         return f"({', '.join(child.accept(self) for child in node.elts)})"
+ 
++    def visit_typealias(self, node: nodes.TypeAlias) -> str:
++        """return an astroid.TypeAlias node as string"""
++        return node.name.accept(self) if node.name else "_"
++
++    def visit_typevar(self, node: nodes.TypeVar) -> str:
++        """return an astroid.TypeVar node as string"""
++        return node.name.accept(self) if node.name else "_"
++
++    def visit_typevartuple(self, node: nodes.TypeVarTuple) -> str:
++        """return an astroid.TypeVarTuple node as string"""
++        return "*" + node.name.accept(self) if node.name else ""
++
+     def visit_unaryop(self, node) -> str:
+         """return an astroid.UnaryOp node as string"""
+         if node.op == "not":
+diff --git a/astroid/nodes/node_classes.py b/astroid/nodes/node_classes.py
+--- a/astroid/nodes/node_classes.py
++++ b/astroid/nodes/node_classes.py
+@@ -19,7 +19,6 @@
+     ClassVar,
+     Literal,
+     Optional,
+-    TypeVar,
+     Union,
+ )
+ 
+@@ -62,8 +61,8 @@ def _is_const(value) -> bool:
+     return isinstance(value, tuple(CONST_CLS))
+ 
+ 
+-_NodesT = TypeVar("_NodesT", bound=NodeNG)
+-_BadOpMessageT = TypeVar("_BadOpMessageT", bound=util.BadOperationMessage)
++_NodesT = typing.TypeVar("_NodesT", bound=NodeNG)
++_BadOpMessageT = typing.TypeVar("_BadOpMessageT", bound=util.BadOperationMessage)
+ 
+ AssignedStmtsPossibleNode = Union["List", "Tuple", "AssignName", "AssignAttr", None]
+ AssignedStmtsCall = Callable[
+@@ -2696,6 +2695,37 @@ def _infer_name(self, frame, name):
+         return name
+ 
+ 
++class ParamSpec(_base_nodes.AssignTypeNode):
++    """Class representing a :class:`ast.ParamSpec` node.
++
++    >>> import astroid
++    >>> node = astroid.extract_node('type Alias[**P] = Callable[P, int]')
++    >>> node.type_params[0]
++    <ParamSpec l.1 at 0x7f23b2e4e198>
++    """
++
++    def __init__(
++        self,
++        lineno: int,
++        col_offset: int,
++        parent: NodeNG,
++        *,
++        end_lineno: int | None = None,
++        end_col_offset: int | None = None,
++    ) -> None:
++        self.name: AssignName | None
++        super().__init__(
++            lineno=lineno,
++            col_offset=col_offset,
++            end_lineno=end_lineno,
++            end_col_offset=end_col_offset,
++            parent=parent,
++        )
++
++    def postinit(self, *, name: AssignName | None) -> None:
++        self.name = name
++
++
+ class Pass(_base_nodes.NoChildrenNode, _base_nodes.Statement):
+     """Class representing an :class:`ast.Pass` node.
+ 
+@@ -3310,6 +3340,115 @@ def getitem(self, index, context: InferenceContext | None = None):
+         return _container_getitem(self, self.elts, index, context=context)
+ 
+ 
++class TypeAlias(_base_nodes.AssignTypeNode):
++    """Class representing a :class:`ast.TypeAlias` node.
++
++    >>> import astroid
++    >>> node = astroid.extract_node('type Point = tuple[float, float]')
++    >>> node
++    <TypeAlias l.1 at 0x7f23b2e4e198>
++    """
++
++    _astroid_fields = ("type_params", "value")
++
++    def __init__(
++        self,
++        lineno: int,
++        col_offset: int,
++        parent: NodeNG,
++        *,
++        end_lineno: int | None = None,
++        end_col_offset: int | None = None,
++    ) -> None:
++        self.name: AssignName | None
++        self.type_params: list[TypeVar, ParamSpec, TypeVarTuple]
++        self.value: NodeNG
++        super().__init__(
++            lineno=lineno,
++            col_offset=col_offset,
++            end_lineno=end_lineno,
++            end_col_offset=end_col_offset,
++            parent=parent,
++        )
++
++    def postinit(
++        self,
++        *,
++        name: AssignName | None,
++        type_params: list[TypeVar, ParamSpec, TypeVarTuple],
++        value: NodeNG,
++    ) -> None:
++        self.name = name
++        self.type_params = type_params
++        self.value = value
++
++
++class TypeVar(_base_nodes.AssignTypeNode):
++    """Class representing a :class:`ast.TypeVar` node.
++
++    >>> import astroid
++    >>> node = astroid.extract_node('type Point[T] = tuple[float, float]')
++    >>> node.type_params[0]
++    <TypeVar l.1 at 0x7f23b2e4e198>
++    """
++
++    _astroid_fields = ("bound",)
++
++    def __init__(
++        self,
++        lineno: int,
++        col_offset: int,
++        parent: NodeNG,
++        *,
++        end_lineno: int | None = None,
++        end_col_offset: int | None = None,
++    ) -> None:
++        self.name: AssignName | None
++        self.bound: NodeNG | None
++        super().__init__(
++            lineno=lineno,
++            col_offset=col_offset,
++            end_lineno=end_lineno,
++            end_col_offset=end_col_offset,
++            parent=parent,
++        )
++
++    def postinit(self, *, name: AssignName | None, bound: NodeNG | None) -> None:
++        self.name = name
++        self.bound = bound
++
++
++class TypeVarTuple(_base_nodes.AssignTypeNode):
++    """Class representing a :class:`ast.TypeVarTuple` node.
++
++    >>> import astroid
++    >>> node = astroid.extract_node('type Alias[*Ts] = tuple[*Ts]')
++    >>> node.type_params[0]
++    <TypeVarTuple l.1 at 0x7f23b2e4e198>
++    """
++
++    def __init__(
++        self,
++        lineno: int,
++        col_offset: int,
++        parent: NodeNG,
++        *,
++        end_lineno: int | None = None,
++        end_col_offset: int | None = None,
++    ) -> None:
++        self.name: AssignName | None
++        super().__init__(
++            lineno=lineno,
++            col_offset=col_offset,
++            end_lineno=end_lineno,
++            end_col_offset=end_col_offset,
++            parent=parent,
++        )
++
++    def postinit(self, *, name: AssignName | None) -> None:
++        self.name = name
++
++
+ class UnaryOp(NodeNG):
+     """Class representing an :class:`ast.UnaryOp` node.
+ 
+diff --git a/astroid/nodes/scoped_nodes/scoped_nodes.py b/astroid/nodes/scoped_nodes/scoped_nodes.py
+--- a/astroid/nodes/scoped_nodes/scoped_nodes.py
++++ b/astroid/nodes/scoped_nodes/scoped_nodes.py
+@@ -1055,7 +1055,14 @@ class FunctionDef(
+     <FunctionDef.my_func l.2 at 0x7f23b2e71e10>
+     """
+ 
+-    _astroid_fields = ("decorators", "args", "returns", "doc_node", "body")
++    _astroid_fields = (
++        "decorators",
++        "args",
++        "returns",
++        "type_params",
++        "doc_node",
++        "body",
++    )
+     _multi_line_block_fields = ("body",)
+     returns = None
+ 
+@@ -1123,6 +1130,9 @@ def __init__(
+         self.body: list[NodeNG] = []
+         """The contents of the function body."""
+ 
++        self.type_params: list[nodes.TypeVar, nodes.ParamSpec, nodes.TypeVarTuple] = []
++        """PEP 695 (Python 3.12+) type params, e.g. first 'T' in def func[T]() -> T: ..."""
++
+         self.instance_attrs: dict[str, list[NodeNG]] = {}
+ 
+         super().__init__(
+@@ -1147,6 +1157,7 @@ def postinit(
+         *,
+         position: Position | None = None,
+         doc_node: Const | None = None,
++        type_params: list[nodes.TypeVar] | None = None,
+     ):
+         """Do some setup after initialisation.
+ 
+@@ -1164,6 +1175,8 @@ def postinit(
+             Position of function keyword(s) and name.
+         :param doc_node:
+             The doc node associated with this node.
++        :param type_params:
++            The type_params associated with this node.
+         """
+         self.args = args
+         self.body = body
+@@ -1173,6 +1186,7 @@ def postinit(
+         self.type_comment_args = type_comment_args
+         self.position = position
+         self.doc_node = doc_node
++        self.type_params = type_params or []
+ 
+     @cached_property
+     def extra_decorators(self) -> list[node_classes.Call]:
+@@ -1739,7 +1753,7 @@ def get_wrapping_class(node):
+     return klass
+ 
+ 
+-class ClassDef(
++class ClassDef(  # pylint: disable=too-many-instance-attributes
+     _base_nodes.FilterStmtsBaseNode, LocalsDictNodeNG, _base_nodes.Statement
+ ):
+     """Class representing an :class:`ast.ClassDef` node.
+@@ -1758,7 +1772,14 @@ def my_meth(self, arg):
+     # by a raw factories
+ 
+     # a dictionary of class instances attributes
+-    _astroid_fields = ("decorators", "bases", "keywords", "doc_node", "body")  # name
++    _astroid_fields = (
++        "decorators",
++        "bases",
++        "keywords",
++        "doc_node",
++        "body",
++        "type_params",
++    )  # name
+ 
+     decorators = None
+     """The decorators that are applied to this class.
+@@ -1825,6 +1846,9 @@ def __init__(
+         self.is_dataclass: bool = False
+         """Whether this class is a dataclass."""
+ 
++        self.type_params: list[nodes.TypeVar, nodes.ParamSpec, nodes.TypeVarTuple] = []
++        """PEP 695 (Python 3.12+) type params, e.g. class MyClass[T]: ..."""
++
+         super().__init__(
+             lineno=lineno,
+             col_offset=col_offset,
+@@ -1866,6 +1890,7 @@ def postinit(
+         *,
+         position: Position | None = None,
+         doc_node: Const | None = None,
++        type_params: list[nodes.TypeVar] | None = None,
+     ) -> None:
+         if keywords is not None:
+             self.keywords = keywords
+@@ -1876,6 +1901,7 @@ def postinit(
+         self._metaclass = metaclass
+         self.position = position
+         self.doc_node = doc_node
++        self.type_params = type_params or []
+ 
+     def _newstyle_impl(self, context: InferenceContext | None = None):
+         if context is None:
+diff --git a/astroid/rebuilder.py b/astroid/rebuilder.py
+--- a/astroid/rebuilder.py
++++ b/astroid/rebuilder.py
+@@ -18,7 +18,7 @@
+ 
+ from astroid import nodes
+ from astroid._ast import ParserModule, get_parser_module, parse_function_type_comment
+-from astroid.const import IS_PYPY, PY38, PY39_PLUS, Context
++from astroid.const import IS_PYPY, PY38, PY39_PLUS, PY312_PLUS, Context
+ from astroid.manager import AstroidManager
+ from astroid.nodes import NodeNG
+ from astroid.nodes.utils import Position
+@@ -384,6 +384,12 @@ def visit(self, node: ast.Nonlocal, parent: NodeNG) -> nodes.Nonlocal:
+         def visit(self, node: ast.Constant, parent: NodeNG) -> nodes.Const:
+             ...
+ 
++        if sys.version_info >= (3, 12):
++
++            @overload
++            def visit(self, node: ast.ParamSpec, parent: NodeNG) -> nodes.ParamSpec:
++                ...
++
+         @overload
+         def visit(self, node: ast.Pass, parent: NodeNG) -> nodes.Pass:
+             ...
+@@ -432,6 +438,22 @@ def visit(self, node: ast.TryStar, parent: NodeNG) -> nodes.TryStar:
+         def visit(self, node: ast.Tuple, parent: NodeNG) -> nodes.Tuple:
+             ...
+ 
++        if sys.version_info >= (3, 12):
++
++            @overload
++            def visit(self, node: ast.TypeAlias, parent: NodeNG) -> nodes.TypeAlias:
++                ...
++
++            @overload
++            def visit(self, node: ast.TypeVar, parent: NodeNG) -> nodes.TypeVar:
++                ...
++
++            @overload
++            def visit(
++                self, node: ast.TypeVarTuple, parent: NodeNG
++            ) -> nodes.TypeVarTuple:
++                ...
++
+         @overload
+         def visit(self, node: ast.UnaryOp, parent: NodeNG) -> nodes.UnaryOp:
+             ...
+@@ -870,6 +892,9 @@ def visit_classdef(
+             ],
+             position=self._get_position_info(node, newnode),
+             doc_node=self.visit(doc_ast_node, newnode),
++            type_params=[self.visit(param, newnode) for param in node.type_params]
++            if PY312_PLUS
++            else [],
+         )
+         return newnode
+ 
+@@ -1170,6 +1195,9 @@ def _visit_functiondef(
+             type_comment_args=type_comment_args,
+             position=self._get_position_info(node, newnode),
+             doc_node=self.visit(doc_ast_node, newnode),
++            type_params=[self.visit(param, newnode) for param in node.type_params]
++            if PY312_PLUS
++            else [],
+         )
+         self._global_names.pop()
+         return newnode
+@@ -1477,6 +1505,20 @@ def visit_constant(self, node: ast.Constant, parent: NodeNG) -> nodes.Const:
+             parent=parent,
+         )
+ 
++    def visit_paramspec(self, node: ast.ParamSpec, parent: NodeNG) -> nodes.ParamSpec:
++        """Visit a ParamSpec node by returning a fresh instance of it."""
++        newnode = nodes.ParamSpec(
++            lineno=node.lineno,
++            col_offset=node.col_offset,
++            end_lineno=node.end_lineno,
++            end_col_offset=node.end_col_offset,
++            parent=parent,
++        )
++        # Add AssignName node for 'node.name'
++        # https://bugs.python.org/issue43994
++        newnode.postinit(name=self.visit_assignname(node, newnode, node.name))
++        return newnode
++
+     def visit_pass(self, node: ast.Pass, parent: NodeNG) -> nodes.Pass:
+         """Visit a Pass node by returning a fresh instance of it."""
+         return nodes.Pass(
+@@ -1669,6 +1711,55 @@ def visit_tuple(self, node: ast.Tuple, parent: NodeNG) -> nodes.Tuple:
+         newnode.postinit([self.visit(child, newnode) for child in node.elts])
+         return newnode
+ 
++    def visit_typealias(self, node: ast.TypeAlias, parent: NodeNG) -> nodes.TypeAlias:
++        """Visit a TypeAlias node by returning a fresh instance of it."""
++        newnode = nodes.TypeAlias(
++            lineno=node.lineno,
++            col_offset=node.col_offset,
++            end_lineno=node.end_lineno,
++            end_col_offset=node.end_col_offset,
++            parent=parent,
++        )
++        newnode.postinit(
++            name=self.visit(node.name, newnode),
++            type_params=[self.visit(p, newnode) for p in node.type_params],
++            value=self.visit(node.value, newnode),
++        )
++        return newnode
++
++    def visit_typevar(self, node: ast.TypeVar, parent: NodeNG) -> nodes.TypeVar:
++        """Visit a TypeVar node by returning a fresh instance of it."""
++        newnode = nodes.TypeVar(
++            lineno=node.lineno,
++            col_offset=node.col_offset,
++            end_lineno=node.end_lineno,
++            end_col_offset=node.end_col_offset,
++            parent=parent,
++        )
++        # Add AssignName node for 'node.name'
++        # https://bugs.python.org/issue43994
++        newnode.postinit(
++            name=self.visit_assignname(node, newnode, node.name),
++            bound=self.visit(node.bound, newnode),
++        )
++        return newnode
++
++    def visit_typevartuple(
++        self, node: ast.TypeVarTuple, parent: NodeNG
++    ) -> nodes.TypeVarTuple:
++        """Visit a TypeVarTuple node by returning a fresh instance of it."""
++        newnode = nodes.TypeVarTuple(
++            lineno=node.lineno,
++            col_offset=node.col_offset,
++            end_lineno=node.end_lineno,
++            end_col_offset=node.end_col_offset,
++            parent=parent,
++        )
++        # Add AssignName node for 'node.name'
++        # https://bugs.python.org/issue43994
++        newnode.postinit(name=self.visit_assignname(node, newnode, node.name))
++        return newnode
++
+     def visit_unaryop(self, node: ast.UnaryOp, parent: NodeNG) -> nodes.UnaryOp:
+         """Visit a UnaryOp node by returning a fresh instance of it."""
+         newnode = nodes.UnaryOp(

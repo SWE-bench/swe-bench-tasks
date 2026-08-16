@@ -1,0 +1,76 @@
+diff --git a/pydicom/_version.py b/pydicom/_version.py
+--- a/pydicom/_version.py
++++ b/pydicom/_version.py
+@@ -3,7 +3,7 @@
+ from typing import Tuple
+ 
+ 
+-__version__: str = '2.1.0'
++__version__: str = '2.1.1'
+ __version_info__: Tuple[str, str, str] = tuple(
+     re.match(r'(\d+\.\d+\.\d+).*', __version__).group(1).split('.')
+ )
+diff --git a/pydicom/filebase.py b/pydicom/filebase.py
+--- a/pydicom/filebase.py
++++ b/pydicom/filebase.py
+@@ -5,7 +5,7 @@
+ from struct import unpack, pack
+ from types import TracebackType
+ from typing import (
+-    Tuple, Optional, NoReturn, BinaryIO, Callable, Type, Union, cast, TextIO,
++    Tuple, Optional, BinaryIO, Callable, Type, Union, cast, TextIO,
+     TYPE_CHECKING, Any
+ )
+ 
+@@ -182,15 +182,15 @@ def __init__(
+         self.close = file_like_obj.close
+         self.name: str = getattr(file_like_obj, 'name', '<no filename>')
+ 
+-    def no_write(self, bytes_read: bytes) -> NoReturn:
++    def no_write(self, bytes_read: bytes) -> None:
+         """Used for file-like objects where no write is available"""
+         raise IOError("This DicomFileLike object has no write() method")
+ 
+-    def no_read(self, bytes_read: Optional[int] = None) -> NoReturn:
++    def no_read(self, bytes_read: Optional[int] = None) -> None:
+         """Used for file-like objects where no read is available"""
+         raise IOError("This DicomFileLike object has no read() method")
+ 
+-    def no_seek(self, offset: int, from_what: int = 0) -> NoReturn:
++    def no_seek(self, offset: int, from_what: int = 0) -> None:
+         """Used for file-like objects where no seek is available"""
+         raise IOError("This DicomFileLike object has no seek() method")
+ 
+diff --git a/pydicom/jsonrep.py b/pydicom/jsonrep.py
+--- a/pydicom/jsonrep.py
++++ b/pydicom/jsonrep.py
+@@ -226,7 +226,8 @@ def get_sequence_item(self, value):
+                     value_key = unique_value_keys[0]
+                     elem = DataElement.from_json(
+                         self.dataset_class, key, vr,
+-                        val[value_key], value_key
++                        val[value_key], value_key,
++                        self.bulk_data_element_handler
+                     )
+                 ds.add(elem)
+         return ds
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -38,6 +38,7 @@
+     "Programming Language :: Python :: 3.6",
+     "Programming Language :: Python :: 3.7",
+     "Programming Language :: Python :: 3.8",
++    "Programming Language :: Python :: 3.9",
+     "Operating System :: OS Independent",
+     "Topic :: Scientific/Engineering :: Medical Science Apps.",
+     "Topic :: Scientific/Engineering :: Physics",
+@@ -80,7 +81,7 @@ def data_files_inventory():
+ 
+ 
+ PACKAGE_DATA = {
+-    'pydicom': data_files_inventory() + ['py.typed']
++    'pydicom': data_files_inventory()
+ }
+ 
+ opts = dict(

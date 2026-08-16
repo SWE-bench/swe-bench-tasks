@@ -1,0 +1,7 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_L003_L065_combo_test.py::test__rules__std_L003_L065_union_all_in_subquery_lint",
+    "test/rules/std_L003_L065_combo_test.py::test__rules__std_L003_L065_union_all_in_subquery_fix"
+  ],
+  "PASS_TO_PASS": []
+}

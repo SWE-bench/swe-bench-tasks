@@ -1,0 +1,75 @@
+diff --git a/test/api/simple_test.py b/test/api/simple_test.py
+--- a/test/api/simple_test.py
++++ b/test/api/simple_test.py
+@@ -72,16 +72,16 @@
+         "description": "Keywords must be consistently upper case.",
+     },
+     {
+-        "code": "L009",
++        "code": "L014",
+         "line_no": 1,
+         "line_pos": 34,
+-        "description": "Files must end with a single trailing newline.",
++        "description": "Unquoted identifiers must be consistently lower case.",
+     },
+     {
+-        "code": "L014",
++        "code": "L009",
+         "line_no": 1,
+-        "line_pos": 34,
+-        "description": "Unquoted identifiers must be consistently lower case.",
++        "line_pos": 41,
++        "description": "Files must end with a single trailing newline.",
+     },
+ ]
+ 
+diff --git a/test/core/templaters/jinja_test.py b/test/core/templaters/jinja_test.py
+--- a/test/core/templaters/jinja_test.py
++++ b/test/core/templaters/jinja_test.py
+@@ -822,6 +822,10 @@ def test__templater_jinja_slice_template(test, result):
+                 ("block_end", slice(113, 127, None), slice(11, 11, None)),
+                 ("block_start", slice(27, 46, None), slice(11, 11, None)),
+                 ("literal", slice(46, 57, None), slice(11, 22, None)),
++                ("block_end", slice(57, 70, None), slice(22, 22, None)),
++                ("block_start", slice(70, 89, None), slice(22, 22, None)),
++                ("block_end", slice(100, 113, None), slice(22, 22, None)),
++                ("block_end", slice(113, 127, None), slice(22, 22, None)),
+             ],
+         ),
+         (
+@@ -910,8 +914,20 @@ def test__templater_jinja_slice_template(test, result):
+                 ("literal", slice(91, 92, None), slice(0, 0, None)),
+                 ("block_end", slice(92, 104, None), slice(0, 0, None)),
+                 ("literal", slice(104, 113, None), slice(0, 9, None)),
+-                ("templated", slice(113, 139, None), slice(9, 29, None)),
+-                ("literal", slice(139, 156, None), slice(29, 46, None)),
++                ("templated", slice(113, 139, None), slice(9, 28, None)),
++                ("literal", slice(139, 156, None), slice(28, 28, None)),
++            ],
++        ),
++        (
++            # Test for issue 2822: Handle slicing when there's no newline after
++            # the Jinja block end.
++            "{% if true %}\nSELECT 1 + 1\n{%- endif %}",
++            None,
++            [
++                ("block_start", slice(0, 13, None), slice(0, 0, None)),
++                ("literal", slice(13, 26, None), slice(0, 13, None)),
++                ("literal", slice(26, 27, None), slice(13, 13, None)),
++                ("block_end", slice(27, 39, None), slice(13, 13, None)),
+             ],
+         ),
+     ],
+diff --git a/test/fixtures/rules/std_rule_cases/L009.yml b/test/fixtures/rules/std_rule_cases/L009.yml
+--- a/test/fixtures/rules/std_rule_cases/L009.yml
++++ b/test/fixtures/rules/std_rule_cases/L009.yml
+@@ -33,3 +33,9 @@ test_pass_templated_macro_newlines:
+       {{ columns }}
+     {% endmacro %}
+     SELECT {{ get_keyed_nulls("other_id") }}
++
++test_fail_templated_no_newline:
++  # Tricky because there's no newline at the end of the file (following the
++  # templated code).
++  fail_str: "{% if true %}\nSELECT 1 + 1\n{%- endif %}"
++  fix_str: "{% if true %}\nSELECT 1 + 1\n{%- endif %}\n"

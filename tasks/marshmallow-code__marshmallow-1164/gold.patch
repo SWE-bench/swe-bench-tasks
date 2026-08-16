@@ -1,0 +1,43 @@
+diff --git a/src/marshmallow/fields.py b/src/marshmallow/fields.py
+--- a/src/marshmallow/fields.py
++++ b/src/marshmallow/fields.py
+@@ -443,6 +443,8 @@ def _serialize(self, nested_obj, attr, obj):
+         schema = self.schema
+         if nested_obj is None:
+             return None
++        if self.many and utils.is_iterable_but_not_string(nested_obj):
++            nested_obj = list(nested_obj)
+         if not self.__updated_fields:
+             schema._update_fields(obj=nested_obj, many=self.many)
+             self.__updated_fields = True
+diff --git a/src/marshmallow/schema.py b/src/marshmallow/schema.py
+--- a/src/marshmallow/schema.py
++++ b/src/marshmallow/schema.py
+@@ -816,23 +816,14 @@ def __filter_fields(self, field_names, obj, many=False):
+ 
+         :param set field_names: Field names to include in the final
+             return dictionary.
++        :param object|Mapping|list obj The object to base filtered fields on.
+         :returns: An dict of field_name:field_obj pairs.
+         """
+         if obj and many:
+-            try:  # Homogeneous collection
+-                # Prefer getitem over iter to prevent breaking serialization
+-                # of objects for which iter will modify position in the collection
+-                # e.g. Pymongo cursors
+-                if hasattr(obj, '__getitem__') and callable(getattr(obj, '__getitem__')):
+-                    try:
+-                        obj_prototype = obj[0]
+-                    except KeyError:
+-                        obj_prototype = next(iter(obj))
+-                else:
+-                    obj_prototype = next(iter(obj))
+-            except (StopIteration, IndexError):  # Nothing to serialize
++            try:  # list
++                obj = obj[0]
++            except IndexError:  # Nothing to serialize
+                 return dict((k, v) for k, v in self.declared_fields.items() if k in field_names)
+-            obj = obj_prototype
+         ret = self.dict_class()
+         for key in field_names:
+             if key in self.declared_fields:

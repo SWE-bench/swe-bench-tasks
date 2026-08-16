@@ -1,0 +1,116 @@
+diff --git a/pydicom/dataelem.py b/pydicom/dataelem.py
+--- a/pydicom/dataelem.py
++++ b/pydicom/dataelem.py
+@@ -315,32 +315,21 @@ def to_json_dict(self, bulk_data_element_handler, bulk_data_threshold):
+             via DICOMweb WADO-RS
+         bulk_data_threshold: int
+             Size of base64 encoded data element above which a value will be
+-            provided in form of a "BulkDataURI" rather than "InlineBinary"
++            provided in form of a "BulkDataURI" rather than "InlineBinary".
++            Ignored if no bulk data handler is given.
+ 
+         Returns
+         -------
+         dict
+             Mapping representing a JSON encoded data element
+-
+-        Raises
+-        ------
+-        TypeError
+-            When size of encoded data element exceeds `bulk_data_threshold`
+-            but `bulk_data_element_handler` is ``None`` and hence not callable
+-
+         """
+         json_element = {'vr': self.VR, }
+         if self.VR in jsonrep.BINARY_VR_VALUES:
+             if not self.is_empty:
+                 binary_value = self.value
+                 encoded_value = base64.b64encode(binary_value).decode('utf-8')
+-                if len(encoded_value) > bulk_data_threshold:
+-                    if bulk_data_element_handler is None:
+-                        raise TypeError(
+-                            'No bulk data element handler provided to '
+-                            'generate URL for value of data element "{}".'
+-                            .format(self.name)
+-                        )
++                if (bulk_data_element_handler is not None and
++                        len(encoded_value) > bulk_data_threshold):
+                     json_element['BulkDataURI'] = bulk_data_element_handler(
+                         self
+                     )
+@@ -398,7 +387,7 @@ def to_json_dict(self, bulk_data_element_handler, bulk_data_threshold):
+             )
+         return json_element
+ 
+-    def to_json(self, bulk_data_threshold=1, bulk_data_element_handler=None,
++    def to_json(self, bulk_data_threshold=1024, bulk_data_element_handler=None,
+                 dump_handler=None):
+         """Return a JSON representation of the :class:`DataElement`.
+ 
+@@ -412,7 +401,8 @@ def to_json(self, bulk_data_threshold=1, bulk_data_element_handler=None,
+             via DICOMweb WADO-RS
+         bulk_data_threshold: int
+             Size of base64 encoded data element above which a value will be
+-            provided in form of a "BulkDataURI" rather than "InlineBinary"
++            provided in form of a "BulkDataURI" rather than "InlineBinary".
++            Ignored if no bulk data handler is given.
+         dump_handler : callable, optional
+             Callable function that accepts a :class:`dict` and returns the
+             serialized (dumped) JSON string (by default uses
+@@ -423,12 +413,6 @@ def to_json(self, bulk_data_threshold=1, bulk_data_element_handler=None,
+         dict
+             Mapping representing a JSON encoded data element
+ 
+-        Raises
+-        ------
+-        TypeError
+-            When size of encoded data element exceeds `bulk_data_threshold`
+-            but `bulk_data_element_handler` is ``None`` and hence not callable
+-
+         See also
+         --------
+         Dataset.to_json
+diff --git a/pydicom/dataset.py b/pydicom/dataset.py
+--- a/pydicom/dataset.py
++++ b/pydicom/dataset.py
+@@ -2126,11 +2126,11 @@ def from_json(cls, json_dataset, bulk_data_uri_handler=None):
+             dataset.add(data_element)
+         return dataset
+ 
+-    def to_json_dict(self, bulk_data_threshold=1,
++    def to_json_dict(self, bulk_data_threshold=1024,
+                      bulk_data_element_handler=None):
+         """Return a dictionary representation of the :class:`Dataset`
+         conforming to the DICOM JSON Model as described in the DICOM
+-        Standard, Part 18, :dcm:`Annex F<part18/chaptr_F.html>`.
++        Standard, Part 18, :dcm:`Annex F<part18/chapter_F.html>`.
+ 
+         .. versionadded:: 1.4
+ 
+@@ -2140,7 +2140,7 @@ def to_json_dict(self, bulk_data_threshold=1,
+             Threshold for the length of a base64-encoded binary data element
+             above which the element should be considered bulk data and the
+             value provided as a URI rather than included inline (default:
+-            ``1``).
++            ``1024``). Ignored if no bulk data handler is given.
+         bulk_data_element_handler : callable, optional
+             Callable function that accepts a bulk data element and returns a
+             JSON representation of the data element (dictionary including the
+@@ -2161,7 +2161,7 @@ def to_json_dict(self, bulk_data_threshold=1,
+             )
+         return json_dataset
+ 
+-    def to_json(self, bulk_data_threshold=1, bulk_data_element_handler=None,
++    def to_json(self, bulk_data_threshold=1024, bulk_data_element_handler=None,
+                 dump_handler=None):
+         """Return a JSON representation of the :class:`Dataset`.
+ 
+@@ -2175,7 +2175,7 @@ def to_json(self, bulk_data_threshold=1, bulk_data_element_handler=None,
+             Threshold for the length of a base64-encoded binary data element
+             above which the element should be considered bulk data and the
+             value provided as a URI rather than included inline (default:
+-            ``1``).
++            ``1024``). Ignored if no bulk data handler is given.
+         bulk_data_element_handler : callable, optional
+             Callable function that accepts a bulk data element and returns a
+             JSON representation of the data element (dictionary including the

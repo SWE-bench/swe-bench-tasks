@@ -1,0 +1,351 @@
+diff --git a/tests/brain/test_brain.py b/tests/brain/test_brain.py
+--- a/tests/brain/test_brain.py
++++ b/tests/brain/test_brain.py
+@@ -15,6 +15,7 @@
+ from astroid import MANAGER, builder, nodes, objects, test_utils, util
+ from astroid.bases import Instance
+ from astroid.brain.brain_namedtuple_enum import _get_namedtuple_fields
++from astroid.const import PY312_PLUS
+ from astroid.exceptions import (
+     AttributeInferenceError,
+     InferenceError,
+@@ -186,9 +187,16 @@ def test_builtin_subscriptable(self):
+ 
+ 
+ def check_metaclass_is_abc(node: nodes.ClassDef):
+-    meta = node.metaclass()
+-    assert isinstance(meta, nodes.ClassDef)
+-    assert meta.name == "ABCMeta"
++    if PY312_PLUS and node.name == "ByteString":
++        # .metaclass() finds the first metaclass in the mro(),
++        # which, from 3.12, is _DeprecateByteStringMeta (unhelpful)
++        # until ByteString is removed in 3.14.
++        # Jump over the first two ByteString classes in the mro().
++        check_metaclass_is_abc(node.mro()[2])
++    else:
++        meta = node.metaclass()
++        assert isinstance(meta, nodes.ClassDef)
++        assert meta.name == "ABCMeta"
+ 
+ 
+ class CollectionsBrain(unittest.TestCase):
+@@ -323,7 +331,7 @@ def test_collections_object_not_yet_subscriptable_2(self):
+ 
+     @test_utils.require_version(minver="3.9")
+     def test_collections_object_subscriptable_3(self):
+-        """With Python 3.9 the ByteString class of the collections module is subscritable
++        """With Python 3.9 the ByteString class of the collections module is subscriptable
+         (but not the same class from typing module)"""
+         right_node = builder.extract_node(
+             """
+diff --git a/tests/brain/test_qt.py b/tests/brain/test_qt.py
+--- a/tests/brain/test_qt.py
++++ b/tests/brain/test_qt.py
+@@ -8,6 +8,7 @@
+ 
+ from astroid import Uninferable, extract_node
+ from astroid.bases import UnboundMethod
++from astroid.const import PY312_PLUS
+ from astroid.manager import AstroidManager
+ from astroid.nodes import FunctionDef
+ 
+@@ -15,6 +16,8 @@
+ 
+ 
+ @pytest.mark.skipif(HAS_PYQT6 is None, reason="These tests require the PyQt6 library.")
++# TODO: enable for Python 3.12 as soon as PyQt6 release is compatible
++@pytest.mark.skipif(PY312_PLUS, reason="This test was segfaulting with Python 3.12.")
+ class TestBrainQt:
+     AstroidManager.brain["extension_package_whitelist"] = {"PyQt6"}
+ 
+diff --git a/tests/test_inference.py b/tests/test_inference.py
+--- a/tests/test_inference.py
++++ b/tests/test_inference.py
+@@ -6,6 +6,7 @@
+ 
+ from __future__ import annotations
+ 
++import sys
+ import textwrap
+ import unittest
+ from abc import ABCMeta
+@@ -32,7 +33,7 @@
+ from astroid.arguments import CallSite
+ from astroid.bases import BoundMethod, Instance, UnboundMethod, UnionType
+ from astroid.builder import AstroidBuilder, _extract_single_node, extract_node, parse
+-from astroid.const import IS_PYPY, PY39_PLUS, PY310_PLUS
++from astroid.const import IS_PYPY, PY39_PLUS, PY310_PLUS, PY312_PLUS
+ from astroid.context import CallContext, InferenceContext
+ from astroid.exceptions import (
+     AstroidTypeError,
+@@ -988,7 +989,12 @@ def test_import_as(self) -> None:
+         self.assertIsInstance(inferred[0], nodes.Module)
+         self.assertEqual(inferred[0].name, "os.path")
+         inferred = list(ast.igetattr("e"))
+-        self.assertEqual(len(inferred), 1)
++        if PY312_PLUS and sys.platform.startswith("win"):
++            # There are two os.path.exists exported, likely due to
++            # https://github.com/python/cpython/pull/101324
++            self.assertEqual(len(inferred), 2)
++        else:
++            self.assertEqual(len(inferred), 1)
+         self.assertIsInstance(inferred[0], nodes.FunctionDef)
+         self.assertEqual(inferred[0].name, "exists")
+ 
+diff --git a/tests/test_nodes.py b/tests/test_nodes.py
+--- a/tests/test_nodes.py
++++ b/tests/test_nodes.py
+@@ -28,7 +28,7 @@
+     transforms,
+     util,
+ )
+-from astroid.const import PY310_PLUS, Context
++from astroid.const import PY310_PLUS, PY312_PLUS, Context
+ from astroid.context import InferenceContext
+ from astroid.exceptions import (
+     AstroidBuildingError,
+@@ -279,6 +279,33 @@ def test_as_string_unknown() -> None:
+         assert nodes.Unknown(lineno=1, col_offset=0).as_string() == "Unknown.Unknown()"
+ 
+ 
++@pytest.mark.skipif(not PY312_PLUS, reason="Uses 3.12 type param nodes")
++class AsStringTypeParamNodes(unittest.TestCase):
++    @staticmethod
++    def test_as_string_type_alias() -> None:
++        ast = abuilder.string_build("type Point = tuple[float, float]")
++        type_alias = ast.body[0]
++        assert type_alias.as_string().strip() == "Point"
++
++    @staticmethod
++    def test_as_string_type_var() -> None:
++        ast = abuilder.string_build("type Point[T] = tuple[float, float]")
++        type_var = ast.body[0].type_params[0]
++        assert type_var.as_string().strip() == "T"
++
++    @staticmethod
++    def test_as_string_type_var_tuple() -> None:
++        ast = abuilder.string_build("type Alias[*Ts] = tuple[*Ts]")
++        type_var_tuple = ast.body[0].type_params[0]
++        assert type_var_tuple.as_string().strip() == "*Ts"
++
++    @staticmethod
++    def test_as_string_param_spec() -> None:
++        ast = abuilder.string_build("type Alias[**P] = Callable[P, int]")
++        param_spec = ast.body[0].type_params[0]
++        assert param_spec.as_string().strip() == "P"
++
++
+ class _NodeTest(unittest.TestCase):
+     """Test transformation of If Node."""
+ 
+diff --git a/tests/test_nodes_lineno.py b/tests/test_nodes_lineno.py
+--- a/tests/test_nodes_lineno.py
++++ b/tests/test_nodes_lineno.py
+@@ -8,7 +8,7 @@
+ 
+ import astroid
+ from astroid import builder, nodes
+-from astroid.const import IS_PYPY, PY38, PY39_PLUS, PY310_PLUS
++from astroid.const import IS_PYPY, PY38, PY39_PLUS, PY310_PLUS, PY312_PLUS
+ 
+ 
+ @pytest.mark.skipif(
+@@ -977,13 +977,24 @@ def test_end_lineno_string() -> None:
+         assert isinstance(s1.values[0], nodes.Const)
+         assert (s1.lineno, s1.col_offset) == (1, 0)
+         assert (s1.end_lineno, s1.end_col_offset) == (1, 29)
+-        assert (s1.values[0].lineno, s1.values[0].col_offset) == (1, 0)
+-        assert (s1.values[0].end_lineno, s1.values[0].end_col_offset) == (1, 29)
++        if PY312_PLUS:
++            assert (s1.values[0].lineno, s1.values[0].col_offset) == (1, 2)
++            assert (s1.values[0].end_lineno, s1.values[0].end_col_offset) == (1, 15)
++        else:
++            # Bug in Python 3.11
++            # https://github.com/python/cpython/issues/81639
++            assert (s1.values[0].lineno, s1.values[0].col_offset) == (1, 0)
++            assert (s1.values[0].end_lineno, s1.values[0].end_col_offset) == (1, 29)
+ 
+         s2 = s1.values[1]
+         assert isinstance(s2, nodes.FormattedValue)
+-        assert (s2.lineno, s2.col_offset) == (1, 0)
+-        assert (s2.end_lineno, s2.end_col_offset) == (1, 29)
++        if PY312_PLUS:
++            assert (s2.lineno, s2.col_offset) == (1, 15)
++            assert (s2.end_lineno, s2.end_col_offset) == (1, 28)
++        else:
++            assert (s2.lineno, s2.col_offset) == (1, 0)
++            assert (s2.end_lineno, s2.end_col_offset) == (1, 29)
++
+         assert isinstance(s2.value, nodes.Const)  # 42.1234
+         if PY39_PLUS:
+             assert (s2.value.lineno, s2.value.col_offset) == (1, 16)
+@@ -993,22 +1004,35 @@ def test_end_lineno_string() -> None:
+             # https://bugs.python.org/issue44885
+             assert (s2.value.lineno, s2.value.col_offset) == (1, 1)
+             assert (s2.value.end_lineno, s2.value.end_col_offset) == (1, 8)
+-        assert isinstance(s2.format_spec, nodes.JoinedStr)  # '02d'
+-        assert (s2.format_spec.lineno, s2.format_spec.col_offset) == (1, 0)
+-        assert (s2.format_spec.end_lineno, s2.format_spec.end_col_offset) == (1, 29)
++        assert isinstance(s2.format_spec, nodes.JoinedStr)  # ':02d'
++        if PY312_PLUS:
++            assert (s2.format_spec.lineno, s2.format_spec.col_offset) == (1, 23)
++            assert (s2.format_spec.end_lineno, s2.format_spec.end_col_offset) == (1, 27)
++        else:
++            assert (s2.format_spec.lineno, s2.format_spec.col_offset) == (1, 0)
++            assert (s2.format_spec.end_lineno, s2.format_spec.end_col_offset) == (1, 29)
+ 
+         s3 = ast_nodes[1]
+         assert isinstance(s3, nodes.JoinedStr)
+         assert isinstance(s3.values[0], nodes.Const)
+         assert (s3.lineno, s3.col_offset) == (2, 0)
+         assert (s3.end_lineno, s3.end_col_offset) == (2, 17)
+-        assert (s3.values[0].lineno, s3.values[0].col_offset) == (2, 0)
+-        assert (s3.values[0].end_lineno, s3.values[0].end_col_offset) == (2, 17)
++        if PY312_PLUS:
++            assert (s3.values[0].lineno, s3.values[0].col_offset) == (2, 2)
++            assert (s3.values[0].end_lineno, s3.values[0].end_col_offset) == (2, 15)
++        else:
++            assert (s3.values[0].lineno, s3.values[0].col_offset) == (2, 0)
++            assert (s3.values[0].end_lineno, s3.values[0].end_col_offset) == (2, 17)
+ 
+         s4 = s3.values[1]
+         assert isinstance(s4, nodes.FormattedValue)
+-        assert (s4.lineno, s4.col_offset) == (2, 0)
+-        assert (s4.end_lineno, s4.end_col_offset) == (2, 17)
++        if PY312_PLUS:
++            assert (s4.lineno, s4.col_offset) == (2, 9)
++            assert (s4.end_lineno, s4.end_col_offset) == (2, 16)
++        else:
++            assert (s4.lineno, s4.col_offset) == (2, 0)
++            assert (s4.end_lineno, s4.end_col_offset) == (2, 17)
++
+         assert isinstance(s4.value, nodes.Name)  # 'name'
+         if PY39_PLUS:
+             assert (s4.value.lineno, s4.value.col_offset) == (2, 10)
+diff --git a/tests/test_raw_building.py b/tests/test_raw_building.py
+--- a/tests/test_raw_building.py
++++ b/tests/test_raw_building.py
+@@ -24,7 +24,7 @@
+ import tests.testdata.python3.data.fake_module_with_broken_getattr as fm_getattr
+ import tests.testdata.python3.data.fake_module_with_warnings as fm
+ from astroid.builder import AstroidBuilder
+-from astroid.const import IS_PYPY
++from astroid.const import IS_PYPY, PY312_PLUS
+ from astroid.raw_building import (
+     attach_dummy_node,
+     build_class,
+@@ -86,7 +86,7 @@ def test_build_from_import(self) -> None:
+ 
+     @unittest.skipIf(IS_PYPY, "Only affects CPython")
+     def test_io_is__io(self):
+-        # _io module calls itself io. This leads
++        # _io module calls itself io before Python 3.12. This leads
+         # to cyclic dependencies when astroid tries to resolve
+         # what io.BufferedReader is. The code that handles this
+         # is in astroid.raw_building.imported_member, which verifies
+@@ -94,7 +94,8 @@ def test_io_is__io(self):
+         builder = AstroidBuilder()
+         module = builder.inspect_build(_io)
+         buffered_reader = module.getattr("BufferedReader")[0]
+-        self.assertEqual(buffered_reader.root().name, "io")
++        expected = "_io" if PY312_PLUS else "io"
++        self.assertEqual(buffered_reader.root().name, expected)
+ 
+     def test_build_function_deepinspect_deprecation(self) -> None:
+         # Tests https://github.com/pylint-dev/astroid/issues/1717
+diff --git a/tests/test_scoped_nodes.py b/tests/test_scoped_nodes.py
+--- a/tests/test_scoped_nodes.py
++++ b/tests/test_scoped_nodes.py
+@@ -8,7 +8,7 @@
+ 
+ from __future__ import annotations
+ 
+-import datetime
++import difflib
+ import os
+ import sys
+ import textwrap
+@@ -2141,8 +2141,8 @@ class ParentGetattr(Getattr):
+         # Test that objects analyzed through the live introspection
+         # aren't considered to have dynamic getattr implemented.
+         astroid_builder = builder.AstroidBuilder()
+-        module = astroid_builder.module_build(datetime)
+-        self.assertFalse(module["timedelta"].has_dynamic_getattr())
++        module = astroid_builder.module_build(difflib)
++        self.assertFalse(module["SequenceMatcher"].has_dynamic_getattr())
+ 
+     def test_duplicate_bases_namedtuple(self) -> None:
+         module = builder.parse(
+diff --git a/tests/test_type_params.py b/tests/test_type_params.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_type_params.py
+@@ -0,0 +1,68 @@
++# Licensed under the LGPL: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
++# For details: https://github.com/pylint-dev/astroid/blob/main/LICENSE
++# Copyright (c) https://github.com/pylint-dev/astroid/blob/main/CONTRIBUTORS.txt
++
++import pytest
++
++from astroid import extract_node
++from astroid.const import PY312_PLUS
++from astroid.nodes import (
++    AssignName,
++    ParamSpec,
++    Subscript,
++    TypeAlias,
++    TypeVar,
++    TypeVarTuple,
++)
++
++if not PY312_PLUS:
++    pytest.skip("Requires Python 3.12 or higher", allow_module_level=True)
++
++
++def test_type_alias() -> None:
++    node = extract_node("type Point[T] = list[float, float]")
++    assert isinstance(node, TypeAlias)
++    assert isinstance(node.type_params[0], TypeVar)
++    assert isinstance(node.type_params[0].name, AssignName)
++    assert node.type_params[0].name.name == "T"
++    assert node.type_params[0].bound is None
++
++    assert isinstance(node.value, Subscript)
++    assert node.value.value.name == "list"
++    assert node.value.slice.name == "tuple"
++    assert all(elt.name == "float" for elt in node.value.slice.elts)
++
++    assert node.inferred()[0] is node
++    assert node.type_params[0].inferred()[0] is node.type_params[0]
++
++
++def test_type_param_spec() -> None:
++    node = extract_node("type Alias[**P] = Callable[P, int]")
++    params = node.type_params[0]
++    assert isinstance(params, ParamSpec)
++    assert isinstance(params.name, AssignName)
++    assert params.name.name == "P"
++
++    assert node.inferred()[0] is node
++
++
++def test_type_var_tuple() -> None:
++    node = extract_node("type Alias[*Ts] = tuple[*Ts]")
++    params = node.type_params[0]
++    assert isinstance(params, TypeVarTuple)
++    assert isinstance(params.name, AssignName)
++    assert params.name.name == "Ts"
++
++    assert node.inferred()[0] is node
++
++
++def test_type_param() -> None:
++    func_node = extract_node("def func[T]() -> T: ...")
++    assert isinstance(func_node.type_params[0], TypeVar)
++    assert func_node.type_params[0].name.name == "T"
++    assert func_node.type_params[0].bound is None
++
++    class_node = extract_node("class MyClass[T]: ...")
++    assert isinstance(class_node.type_params[0], TypeVar)
++    assert class_node.type_params[0].name.name == "T"
++    assert class_node.type_params[0].bound is None

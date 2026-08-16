@@ -1,0 +1,39 @@
+{
+  "FAIL_TO_PASS": [
+    "test/core/config_test.py::test__config__validate_configs_inline_layout[--",
+    "test/core/config_test.py::test__config__validate_configs_inline_layout[--sqlfluff:layout:type:comma:foo:bar\\nSELECT",
+    "test/core/config_test.py::test__process_inline_config"
+  ],
+  "PASS_TO_PASS": [
+    "test/core/config_test.py::test__config__nested_combine",
+    "test/core/config_test.py::test__config__dict_diff",
+    "test/core/config_test.py::test__config__load_file_dir",
+    "test/core/config_test.py::test__config__load_file_f",
+    "test/core/config_test.py::test__config__load_nested",
+    "test/core/config_test.py::test__config__iter_config_elems_from_dict",
+    "test/core/config_test.py::test__config__load_toml",
+    "test/core/config_test.py::test__config__load_placeholder_cfg",
+    "test/core/config_test.py::test__config__iter_config_paths_right_order",
+    "test/core/config_test.py::test__config__find_sqlfluffignore_in_same_directory",
+    "test/core/config_test.py::test__config__nested_config_tests",
+    "test/core/config_test.py::test__config__load_user_appdir_config",
+    "test/core/config_test.py::test__config__split_comma_separated_string[AL01,LT08,AL07-expected0]",
+    "test/core/config_test.py::test__config__split_comma_separated_string[\\nAL01,\\nLT08,\\nAL07,-expected1]",
+    "test/core/config_test.py::test__config__split_comma_separated_string[raw_str2-expected2]",
+    "test/core/config_test.py::test__config__split_comma_separated_string_correct_type",
+    "test/core/config_test.py::test__config__templater_selection",
+    "test/core/config_test.py::test__config__glob_exclude_config_tests",
+    "test/core/config_test.py::test__config__glob_include_config_tests",
+    "test/core/config_test.py::test__config__rules_set_to_none",
+    "test/core/config_test.py::test__config__rules_group_with_exclude",
+    "test/core/config_test.py::test__config__get_section",
+    "test/core/config_test.py::test__config__get",
+    "test/core/config_test.py::test__config__from_kwargs",
+    "test/core/config_test.py::test__config_missing_dialect",
+    "test/core/config_test.py::test__config__validate_configs_direct",
+    "test/core/config_test.py::test__config__validate_configs_indirect",
+    "test/core/config_test.py::test__config__validate_configs_precedence_same_file",
+    "test/core/config_test.py::test__config__toml_list_config",
+    "test/core/config_test.py::test__config__warn_unknown_rule"
+  ]
+}

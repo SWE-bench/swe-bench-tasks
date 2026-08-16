@@ -1,0 +1,253 @@
+diff --git a/pvlib/clearsky.py b/pvlib/clearsky.py
+--- a/pvlib/clearsky.py
++++ b/pvlib/clearsky.py
+@@ -14,6 +14,7 @@
+ import h5py
+ 
+ from pvlib import atmosphere, tools
++from pvlib.tools import _degrees_to_index
+ 
+ 
+ def ineichen(apparent_zenith, airmass_absolute, linke_turbidity,
+@@ -286,67 +287,6 @@ def _calendar_month_middles(year):
+     return middles
+ 
+ 
+-def _degrees_to_index(degrees, coordinate):
+-    """Transform input degrees to an output index integer. The Linke
+-    turbidity lookup tables have three dimensions, latitude, longitude, and
+-    month. Specify a degree value and either 'latitude' or 'longitude' to get
+-    the appropriate index number for the first two of these index numbers.
+-
+-    Parameters
+-    ----------
+-    degrees : float or int
+-        Degrees of either latitude or longitude.
+-    coordinate : string
+-        Specify whether degrees arg is latitude or longitude. Must be set to
+-        either 'latitude' or 'longitude' or an error will be raised.
+-
+-    Returns
+-    -------
+-    index : np.int16
+-        The latitude or longitude index number to use when looking up values
+-        in the Linke turbidity lookup table.
+-    """
+-    # Assign inputmin, inputmax, and outputmax based on degree type.
+-    if coordinate == 'latitude':
+-        inputmin = 90
+-        inputmax = -90
+-        outputmax = 2160
+-    elif coordinate == 'longitude':
+-        inputmin = -180
+-        inputmax = 180
+-        outputmax = 4320
+-    else:
+-        raise IndexError("coordinate must be 'latitude' or 'longitude'.")
+-
+-    inputrange = inputmax - inputmin
+-    scale = outputmax/inputrange  # number of indices per degree
+-    center = inputmin + 1 / scale / 2  # shift to center of index
+-    outputmax -= 1  # shift index to zero indexing
+-    index = (degrees - center) * scale
+-    err = IndexError('Input, %g, is out of range (%g, %g).' %
+-                     (degrees, inputmin, inputmax))
+-
+-    # If the index is still out of bounds after rounding, raise an error.
+-    # 0.500001 is used in comparisons instead of 0.5 to allow for a small
+-    # margin of error which can occur when dealing with floating point numbers.
+-    if index > outputmax:
+-        if index - outputmax <= 0.500001:
+-            index = outputmax
+-        else:
+-            raise err
+-    elif index < 0:
+-        if -index <= 0.500001:
+-            index = 0
+-        else:
+-            raise err
+-    # If the index wasn't set to outputmax or 0, round it and cast it as an
+-    # integer so it can be used in integer-based indexing.
+-    else:
+-        index = int(np.around(index))
+-
+-    return index
+-
+-
+ def haurwitz(apparent_zenith):
+     '''
+     Determine clear sky GHI using the Haurwitz model.
+diff --git a/pvlib/location.py b/pvlib/location.py
+--- a/pvlib/location.py
++++ b/pvlib/location.py
+@@ -4,13 +4,16 @@
+ 
+ # Will Holmgren, University of Arizona, 2014-2016.
+ 
++import os
+ import datetime
+ import warnings
+ 
+ import pandas as pd
+ import pytz
++import h5py
+ 
+ from pvlib import solarposition, clearsky, atmosphere, irradiance
++from pvlib.tools import _degrees_to_index
+ 
+ class Location:
+     """
+@@ -356,3 +359,88 @@ def get_sun_rise_set_transit(self, times, method='pyephem', **kwargs):
+                              'one of pyephem, spa, geometric'
+                              .format(method))
+         return result
++
++
++def lookup_altitude(latitude, longitude):
++    """
++    Look up location altitude from low-resolution altitude map
++    supplied with pvlib. The data for this map comes from multiple open data
++    sources with varying resolutions aggregated by Mapzen.
++
++    More details can be found here
++    https://github.com/tilezen/joerd/blob/master/docs/data-sources.md
++
++    Altitudes from this map are a coarse approximation and can have
++    significant errors (100+ meters) introduced by downsampling and
++    source data resolution.
++
++    Parameters
++    ----------
++    latitude : float.
++        Positive is north of the equator.
++        Use decimal degrees notation.
++
++    longitude : float.
++        Positive is east of the prime meridian.
++        Use decimal degrees notation.
++
++    Returns
++    -------
++    altitude : float
++        The altitude of the location in meters.
++
++    Notes
++    -----------
++    Attributions:
++
++    * ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc.,
++      imagery and funded under National Science Foundation awards 1043681,
++      1559691, and 1542736;
++    * Australia terrain data © Commonwealth of Australia
++      (Geoscience Australia) 2017;
++    * Austria terrain data © offene Daten Österreichs - Digitales
++      Geländemodell (DGM) Österreich;
++    * Canada terrain data contains information licensed under the Open
++      Government Licence - Canada;
++    * Europe terrain data produced using Copernicus data and information
++      funded by the European Union - EU-DEM layers;
++    * Global ETOPO1 terrain data U.S. National Oceanic and Atmospheric
++      Administration
++    * Mexico terrain data source: INEGI, Continental relief, 2016;
++    * New Zealand terrain data Copyright 2011 Crown copyright (c) Land
++      Information New Zealand and the New Zealand Government
++      (All rights reserved);
++    * Norway terrain data © Kartverket;
++    * United Kingdom terrain data © Environment Agency copyright and/or
++      database right 2015. All rights reserved;
++    * United States 3DEP (formerly NED) and global GMTED2010 and SRTM
++      terrain data courtesy of the U.S. Geological Survey.
++
++    References
++    ----------
++    .. [1] `Mapzen, Linux foundation project for open data maps
++        <https://www.mapzen.com/>`_
++    .. [2] `Joerd, tool for downloading and processing DEMs, Used by Mapzen
++        <https://github.com/tilezen/joerd/>`_
++    .. [3] `AWS, Open Data Registry Terrain Tiles
++        <https://registry.opendata.aws/terrain-tiles/>`_
++
++    """
++
++    pvlib_path = os.path.dirname(os.path.abspath(__file__))
++    filepath = os.path.join(pvlib_path, 'data', 'Altitude.h5')
++
++    latitude_index = _degrees_to_index(latitude, coordinate='latitude')
++    longitude_index = _degrees_to_index(longitude, coordinate='longitude')
++
++    with h5py.File(filepath, 'r') as alt_h5_file:
++        alt = alt_h5_file['Altitude'][latitude_index, longitude_index]
++
++    # 255 is a special value that means nodata. Fallback to 0 if nodata.
++    if alt == 255:
++        return 0
++    # Altitude is encoded in 28 meter steps from -450 meters to 6561 meters
++    # There are 0-254 possible altitudes, with 255 reserved for nodata.
++    alt *= 28
++    alt -= 450
++    return float(alt)
+diff --git a/pvlib/tools.py b/pvlib/tools.py
+--- a/pvlib/tools.py
++++ b/pvlib/tools.py
+@@ -412,3 +412,61 @@ def _get_sample_intervals(times, win_length):
+             'periods, leap days, etc.'
+         )
+         raise NotImplementedError(message)
++
++
++def _degrees_to_index(degrees, coordinate):
++    """Transform input degrees to an output index integer.
++    Specify a degree value and either 'latitude' or 'longitude' to get
++    the appropriate index number for these two index numbers.
++    Parameters
++    ----------
++    degrees : float or int
++        Degrees of either latitude or longitude.
++    coordinate : string
++        Specify whether degrees arg is latitude or longitude. Must be set to
++        either 'latitude' or 'longitude' or an error will be raised.
++    Returns
++    -------
++    index : np.int16
++        The latitude or longitude index number to use when looking up values
++        in the Linke turbidity lookup table.
++    """
++    # Assign inputmin, inputmax, and outputmax based on degree type.
++    if coordinate == 'latitude':
++        inputmin = 90
++        inputmax = -90
++        outputmax = 2160
++    elif coordinate == 'longitude':
++        inputmin = -180
++        inputmax = 180
++        outputmax = 4320
++    else:
++        raise IndexError("coordinate must be 'latitude' or 'longitude'.")
++
++    inputrange = inputmax - inputmin
++    scale = outputmax/inputrange  # number of indices per degree
++    center = inputmin + 1 / scale / 2  # shift to center of index
++    outputmax -= 1  # shift index to zero indexing
++    index = (degrees - center) * scale
++    err = IndexError('Input, %g, is out of range (%g, %g).' %
++                     (degrees, inputmin, inputmax))
++
++    # If the index is still out of bounds after rounding, raise an error.
++    # 0.500001 is used in comparisons instead of 0.5 to allow for a small
++    # margin of error which can occur when dealing with floating point numbers.
++    if index > outputmax:
++        if index - outputmax <= 0.500001:
++            index = outputmax
++        else:
++            raise err
++    elif index < 0:
++        if -index <= 0.500001:
++            index = 0
++        else:
++            raise err
++    # If the index wasn't set to outputmax or 0, round it and cast it as an
++    # integer so it can be used in integer-based indexing.
++    else:
++        index = int(np.around(index))
++
++    return index

@@ -1,0 +1,2 @@
+Pending feedback from the admins, I'm happy to submit a pull request on this one.
+Been thinking about it, and I think we should show the message for all dialects. Some people might be using an incorrect dialect if their dialect is not supported.

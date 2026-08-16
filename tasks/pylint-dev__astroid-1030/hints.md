@@ -1,0 +1,9 @@
+Hmm, thank you for opening a report for this. There is the same problem in pylint btw. I thought `pkg_resources` was a builtin. Do you know a way to remove this dependency for python < 3.8 ? We can use ` from importlib.metadata import version` for python > 3.8. If there is no way to do that for 3.6 and 3.7 we could add a conditional requirements for those interpreters.
+You can use https://pypi.org/project/importlib-metadata/ for 3.6 and 3.7 if I understand correctly.
+Ho that's still a dependency to add but that's better, thank you for the advise, will do :) 
+I'd send up an MR but this is all from my phone. On a road trip today and won't be back to a keyboard for a few days. Happy to review the fix though. Thanks for looking into this.
+I have a feeling that astroid do not need to calculate it's version like this so we could remove the dependency altogether. But pylint will need it because we broke a lot of pylint related tool when we removed the numversion in 2.8.0. Having to add a dependency for such a small benefit makes me rethink using ``setuptools_scm``. Having proper github actions would probably be better than that. There is such a release here: https://github.com/python/importlib_metadata/blob/main/.github/workflows/main.yml#L61. Maybe we just have to create a small script that will update the version in two places and be done with it. Thoughts @cdce8p ?
+> Maybe we just have to create a small script that will update the version in two places and be done with it.
+
+I believe there are already tools for it. `tbump` certainly looks promising although I haven't used it yet.
+https://github.com/dmerejkowsky/tbump

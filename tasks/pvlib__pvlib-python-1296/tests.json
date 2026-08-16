@@ -1,0 +1,37 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[asi-expected0]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[perovskite-expected1]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[cdte-expected2]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[multisi-expected3]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[monosi-expected4]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero[cigs-expected5]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero_supplied",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero_supplied_redundant",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_caballero_supplied_ambiguous"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/test_spectrum.py::test_spectrl2",
+    "pvlib/tests/test_spectrum.py::test_spectrl2_array",
+    "pvlib/tests/test_spectrum.py::test_spectrl2_series",
+    "pvlib/tests/test_spectrum.py::test_dayofyear_missing",
+    "pvlib/tests/test_spectrum.py::test_aoi_gt_90",
+    "pvlib/tests/test_spectrum.py::test_get_example_spectral_response",
+    "pvlib/tests/test_spectrum.py::test_get_am15g",
+    "pvlib/tests/test_spectrum.py::test_calc_spectral_mismatch_field",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar[cdte-expect0]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar[monosi-expect1]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar[polysi-expect2]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar[cigs-expect3]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar[asi-expect4]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_supplied",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_ambiguous",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_ambiguous_both",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_large_airmass",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_low_airmass",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_firstsolar_range",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_sapm[1.5-1.00028714375]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_sapm[airmass1-expected1]",
+    "pvlib/tests/test_spectrum.py::test_spectral_factor_sapm[airmass2-expected2]"
+  ]
+}

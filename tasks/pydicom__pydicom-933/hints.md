@@ -1,0 +1,3 @@
+This certainly makes sense, though deferred reads have not been implemented for file-like, so I see this as a feature request. 
+@darcymason - I suggest to flag this for the 1.4 release.
+Note that the two mentioned issues have not addressed this - the first one was not about deferred read, the second one was about deferred read from a gzip file (the fix just made sure the correct filename was used).

@@ -1,0 +1,12 @@
+base_commit: 98ac88706e7ab17cd279c94949ac6af4e87f341d
+created_at: '2022-04-14T18:26:56Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: a8be738418dee0a2b93c241fbd5e0bc82f4b8680
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pydicom_1776_pydicom-1633:latest
+instance_id: pydicom__pydicom-1633
+log_parser: parse_log_pydicom
+repo: pydicom/pydicom
+split: dev
+version: '2.3'

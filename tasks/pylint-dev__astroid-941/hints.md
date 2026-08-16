@@ -1,0 +1,1 @@
+Looks like this is caused by https://github.com/PyCQA/astroid/blob/f2b197a4f8af0ceeddf435747a5c937c8632872a/astroid/scoped_nodes.py#L2590-L2603. When we are inferring an attribute on a derived class then `class_context` is `True` but `metaclass` is `False` so the property itself is returned.

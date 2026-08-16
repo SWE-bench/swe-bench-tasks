@@ -1,0 +1,4 @@
++1. This [reference](https://www.sciencedirect.com/science/article/abs/pii/S0038092X96001375) might be relevant.
+I seem to recall from somewhere that PVsyst actually interpolates from a fixed set of pre-calculated values when simulating.
+PVsyst allows a user specified custom IAM v AOI lookup table in the module PAN file, but that presupposes there exist qualified IAM measurements either from a lab or the manufacturer. Otherwise they use Fresnel as of v6.67. See https://www.pvsyst.com/help/iam_loss.htm
+Yes, what I meant is that they use the Fresnel equations to populate the table for interpolation. At least this is my recollection.

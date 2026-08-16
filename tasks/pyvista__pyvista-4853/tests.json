@@ -1,0 +1,30 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/core/test_parametric_geometry.py::test_direction"
+  ],
+  "PASS_TO_PASS": [
+    "tests/core/test_parametric_geometry.py::test_spline",
+    "tests/core/test_parametric_geometry.py::test_kochanek_spline",
+    "tests/core/test_parametric_geometry.py::test_ParametricBohemianDome",
+    "tests/core/test_parametric_geometry.py::test_ParametricBour",
+    "tests/core/test_parametric_geometry.py::test_ParametricBoy",
+    "tests/core/test_parametric_geometry.py::test_ParametricCatalanMinimal",
+    "tests/core/test_parametric_geometry.py::test_ParametricConicSpiral",
+    "tests/core/test_parametric_geometry.py::test_ParametricCrossCap",
+    "tests/core/test_parametric_geometry.py::test_ParametricDini",
+    "tests/core/test_parametric_geometry.py::test_ParametricEllipsoid",
+    "tests/core/test_parametric_geometry.py::test_ParametricEnneper",
+    "tests/core/test_parametric_geometry.py::test_ParametricFigure8Klein",
+    "tests/core/test_parametric_geometry.py::test_ParametricHenneberg",
+    "tests/core/test_parametric_geometry.py::test_ParametricKlein",
+    "tests/core/test_parametric_geometry.py::test_ParametricKuen",
+    "tests/core/test_parametric_geometry.py::test_ParametricMobius",
+    "tests/core/test_parametric_geometry.py::test_ParametricPluckerConoid",
+    "tests/core/test_parametric_geometry.py::test_ParametricPseudosphere",
+    "tests/core/test_parametric_geometry.py::test_ParametricRandomHills",
+    "tests/core/test_parametric_geometry.py::test_ParametricRoman",
+    "tests/core/test_parametric_geometry.py::test_ParametricSuperEllipsoid",
+    "tests/core/test_parametric_geometry.py::test_ParametricSuperToroid",
+    "tests/core/test_parametric_geometry.py::test_ParametricTorus"
+  ]
+}

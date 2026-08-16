@@ -1,0 +1,1 @@
+Thanks! Going to add `KeyError` to the caught exceptions.

@@ -1,0 +1,309 @@
+diff --git a/benchmarks/benchmarks/infinite_sheds.py b/benchmarks/benchmarks/infinite_sheds.py
+--- a/benchmarks/benchmarks/infinite_sheds.py
++++ b/benchmarks/benchmarks/infinite_sheds.py
+@@ -10,7 +10,11 @@
+ 
+ class InfiniteSheds:
+ 
+-    def setup(self):
++    # benchmark variant parameters (run both vectorize=True and False)
++    params = [True, False]
++    param_names = ['vectorize']
++
++    def setup(self, vectorize):
+         self.times = pd.date_range(start='20180601', freq='1min',
+                                    periods=1440)
+         self.location = location.Location(40, -80)
+@@ -38,7 +42,7 @@ def setup(self):
+                 gcr=self.gcr
+             )
+ 
+-    def time_get_irradiance_poa_fixed(self):
++    def time_get_irradiance_poa_fixed(self, vectorize):
+         infinite_sheds.get_irradiance_poa(
+             surface_tilt=self.surface_tilt,
+             surface_azimuth=self.surface_azimuth,
+@@ -51,10 +55,11 @@ def time_get_irradiance_poa_fixed(self):
+             dhi=self.clearsky_irradiance['dhi'],
+             dni=self.clearsky_irradiance['dni'],
+             albedo=self.albedo,
+-            npoints=self.npoints
++            npoints=self.npoints,
++            vectorize=vectorize,
+         )
+ 
+-    def time_get_irradiance_poa_tracking(self):
++    def time_get_irradiance_poa_tracking(self, vectorize):
+         infinite_sheds.get_irradiance_poa(
+             surface_tilt=self.tracking['surface_tilt'],
+             surface_azimuth=self.tracking['surface_azimuth'],
+@@ -67,10 +72,11 @@ def time_get_irradiance_poa_tracking(self):
+             dhi=self.clearsky_irradiance['dhi'],
+             dni=self.clearsky_irradiance['dni'],
+             albedo=self.albedo,
+-            npoints=self.npoints
++            npoints=self.npoints,
++            vectorize=vectorize,
+         )
+ 
+-    def time_get_irradiance_fixed(self):
++    def time_get_irradiance_fixed(self, vectorize):
+         infinite_sheds.get_irradiance(
+             surface_tilt=self.surface_tilt,
+             surface_azimuth=self.surface_azimuth,
+@@ -83,10 +89,11 @@ def time_get_irradiance_fixed(self):
+             dhi=self.clearsky_irradiance['dhi'],
+             dni=self.clearsky_irradiance['dni'],
+             albedo=self.albedo,
+-            npoints=self.npoints
++            npoints=self.npoints,
++            vectorize=vectorize,
+         )
+ 
+-    def time_get_irradiance_tracking(self):
++    def time_get_irradiance_tracking(self, vectorize):
+         infinite_sheds.get_irradiance(
+             surface_tilt=self.tracking['surface_tilt'],
+             surface_azimuth=self.tracking['surface_azimuth'],
+@@ -99,5 +106,6 @@ def time_get_irradiance_tracking(self):
+             dhi=self.clearsky_irradiance['dhi'],
+             dni=self.clearsky_irradiance['dni'],
+             albedo=self.albedo,
+-            npoints=self.npoints
++            npoints=self.npoints,
++            vectorize=vectorize,
+         )
+diff --git a/pvlib/bifacial/infinite_sheds.py b/pvlib/bifacial/infinite_sheds.py
+--- a/pvlib/bifacial/infinite_sheds.py
++++ b/pvlib/bifacial/infinite_sheds.py
+@@ -10,10 +10,10 @@
+ from pvlib.irradiance import beam_component, aoi, haydavies
+ 
+ def _vf_ground_sky_integ(surface_tilt, surface_azimuth, gcr, height,
+-                         pitch, max_rows=10, npoints=100):
++                         pitch, max_rows=10, npoints=100, vectorize=False):
+     """
+-    Integrated and per-point view factors from the ground to the sky at points
+-    between interior rows of the array.
++    Integrated view factor to the sky from the ground underneath
++    interior rows of the array.
+ 
+     Parameters
+     ----------
+@@ -35,20 +35,16 @@ def _vf_ground_sky_integ(surface_tilt, surface_azimuth, gcr, height,
+         Maximum number of rows to consider in front and behind the current row.
+     npoints : int, default 100
+         Number of points used to discretize distance along the ground.
++    vectorize : bool, default False
++        If True, vectorize the view factor calculation across ``surface_tilt``.
++        This increases speed with the cost of increased memory usage.
+ 
+     Returns
+     -------
+-    fgnd_sky : float
++    fgnd_sky : numeric
+         Integration of view factor over the length between adjacent, interior
+-        rows. [unitless]
+-    fz : ndarray
+-        Fraction of distance from the previous row to the next row. [unitless]
+-    fz_sky : ndarray
+-        View factors at discrete points between adjacent, interior rows.
+-        [unitless]
+-
++        rows.  Shape matches that of ``surface_tilt``. [unitless]
+     """
+-    # TODO: vectorize over surface_tilt
+     # Abuse utils._vf_ground_sky_2d by supplying surface_tilt in place
+     # of a signed rotation. This is OK because
+     # 1) z span the full distance between 2 rows, and
+@@ -57,12 +53,16 @@ def _vf_ground_sky_integ(surface_tilt, surface_azimuth, gcr, height,
+     # The VFs to the sky will thus be symmetric around z=0.5
+     z = np.linspace(0, 1, npoints)
+     rotation = np.atleast_1d(surface_tilt)
+-    fz_sky = np.zeros((len(rotation), npoints))
+-    for k, r in enumerate(rotation):
+-        vf, _ = utils._vf_ground_sky_2d(z, r, gcr, pitch, height, max_rows)
+-        fz_sky[k, :] = vf
++    if vectorize:
++        fz_sky = utils._vf_ground_sky_2d(z, rotation, gcr, pitch, height,
++                                         max_rows)
++    else:
++        fz_sky = np.zeros((npoints, len(rotation)))
++        for k, r in enumerate(rotation):
++            vf = utils._vf_ground_sky_2d(z, r, gcr, pitch, height, max_rows)
++            fz_sky[:, k] = vf[:, 0]  # remove spurious rotation dimension
+     # calculate the integrated view factor for all of the ground between rows
+-    return np.trapz(fz_sky, z, axis=1)
++    return np.trapz(fz_sky, z, axis=0)
+ 
+ 
+ def _poa_ground_shadows(poa_ground, f_gnd_beam, df, vf_gnd_sky):
+@@ -401,7 +401,7 @@ def _shaded_fraction(solar_zenith, solar_azimuth, surface_tilt,
+ def get_irradiance_poa(surface_tilt, surface_azimuth, solar_zenith,
+                        solar_azimuth, gcr, height, pitch, ghi, dhi, dni,
+                        albedo, model='isotropic', dni_extra=None, iam=1.0,
+-                       npoints=100):
++                       npoints=100, vectorize=False):
+     r"""
+     Calculate plane-of-array (POA) irradiance on one side of a row of modules.
+ 
+@@ -469,7 +469,12 @@ def get_irradiance_poa(surface_tilt, surface_azimuth, solar_zenith,
+         on the surface that is not reflected away. [unitless]
+ 
+     npoints : int, default 100
+-        Number of points used to discretize distance along the ground.
++        Number of discretization points for calculating integrated view
++        factors.
++
++    vectorize : bool, default False
++        If True, vectorize the view factor calculation across ``surface_tilt``.
++        This increases speed with the cost of increased memory usage.
+ 
+     Returns
+     -------
+@@ -537,7 +542,8 @@ def get_irradiance_poa(surface_tilt, surface_azimuth, solar_zenith,
+     # method differs from [1], Eq. 7 and Eq. 8; height is defined at row
+     # center rather than at row lower edge as in [1].
+     vf_gnd_sky = _vf_ground_sky_integ(
+-        surface_tilt, surface_azimuth, gcr, height, pitch, max_rows, npoints)
++        surface_tilt, surface_azimuth, gcr, height, pitch, max_rows, npoints,
++        vectorize)
+     # fraction of row slant height that is shaded from direct irradiance
+     f_x = _shaded_fraction(solar_zenith, solar_azimuth, surface_tilt,
+                            surface_azimuth, gcr)
+@@ -610,7 +616,7 @@ def get_irradiance(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+                    gcr, height, pitch, ghi, dhi, dni,
+                    albedo, model='isotropic', dni_extra=None, iam_front=1.0,
+                    iam_back=1.0, bifaciality=0.8, shade_factor=-0.02,
+-                   transmission_factor=0, npoints=100):
++                   transmission_factor=0, npoints=100, vectorize=False):
+     """
+     Get front and rear irradiance using the infinite sheds model.
+ 
+@@ -701,7 +707,12 @@ def get_irradiance(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+         etc. A negative value is a reduction in back irradiance. [unitless]
+ 
+     npoints : int, default 100
+-        Number of points used to discretize distance along the ground.
++        Number of discretization points for calculating integrated view
++        factors.
++
++    vectorize : bool, default False
++        If True, vectorize the view factor calculation across ``surface_tilt``.
++        This increases speed with the cost of increased memory usage.
+ 
+     Returns
+     -------
+@@ -756,14 +767,14 @@ def get_irradiance(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+         solar_zenith=solar_zenith, solar_azimuth=solar_azimuth,
+         gcr=gcr, height=height, pitch=pitch, ghi=ghi, dhi=dhi, dni=dni,
+         albedo=albedo, model=model, dni_extra=dni_extra, iam=iam_front,
+-        npoints=npoints)
++        npoints=npoints, vectorize=vectorize)
+     # back side POA irradiance
+     irrad_back = get_irradiance_poa(
+         surface_tilt=backside_tilt, surface_azimuth=backside_sysaz,
+         solar_zenith=solar_zenith, solar_azimuth=solar_azimuth,
+         gcr=gcr, height=height, pitch=pitch, ghi=ghi, dhi=dhi, dni=dni,
+         albedo=albedo, model=model, dni_extra=dni_extra, iam=iam_back,
+-        npoints=npoints)
++        npoints=npoints, vectorize=vectorize)
+ 
+     colmap_front = {
+         'poa_global': 'poa_front',
+diff --git a/pvlib/bifacial/utils.py b/pvlib/bifacial/utils.py
+--- a/pvlib/bifacial/utils.py
++++ b/pvlib/bifacial/utils.py
+@@ -5,7 +5,6 @@
+ import numpy as np
+ from pvlib.tools import sind, cosd, tand
+ 
+-
+ def _solar_projection_tangent(solar_zenith, solar_azimuth, surface_azimuth):
+     """
+     Tangent of the angle between the zenith vector and the sun vector
+@@ -104,7 +103,7 @@ def _vf_ground_sky_2d(x, rotation, gcr, pitch, height, max_rows=10):
+         Position on the ground between two rows, as a fraction of the pitch.
+         x = 0 corresponds to the point on the ground directly below the
+         center point of a row. Positive x is towards the right. [unitless]
+-    rotation : float
++    rotation : numeric
+         Rotation angle of the row's right edge relative to row center.
+         [degree]
+     gcr : float
+@@ -120,30 +119,53 @@ def _vf_ground_sky_2d(x, rotation, gcr, pitch, height, max_rows=10):
+ 
+     Returns
+     -------
+-    vf : numeric
+-        Fraction of sky dome visible from each point on the ground. [unitless]
+-    wedge_angles : array
+-        Angles defining each wedge of sky that is blocked by a row. Shape is
+-        (2, len(x), 2*max_rows+1). ``wedge_angles[0,:,:]`` is the
+-        starting angle of each wedge, ``wedge_angles[1,:,:]`` is the end angle.
+-        [degree]
++    vf : array
++        Fraction of sky dome visible from each point on the ground.
++        Shape is (len(x), len(rotation)). [unitless]
+     """
+-    x = np.atleast_1d(x)  # handle float
++    # This function creates large float64 arrays of size
++    # (2*len(x)*len(rotation)*len(max_rows)) or ~100 MB for
++    # typical time series inputs.  This function makes heavy
++    # use of numpy's out parameter to avoid allocating new
++    # memory.  Unfortunately that comes at the cost of some
++    # readability: because arrays get reused to avoid new allocations,
++    # variable names don't always match what they hold.
++
++    # handle floats:
++    x = np.atleast_1d(x)[:, np.newaxis, np.newaxis]
++    rotation = np.atleast_1d(rotation)[np.newaxis, :, np.newaxis]
+     all_k = np.arange(-max_rows, max_rows + 1)
+     width = gcr * pitch / 2.
++    distance_to_row_centers = (all_k - x) * pitch
++    dy = width * sind(rotation)
++    dx = width * cosd(rotation)
++
++    phi = np.empty((2, x.shape[0], rotation.shape[1], len(all_k)))
++
+     # angles from x to right edge of each row
+-    a1 = height + width * sind(rotation)
+-    b1 = (all_k - x[:, np.newaxis]) * pitch + width * cosd(rotation)
+-    phi_1 = np.degrees(np.arctan2(a1, b1))
++    a1 = height + dy
++    # temporarily store one leg of the triangle in phi:
++    np.add(distance_to_row_centers, dx, out=phi[0])
++    np.arctan2(a1, phi[0], out=phi[0])
++
+     # angles from x to left edge of each row
+-    a2 = height - width * sind(rotation)
+-    b2 = (all_k - x[:, np.newaxis]) * pitch - width * cosd(rotation)
+-    phi_2 = np.degrees(np.arctan2(a2, b2))
+-    phi = np.stack([phi_1, phi_2])
+-    swap = phi[0, :, :] > phi[1, :, :]
+-    # swap where phi_1 > phi_2 so that phi_1[0,:,:] is the lesser angle
+-    phi = np.where(swap, phi[::-1], phi)
+-    # right edge of next row - left edge of previous row
+-    wedge_vfs = 0.5 * (cosd(phi[1, :, 1:]) - cosd(phi[0, :, :-1]))
+-    vf = np.sum(np.where(wedge_vfs > 0, wedge_vfs, 0.), axis=1)
+-    return vf, phi
++    a2 = height - dy
++    np.subtract(distance_to_row_centers, dx, out=phi[1])
++    np.arctan2(a2, phi[1], out=phi[1])
++
++    # swap angles so that phi[0,:,:,:] is the lesser angle
++    phi.sort(axis=0)
++
++    # now re-use phi's memory again, this time storing cos(phi).
++    next_edge = phi[1, :, :, 1:]
++    np.cos(next_edge, out=next_edge)
++    prev_edge = phi[0, :, :, :-1]
++    np.cos(prev_edge, out=prev_edge)
++    # right edge of next row - left edge of previous row, again
++    # reusing memory so that the difference is stored in next_edge.
++    # Note that the 0.5 view factor coefficient is applied after summing
++    # as a minor speed optimization.
++    np.subtract(next_edge, prev_edge, out=next_edge)
++    np.clip(next_edge, a_min=0., a_max=None, out=next_edge)
++    vf = np.sum(next_edge, axis=-1) / 2
++    return vf

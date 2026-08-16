@@ -1,0 +1,1 @@
+Yes. The fact that it's called a crawler is a historic artifact when I thought that the crawlers and rules might be separate. Given they're not, this makes total sense.

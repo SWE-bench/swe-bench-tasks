@@ -1,0 +1,14 @@
+diff --git a/src/sqlfluff/rules/L039.py b/src/sqlfluff/rules/L039.py
+--- a/src/sqlfluff/rules/L039.py
++++ b/src/sqlfluff/rules/L039.py
+@@ -44,7 +44,9 @@ def _eval(self, context: RuleContext) -> Optional[List[LintResult]]:
+                 # This is to avoid indents
+                 if not prev_newline:
+                     prev_whitespace = seg
+-                prev_newline = False
++                # We won't set prev_newline to False, just for whitespace
++                # in case there's multiple indents, inserted by other rule
++                # fixes (see #1713)
+             elif seg.is_type("comment"):
+                 prev_newline = False
+                 prev_whitespace = None

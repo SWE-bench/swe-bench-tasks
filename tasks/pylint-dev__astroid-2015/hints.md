@@ -1,0 +1,3 @@
+Option 4 seems best to me. I would even be okay with completely removing the weird behaviour described in point 2 and adding a new function that `pyreverse` can use. Imo, if we have a clear changelog entry for this it shouldn't be considered a breaking change, it is very weird that that behaviour exists in the first place.
+
+Please go ahead with the PR! Any work on `astroid` is always highly appreciated!

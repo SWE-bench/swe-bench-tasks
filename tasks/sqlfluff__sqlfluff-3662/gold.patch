@@ -1,0 +1,170 @@
+diff --git a/src/sqlfluff/cli/commands.py b/src/sqlfluff/cli/commands.py
+--- a/src/sqlfluff/cli/commands.py
++++ b/src/sqlfluff/cli/commands.py
+@@ -486,8 +486,12 @@ def dump_file_payload(filename: Optional[str], payload: str):
+     "-p",
+     "--processes",
+     type=int,
+-    default=1,
+-    help="The number of parallel processes to run.",
++    default=None,
++    help=(
++        "The number of parallel processes to run. Positive numbers work as "
++        "expected. Zero and negative numbers will work as number_of_cpus - "
++        "number. e.g  -1 means all cpus except one. 0 means all cpus."
++    ),
+ )
+ @click.option(
+     "--disable_progress_bar",
+@@ -497,7 +501,6 @@ def dump_file_payload(filename: Optional[str], payload: str):
+ @click.argument("paths", nargs=-1, type=click.Path(allow_dash=True))
+ def lint(
+     paths: Tuple[str],
+-    processes: int,
+     format: str,
+     write_output: Optional[str],
+     annotation_level: str,
+@@ -505,6 +508,7 @@ def lint(
+     disregard_sqlfluffignores: bool,
+     logger: Optional[logging.Logger] = None,
+     bench: bool = False,
++    processes: Optional[int] = None,
+     disable_progress_bar: Optional[bool] = False,
+     extra_config_path: Optional[str] = None,
+     ignore_local_config: bool = False,
+@@ -675,8 +679,12 @@ def do_fixes(lnt, result, formatter=None, **kwargs):
+     "-p",
+     "--processes",
+     type=int,
+-    default=1,
+-    help="The number of parallel processes to run.",
++    default=None,
++    help=(
++        "The number of parallel processes to run. Positive numbers work as "
++        "expected. Zero and negative numbers will work as number_of_cpus - "
++        "number. e.g  -1 means all cpus except one. 0 means all cpus."
++    ),
+ )
+ @click.option(
+     "--disable_progress_bar",
+@@ -705,10 +713,10 @@ def do_fixes(lnt, result, formatter=None, **kwargs):
+ def fix(
+     force: bool,
+     paths: Tuple[str],
+-    processes: int,
+     bench: bool = False,
+     fixed_suffix: str = "",
+     logger: Optional[logging.Logger] = None,
++    processes: Optional[int] = None,
+     disable_progress_bar: Optional[bool] = False,
+     extra_config_path: Optional[str] = None,
+     ignore_local_config: bool = False,
+diff --git a/src/sqlfluff/cli/formatters.py b/src/sqlfluff/cli/formatters.py
+--- a/src/sqlfluff/cli/formatters.py
++++ b/src/sqlfluff/cli/formatters.py
+@@ -181,6 +181,14 @@ def dispatch_compilation_header(self, templater, message):
+             f"=== [{self.colorize(templater, Color.lightgrey)}] {message}"
+         )  # pragma: no cover
+ 
++    def dispatch_processing_header(self, processes: int) -> None:
++        """Dispatch the header displayed before linting."""
++        if self._verbosity > 0:
++            self._dispatch(  # pragma: no cover
++                f"{self.colorize('effective configured processes: ', Color.lightgrey)} "
++                f"{processes}"
++            )
++
+     def dispatch_dialect_warning(self, dialect) -> None:
+         """Dispatch a warning for dialects."""
+         self._dispatch(self.format_dialect_warning(dialect))  # pragma: no cover
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -1066,7 +1066,7 @@ def lint_path(
+         fix: bool = False,
+         ignore_non_existent_files: bool = False,
+         ignore_files: bool = True,
+-        processes: int = 1,
++        processes: Optional[int] = None,
+     ) -> LintedDir:
+         """Lint a path."""
+         linted_path = LintedDir(path)
+@@ -1080,16 +1080,22 @@ def lint_path(
+             )
+         )
+ 
++        if processes is None:
++            processes = self.config.get("processes", default=1)
++
+         # to avoid circular import
+         from sqlfluff.core.linter.runner import get_runner
+ 
+-        runner = get_runner(
++        runner, effective_processes = get_runner(
+             self,
+             self.config,
+             processes=processes,
+             allow_process_parallelism=self.allow_process_parallelism,
+         )
+ 
++        if self.formatter and effective_processes != 1:
++            self.formatter.dispatch_processing_header(effective_processes)
++
+         # Show files progress bar only when there is more than one.
+         files_count = len(fnames)
+         progress_bar_files = tqdm(
+@@ -1124,7 +1130,7 @@ def lint_paths(
+         fix: bool = False,
+         ignore_non_existent_files: bool = False,
+         ignore_files: bool = True,
+-        processes: int = 1,
++        processes: Optional[int] = None,
+     ) -> LintingResult:
+         """Lint an iterable of paths."""
+         paths_count = len(paths)
+diff --git a/src/sqlfluff/core/linter/runner.py b/src/sqlfluff/core/linter/runner.py
+--- a/src/sqlfluff/core/linter/runner.py
++++ b/src/sqlfluff/core/linter/runner.py
+@@ -10,6 +10,7 @@
+ import bdb
+ import functools
+ import logging
++import multiprocessing
+ import multiprocessing.dummy
+ import signal
+ import sys
+@@ -227,15 +228,29 @@ def get_runner(
+     config: FluffConfig,
+     processes: int,
+     allow_process_parallelism: bool = True,
+-) -> BaseRunner:
+-    """Generate a runner instance based on parallel and system configuration."""
++) -> Tuple[BaseRunner, int]:
++    """Generate a runner instance based on parallel and system configuration.
++
++    The processes argument can be positive or negative.
++    - If positive, the integer is interpreted as the number of processes.
++    - If negative or zero, the integer is interpreted as number_of_cpus - processes.
++
++    e.g.
++    -1 = all cpus but one.
++    0 = all cpus
++    1 = 1 cpu
++
++    """
++    if processes <= 0:
++        processes = max(multiprocessing.cpu_count() + processes, 1)
++
+     if processes > 1:
+         # Process parallelism isn't really supported during testing
+         # so this flag allows us to fall back to a threaded runner
+         # in those cases.
+         if allow_process_parallelism:
+-            return MultiProcessRunner(linter, config, processes=processes)
++            return MultiProcessRunner(linter, config, processes=processes), processes
+         else:
+-            return MultiThreadRunner(linter, config, processes=processes)
++            return MultiThreadRunner(linter, config, processes=processes), processes
+     else:
+-        return SequentialRunner(linter, config)
++        return SequentialRunner(linter, config), processes

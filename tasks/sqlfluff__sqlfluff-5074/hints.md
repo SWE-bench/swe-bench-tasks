@@ -1,0 +1,2 @@
+This is _very_ interesting! I'll pick this one up 👍 
+It's worth calling out that I think part of the problem here is that the docs are also out of date - but you're still right that the return codes should be _the same_ regardless of the `processes` setting.

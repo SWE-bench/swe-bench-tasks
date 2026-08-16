@@ -1,0 +1,26 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_tracking.py::test_singleaxis_aoi_gh1221"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/test_tracking.py::test_solar_noon",
+    "pvlib/tests/test_tracking.py::test_scalars",
+    "pvlib/tests/test_tracking.py::test_arrays",
+    "pvlib/tests/test_tracking.py::test_nans",
+    "pvlib/tests/test_tracking.py::test_arrays_multi",
+    "pvlib/tests/test_tracking.py::test_azimuth_north_south",
+    "pvlib/tests/test_tracking.py::test_max_angle",
+    "pvlib/tests/test_tracking.py::test_backtrack",
+    "pvlib/tests/test_tracking.py::test_axis_tilt",
+    "pvlib/tests/test_tracking.py::test_axis_azimuth",
+    "pvlib/tests/test_tracking.py::test_horizon_flat",
+    "pvlib/tests/test_tracking.py::test_horizon_tilted",
+    "pvlib/tests/test_tracking.py::test_low_sun_angles",
+    "pvlib/tests/test_tracking.py::test_SingleAxisTracker_tracking",
+    "pvlib/tests/test_tracking.py::test_get_aoi",
+    "pvlib/tests/test_tracking.py::test_get_irradiance",
+    "pvlib/tests/test_tracking.py::test_SingleAxisTracker___repr__",
+    "pvlib/tests/test_tracking.py::test_calc_axis_tilt",
+    "pvlib/tests/test_tracking.py::test_slope_aware_backtracking"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "FAIL_TO_PASS": [
+    "test/api/simple_test.py::test__api__fix_string"
+  ],
+  "PASS_TO_PASS": [
+    "test/api/simple_test.py::test__api__lint_string_without_violations",
+    "test/api/simple_test.py::test__api__lint_string",
+    "test/api/simple_test.py::test__api__lint_file",
+    "test/api/simple_test.py::test__api__lint_string_specific",
+    "test/api/simple_test.py::test__api__fix_string_specific",
+    "test/api/simple_test.py::test__api__parse_string"
+  ]
+}

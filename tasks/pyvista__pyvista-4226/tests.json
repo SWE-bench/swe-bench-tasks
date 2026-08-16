@@ -1,0 +1,30 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_property.py::test_check_range",
+    "tests/test_property.py::test_property_init",
+    "tests/test_property.py::test_property_style",
+    "tests/test_property.py::test_property_edge_color",
+    "tests/test_property.py::test_property_opacity",
+    "tests/test_property.py::test_property_show_edges",
+    "tests/test_property.py::test_property_lighting",
+    "tests/test_property.py::test_property_ambient",
+    "tests/test_property.py::test_property_diffuse",
+    "tests/test_property.py::test_property_specular",
+    "tests/test_property.py::test_property_specular_power",
+    "tests/test_property.py::test_property_metallic",
+    "tests/test_property.py::test_property_roughness",
+    "tests/test_property.py::test_property_interpolation",
+    "tests/test_property.py::test_property_render_points_as_spheres",
+    "tests/test_property.py::test_property_render_lines_as_tubes",
+    "tests/test_property.py::test_property_point_size",
+    "tests/test_property.py::test_property_line_width",
+    "tests/test_property.py::test_property_culling[back]",
+    "tests/test_property.py::test_property_culling[front]",
+    "tests/test_property.py::test_property_culling[none]",
+    "tests/test_property.py::test_property_diffuse_color",
+    "tests/test_property.py::test_property_ambient_color",
+    "tests/test_property.py::test_property_specular_color",
+    "tests/test_property.py::test_property_anisotropy"
+  ],
+  "PASS_TO_PASS": []
+}

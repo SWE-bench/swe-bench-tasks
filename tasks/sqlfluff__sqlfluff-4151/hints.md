@@ -1,0 +1,2 @@
+Looks like #3904 made `lint` work with both but updated `fix` to only accept `--disable-progress-bar`. I assume that was by accident. Should be relatively straightforward to fix by updating to match `lint`. 
+Looks like #3904 made `lint` work with both but updated `fix` to only accept `--disable-progress-bar`. I assume that was by accident. Should be relatively straightforward to fix by updating to match `lint`. 

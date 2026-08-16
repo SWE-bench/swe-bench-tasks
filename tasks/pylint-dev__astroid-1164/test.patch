@@ -1,0 +1,490 @@
+diff --git a/tests/unittest_brain_ctypes.py b/tests/unittest_brain_ctypes.py
+--- a/tests/unittest_brain_ctypes.py
++++ b/tests/unittest_brain_ctypes.py
+@@ -2,8 +2,7 @@
+ 
+ import pytest
+ 
+-from astroid import extract_node
+-from astroid.nodes.node_classes import Const
++from astroid import extract_node, nodes
+ 
+ pytestmark = pytest.mark.skipif(
+     hasattr(sys, "pypy_version_info"),
+@@ -72,7 +71,7 @@ def test_ctypes_redefined_types_members(c_type, builtin_type, type_code):
+     """
+     node = extract_node(src)
+     node_inf = node.inferred()[0]
+-    assert isinstance(node_inf, Const)
++    assert isinstance(node_inf, nodes.Const)
+     assert node_inf.value == type_code
+ 
+ 
+@@ -102,5 +101,5 @@ def test_other_ctypes_member_untouched():
+     """
+     node = extract_node(src)
+     node_inf = node.inferred()[0]
+-    assert isinstance(node_inf, Const)
++    assert isinstance(node_inf, nodes.Const)
+     assert node_inf.value == 6
+diff --git a/tests/unittest_lookup.py b/tests/unittest_lookup.py
+--- a/tests/unittest_lookup.py
++++ b/tests/unittest_lookup.py
+@@ -24,7 +24,6 @@
+     InferenceError,
+     NameInferenceError,
+ )
+-from astroid.nodes.scoped_nodes import builtin_lookup
+ 
+ from . import resources
+ 
+@@ -389,8 +388,8 @@ def initialize(linter):
+         self.assertEqual(len(path.lookup("__path__")[1]), 1)
+ 
+     def test_builtin_lookup(self):
+-        self.assertEqual(builtin_lookup("__dict__")[1], ())
+-        intstmts = builtin_lookup("int")[1]
++        self.assertEqual(nodes.builtin_lookup("__dict__")[1], ())
++        intstmts = nodes.builtin_lookup("int")[1]
+         self.assertEqual(len(intstmts), 1)
+         self.assertIsInstance(intstmts[0], nodes.ClassDef)
+         self.assertEqual(intstmts[0].name, "int")
+@@ -411,7 +410,10 @@ class foo:
+                 def test(self):
+                     pass
+         """
+-        member = builder.extract_node(code, __name__).targets[0]
++
++        node = builder.extract_node(code, __name__)
++        assert isinstance(node, nodes.Assign)
++        member = node.targets[0]
+         it = member.infer()
+         obj = next(it)
+         self.assertIsInstance(obj, nodes.Const)
+diff --git a/tests/unittest_protocols.py b/tests/unittest_protocols.py
+--- a/tests/unittest_protocols.py
++++ b/tests/unittest_protocols.py
+@@ -22,7 +22,6 @@
+ from astroid import extract_node, nodes, util
+ from astroid.const import PY38_PLUS, PY310_PLUS
+ from astroid.exceptions import InferenceError
+-from astroid.nodes.node_classes import AssignName, Const, Name, Starred
+ 
+ 
+ @contextlib.contextmanager
+@@ -38,14 +37,14 @@ class ProtocolTests(unittest.TestCase):
+     def assertConstNodesEqual(self, nodes_list_expected, nodes_list_got):
+         self.assertEqual(len(nodes_list_expected), len(nodes_list_got))
+         for node in nodes_list_got:
+-            self.assertIsInstance(node, Const)
++            self.assertIsInstance(node, nodes.Const)
+         for node, expected_value in zip(nodes_list_got, nodes_list_expected):
+             self.assertEqual(expected_value, node.value)
+ 
+     def assertNameNodesEqual(self, nodes_list_expected, nodes_list_got):
+         self.assertEqual(len(nodes_list_expected), len(nodes_list_got))
+         for node in nodes_list_got:
+-            self.assertIsInstance(node, Name)
++            self.assertIsInstance(node, nodes.Name)
+         for node, expected_name in zip(nodes_list_got, nodes_list_expected):
+             self.assertEqual(expected_name, node.name)
+ 
+@@ -60,11 +59,11 @@ def test_assigned_stmts_simple_for(self):
+         """
+         )
+ 
+-        for1_assnode = next(assign_stmts[0].nodes_of_class(AssignName))
++        for1_assnode = next(assign_stmts[0].nodes_of_class(nodes.AssignName))
+         assigned = list(for1_assnode.assigned_stmts())
+         self.assertConstNodesEqual([1, 2, 3], assigned)
+ 
+-        for2_assnode = next(assign_stmts[1].nodes_of_class(AssignName))
++        for2_assnode = next(assign_stmts[1].nodes_of_class(nodes.AssignName))
+         self.assertRaises(InferenceError, list, for2_assnode.assigned_stmts())
+ 
+     def test_assigned_stmts_starred_for(self):
+@@ -75,14 +74,14 @@ def test_assigned_stmts_starred_for(self):
+         """
+         )
+ 
+-        for1_starred = next(assign_stmts.nodes_of_class(Starred))
++        for1_starred = next(assign_stmts.nodes_of_class(nodes.Starred))
+         assigned = next(for1_starred.assigned_stmts())
+         assert isinstance(assigned, astroid.List)
+         assert assigned.as_string() == "[1, 2]"
+ 
+     def _get_starred_stmts(self, code):
+         assign_stmt = extract_node(f"{code} #@")
+-        starred = next(assign_stmt.nodes_of_class(Starred))
++        starred = next(assign_stmt.nodes_of_class(nodes.Starred))
+         return next(starred.assigned_stmts())
+ 
+     def _helper_starred_expected_const(self, code, expected):
+@@ -97,7 +96,7 @@ def _helper_starred_expected(self, code, expected):
+ 
+     def _helper_starred_inference_error(self, code):
+         assign_stmt = extract_node(f"{code} #@")
+-        starred = next(assign_stmt.nodes_of_class(Starred))
++        starred = next(assign_stmt.nodes_of_class(nodes.Starred))
+         self.assertRaises(InferenceError, list, starred.assigned_stmts())
+ 
+     def test_assigned_stmts_starred_assnames(self):
+@@ -143,11 +142,11 @@ def test_assigned_stmts_assignments(self):
+         """
+         )
+ 
+-        simple_assnode = next(assign_stmts[0].nodes_of_class(AssignName))
++        simple_assnode = next(assign_stmts[0].nodes_of_class(nodes.AssignName))
+         assigned = list(simple_assnode.assigned_stmts())
+         self.assertNameNodesEqual(["a"], assigned)
+ 
+-        assnames = assign_stmts[1].nodes_of_class(AssignName)
++        assnames = assign_stmts[1].nodes_of_class(nodes.AssignName)
+         simple_mul_assnode_1 = next(assnames)
+         assigned = list(simple_mul_assnode_1.assigned_stmts())
+         self.assertNameNodesEqual(["b"], assigned)
+@@ -162,13 +161,15 @@ def test_assigned_stmts_annassignments(self):
+         b: str  #@
+         """
+         )
+-        simple_annassign_node = next(annassign_stmts[0].nodes_of_class(AssignName))
++        simple_annassign_node = next(
++            annassign_stmts[0].nodes_of_class(nodes.AssignName)
++        )
+         assigned = list(simple_annassign_node.assigned_stmts())
+         self.assertEqual(1, len(assigned))
+-        self.assertIsInstance(assigned[0], Const)
++        self.assertIsInstance(assigned[0], nodes.Const)
+         self.assertEqual(assigned[0].value, "abc")
+ 
+-        empty_annassign_node = next(annassign_stmts[1].nodes_of_class(AssignName))
++        empty_annassign_node = next(annassign_stmts[1].nodes_of_class(nodes.AssignName))
+         assigned = list(empty_annassign_node.assigned_stmts())
+         self.assertEqual(1, len(assigned))
+         self.assertIs(assigned[0], util.Uninferable)
+diff --git a/tests/unittest_python3.py b/tests/unittest_python3.py
+--- a/tests/unittest_python3.py
++++ b/tests/unittest_python3.py
+@@ -20,8 +20,6 @@
+ 
+ from astroid import nodes
+ from astroid.builder import AstroidBuilder, extract_node
+-from astroid.nodes.node_classes import Assign, Const, Expr, Name, YieldFrom
+-from astroid.nodes.scoped_nodes import ClassDef, FunctionDef
+ from astroid.test_utils import require_version
+ 
+ 
+@@ -36,7 +34,7 @@ def test_starred_notation(self):
+         # Get the star node
+         node = next(next(next(astroid.get_children()).get_children()).get_children())
+ 
+-        self.assertTrue(isinstance(node.assign_type(), Assign))
++        self.assertTrue(isinstance(node.assign_type(), nodes.Assign))
+ 
+     def test_yield_from(self):
+         body = dedent(
+@@ -47,11 +45,11 @@ def func():
+         )
+         astroid = self.builder.string_build(body)
+         func = astroid.body[0]
+-        self.assertIsInstance(func, FunctionDef)
++        self.assertIsInstance(func, nodes.FunctionDef)
+         yieldfrom_stmt = func.body[0]
+ 
+-        self.assertIsInstance(yieldfrom_stmt, Expr)
+-        self.assertIsInstance(yieldfrom_stmt.value, YieldFrom)
++        self.assertIsInstance(yieldfrom_stmt, nodes.Expr)
++        self.assertIsInstance(yieldfrom_stmt.value, nodes.YieldFrom)
+         self.assertEqual(yieldfrom_stmt.as_string(), "yield from iter([1, 2])")
+ 
+     def test_yield_from_is_generator(self):
+@@ -63,7 +61,7 @@ def func():
+         )
+         astroid = self.builder.string_build(body)
+         func = astroid.body[0]
+-        self.assertIsInstance(func, FunctionDef)
++        self.assertIsInstance(func, nodes.FunctionDef)
+         self.assertTrue(func.is_generator())
+ 
+     def test_yield_from_as_string(self):
+@@ -85,7 +83,7 @@ def test_simple_metaclass(self):
+         klass = astroid.body[0]
+ 
+         metaclass = klass.metaclass()
+-        self.assertIsInstance(metaclass, ClassDef)
++        self.assertIsInstance(metaclass, nodes.ClassDef)
+         self.assertEqual(metaclass.name, "type")
+ 
+     def test_metaclass_error(self):
+@@ -104,7 +102,7 @@ class Test(metaclass=ABCMeta): pass"""
+         klass = astroid.body[1]
+ 
+         metaclass = klass.metaclass()
+-        self.assertIsInstance(metaclass, ClassDef)
++        self.assertIsInstance(metaclass, nodes.ClassDef)
+         self.assertEqual(metaclass.name, "ABCMeta")
+ 
+     def test_metaclass_multiple_keywords(self):
+@@ -114,7 +112,7 @@ def test_metaclass_multiple_keywords(self):
+         klass = astroid.body[0]
+ 
+         metaclass = klass.metaclass()
+-        self.assertIsInstance(metaclass, ClassDef)
++        self.assertIsInstance(metaclass, nodes.ClassDef)
+         self.assertEqual(metaclass.name, "type")
+ 
+     def test_as_string(self):
+@@ -171,7 +169,7 @@ class SubTest(Test): pass
+         klass = astroid["SubTest"]
+         self.assertTrue(klass.newstyle)
+         metaclass = klass.metaclass()
+-        self.assertIsInstance(metaclass, ClassDef)
++        self.assertIsInstance(metaclass, nodes.ClassDef)
+         self.assertEqual(metaclass.name, "ABCMeta")
+ 
+     def test_metaclass_ancestors(self):
+@@ -199,7 +197,7 @@ class ThirdImpl(Simple, SecondMeta):
+             for name in names:
+                 impl = astroid[name]
+                 meta = impl.metaclass()
+-                self.assertIsInstance(meta, ClassDef)
++                self.assertIsInstance(meta, nodes.ClassDef)
+                 self.assertEqual(meta.name, metaclass)
+ 
+     def test_annotation_support(self):
+@@ -213,18 +211,18 @@ def test(a: int, b: str, c: None, d, e,
+             )
+         )
+         func = astroid["test"]
+-        self.assertIsInstance(func.args.varargannotation, Name)
++        self.assertIsInstance(func.args.varargannotation, nodes.Name)
+         self.assertEqual(func.args.varargannotation.name, "float")
+-        self.assertIsInstance(func.args.kwargannotation, Name)
++        self.assertIsInstance(func.args.kwargannotation, nodes.Name)
+         self.assertEqual(func.args.kwargannotation.name, "int")
+-        self.assertIsInstance(func.returns, Name)
++        self.assertIsInstance(func.returns, nodes.Name)
+         self.assertEqual(func.returns.name, "int")
+         arguments = func.args
+-        self.assertIsInstance(arguments.annotations[0], Name)
++        self.assertIsInstance(arguments.annotations[0], nodes.Name)
+         self.assertEqual(arguments.annotations[0].name, "int")
+-        self.assertIsInstance(arguments.annotations[1], Name)
++        self.assertIsInstance(arguments.annotations[1], nodes.Name)
+         self.assertEqual(arguments.annotations[1].name, "str")
+-        self.assertIsInstance(arguments.annotations[2], Const)
++        self.assertIsInstance(arguments.annotations[2], nodes.Const)
+         self.assertIsNone(arguments.annotations[2].value)
+         self.assertIsNone(arguments.annotations[3])
+         self.assertIsNone(arguments.annotations[4])
+@@ -238,9 +236,9 @@ def test(a: int=1, b: str=2):
+             )
+         )
+         func = astroid["test"]
+-        self.assertIsInstance(func.args.annotations[0], Name)
++        self.assertIsInstance(func.args.annotations[0], nodes.Name)
+         self.assertEqual(func.args.annotations[0].name, "int")
+-        self.assertIsInstance(func.args.annotations[1], Name)
++        self.assertIsInstance(func.args.annotations[1], nodes.Name)
+         self.assertEqual(func.args.annotations[1].name, "str")
+         self.assertIsNone(func.returns)
+ 
+@@ -255,11 +253,11 @@ def test(*, a: int, b: str, c: None, d, e):
+         )
+         func = node["test"]
+         arguments = func.args
+-        self.assertIsInstance(arguments.kwonlyargs_annotations[0], Name)
++        self.assertIsInstance(arguments.kwonlyargs_annotations[0], nodes.Name)
+         self.assertEqual(arguments.kwonlyargs_annotations[0].name, "int")
+-        self.assertIsInstance(arguments.kwonlyargs_annotations[1], Name)
++        self.assertIsInstance(arguments.kwonlyargs_annotations[1], nodes.Name)
+         self.assertEqual(arguments.kwonlyargs_annotations[1].name, "str")
+-        self.assertIsInstance(arguments.kwonlyargs_annotations[2], Const)
++        self.assertIsInstance(arguments.kwonlyargs_annotations[2], nodes.Const)
+         self.assertIsNone(arguments.kwonlyargs_annotations[2].value)
+         self.assertIsNone(arguments.kwonlyargs_annotations[3])
+         self.assertIsNone(arguments.kwonlyargs_annotations[4])
+@@ -283,6 +281,7 @@ def test_unpacking_in_dicts(self):
+         code = "{'x': 1, **{'y': 2}}"
+         node = extract_node(code)
+         self.assertEqual(node.as_string(), code)
++        assert isinstance(node, nodes.Dict)
+         keys = [key for (key, _) in node.items]
+         self.assertIsInstance(keys[0], nodes.Const)
+         self.assertIsInstance(keys[1], nodes.DictUnpack)
+diff --git a/tests/unittest_scoped_nodes.py b/tests/unittest_scoped_nodes.py
+--- a/tests/unittest_scoped_nodes.py
++++ b/tests/unittest_scoped_nodes.py
+@@ -53,7 +53,7 @@
+     ResolveError,
+     TooManyLevelsError,
+ )
+-from astroid.nodes import scoped_nodes
++from astroid.nodes.scoped_nodes import _is_metaclass
+ 
+ from . import resources
+ 
+@@ -1120,7 +1120,7 @@ class BBB(AAA.JJJ):
+                 pass
+         """
+         )
+-        self.assertFalse(scoped_nodes._is_metaclass(klass))
++        self.assertFalse(_is_metaclass(klass))
+         ancestors = [base.name for base in klass.ancestors()]
+         self.assertIn("object", ancestors)
+         self.assertIn("JJJ", ancestors)
+@@ -1169,7 +1169,7 @@ class WithMeta(object, metaclass=abc.ABCMeta):
+         )
+         inferred = next(klass.infer())
+         metaclass = inferred.metaclass()
+-        self.assertIsInstance(metaclass, scoped_nodes.ClassDef)
++        self.assertIsInstance(metaclass, nodes.ClassDef)
+         self.assertIn(metaclass.qname(), ("abc.ABCMeta", "_py_abc.ABCMeta"))
+ 
+     @unittest.skipUnless(HAS_SIX, "These tests require the six library")
+@@ -1667,7 +1667,7 @@ class A(object):
+             pass
+         """
+         )
+-        type_cls = scoped_nodes.builtin_lookup("type")[1][0]
++        type_cls = nodes.builtin_lookup("type")[1][0]
+         self.assertEqual(cls.implicit_metaclass(), type_cls)
+ 
+     def test_implicit_metaclass_lookup(self):
+@@ -1743,7 +1743,7 @@ class A(object, metaclass=Metaclass):
+         #   of the property
+         property_meta = next(module["Metaclass"].igetattr("meta_property"))
+         self.assertIsInstance(property_meta, objects.Property)
+-        wrapping = scoped_nodes.get_wrapping_class(property_meta)
++        wrapping = nodes.get_wrapping_class(property_meta)
+         self.assertEqual(wrapping, module["Metaclass"])
+ 
+         property_class = next(acls.igetattr("meta_property"))
+@@ -1751,7 +1751,7 @@ class A(object, metaclass=Metaclass):
+         self.assertEqual(property_class.value, 42)
+ 
+         static = next(acls.igetattr("static"))
+-        self.assertIsInstance(static, scoped_nodes.FunctionDef)
++        self.assertIsInstance(static, nodes.FunctionDef)
+ 
+     def test_local_attr_invalid_mro(self):
+         cls = builder.extract_node(
+@@ -1820,14 +1820,14 @@ class Test(object): #@
+         """
+         )
+         cls = next(ast_nodes[0].infer())
+-        self.assertIsInstance(next(cls.igetattr("lam")), scoped_nodes.Lambda)
+-        self.assertIsInstance(next(cls.igetattr("not_method")), scoped_nodes.Lambda)
++        self.assertIsInstance(next(cls.igetattr("lam")), nodes.Lambda)
++        self.assertIsInstance(next(cls.igetattr("not_method")), nodes.Lambda)
+ 
+         instance = next(ast_nodes[1].infer())
+         lam = next(instance.igetattr("lam"))
+         self.assertIsInstance(lam, BoundMethod)
+         not_method = next(instance.igetattr("not_method"))
+-        self.assertIsInstance(not_method, scoped_nodes.Lambda)
++        self.assertIsInstance(not_method, nodes.Lambda)
+ 
+     def test_instance_bound_method_lambdas_2(self):
+         """
+@@ -1846,7 +1846,7 @@ class MyClass(object): #@
+         """
+         )
+         cls = next(ast_nodes[0].infer())
+-        self.assertIsInstance(next(cls.igetattr("f2")), scoped_nodes.Lambda)
++        self.assertIsInstance(next(cls.igetattr("f2")), nodes.Lambda)
+ 
+         instance = next(ast_nodes[1].infer())
+         f2 = next(instance.igetattr("f2"))
+diff --git a/tests/unittest_utils.py b/tests/unittest_utils.py
+--- a/tests/unittest_utils.py
++++ b/tests/unittest_utils.py
+@@ -13,10 +13,8 @@
+ 
+ import unittest
+ 
+-from astroid import builder, nodes
+-from astroid import util as astroid_util
++from astroid import Uninferable, builder, nodes
+ from astroid.exceptions import InferenceError
+-from astroid.nodes import node_classes
+ 
+ 
+ class InferenceUtil(unittest.TestCase):
+@@ -38,8 +36,8 @@ def test_not_exclusive(self):
+         xnames = [n for n in module.nodes_of_class(nodes.Name) if n.name == "x"]
+         assert len(xnames) == 3
+         assert xnames[1].lineno == 6
+-        self.assertEqual(node_classes.are_exclusive(xass1, xnames[1]), False)
+-        self.assertEqual(node_classes.are_exclusive(xass1, xnames[2]), False)
++        self.assertEqual(nodes.are_exclusive(xass1, xnames[1]), False)
++        self.assertEqual(nodes.are_exclusive(xass1, xnames[2]), False)
+ 
+     def test_if(self):
+         module = builder.parse(
+@@ -61,12 +59,12 @@ def test_if(self):
+         a4 = module.locals["a"][3]
+         a5 = module.locals["a"][4]
+         a6 = module.locals["a"][5]
+-        self.assertEqual(node_classes.are_exclusive(a1, a2), False)
+-        self.assertEqual(node_classes.are_exclusive(a1, a3), True)
+-        self.assertEqual(node_classes.are_exclusive(a1, a5), True)
+-        self.assertEqual(node_classes.are_exclusive(a3, a5), True)
+-        self.assertEqual(node_classes.are_exclusive(a3, a4), False)
+-        self.assertEqual(node_classes.are_exclusive(a5, a6), False)
++        self.assertEqual(nodes.are_exclusive(a1, a2), False)
++        self.assertEqual(nodes.are_exclusive(a1, a3), True)
++        self.assertEqual(nodes.are_exclusive(a1, a5), True)
++        self.assertEqual(nodes.are_exclusive(a3, a5), True)
++        self.assertEqual(nodes.are_exclusive(a3, a4), False)
++        self.assertEqual(nodes.are_exclusive(a5, a6), False)
+ 
+     def test_try_except(self):
+         module = builder.parse(
+@@ -89,16 +87,16 @@ def exclusive_func2():
+         f2 = module.locals["exclusive_func2"][1]
+         f3 = module.locals["exclusive_func2"][2]
+         f4 = module.locals["exclusive_func2"][3]
+-        self.assertEqual(node_classes.are_exclusive(f1, f2), True)
+-        self.assertEqual(node_classes.are_exclusive(f1, f3), True)
+-        self.assertEqual(node_classes.are_exclusive(f1, f4), False)
+-        self.assertEqual(node_classes.are_exclusive(f2, f4), True)
+-        self.assertEqual(node_classes.are_exclusive(f3, f4), True)
+-        self.assertEqual(node_classes.are_exclusive(f3, f2), True)
++        self.assertEqual(nodes.are_exclusive(f1, f2), True)
++        self.assertEqual(nodes.are_exclusive(f1, f3), True)
++        self.assertEqual(nodes.are_exclusive(f1, f4), False)
++        self.assertEqual(nodes.are_exclusive(f2, f4), True)
++        self.assertEqual(nodes.are_exclusive(f3, f4), True)
++        self.assertEqual(nodes.are_exclusive(f3, f2), True)
+ 
+-        self.assertEqual(node_classes.are_exclusive(f2, f1), True)
+-        self.assertEqual(node_classes.are_exclusive(f4, f1), False)
+-        self.assertEqual(node_classes.are_exclusive(f4, f2), True)
++        self.assertEqual(nodes.are_exclusive(f2, f1), True)
++        self.assertEqual(nodes.are_exclusive(f4, f1), False)
++        self.assertEqual(nodes.are_exclusive(f4, f2), True)
+ 
+     def test_unpack_infer_uninferable_nodes(self):
+         node = builder.extract_node(
+@@ -109,9 +107,9 @@ def test_unpack_infer_uninferable_nodes(self):
+         """
+         )
+         inferred = next(node.infer())
+-        unpacked = list(node_classes.unpack_infer(inferred))
++        unpacked = list(nodes.unpack_infer(inferred))
+         self.assertEqual(len(unpacked), 3)
+-        self.assertTrue(all(elt is astroid_util.Uninferable for elt in unpacked))
++        self.assertTrue(all(elt is Uninferable for elt in unpacked))
+ 
+     def test_unpack_infer_empty_tuple(self):
+         node = builder.extract_node(
+@@ -121,7 +119,7 @@ def test_unpack_infer_empty_tuple(self):
+         )
+         inferred = next(node.infer())
+         with self.assertRaises(InferenceError):
+-            list(node_classes.unpack_infer(inferred))
++            list(nodes.unpack_infer(inferred))
+ 
+ 
+ if __name__ == "__main__":

@@ -1,0 +1,398 @@
+diff --git a/pyvista/plotting/_property.py b/pyvista/plotting/_property.py
+--- a/pyvista/plotting/_property.py
++++ b/pyvista/plotting/_property.py
+@@ -4,7 +4,7 @@
+ import pyvista as pv
+ from pyvista import _vtk
+ from pyvista.plotting.opts import InterpolationType
+-from pyvista.utilities.misc import no_new_attr
++from pyvista.utilities.misc import _check_range, no_new_attr
+ 
+ from .colors import Color
+ 
+@@ -74,7 +74,7 @@ class Property(_vtk.vtkProperty):
+         The specular lighting coefficient.
+ 
+     specular_power : float, default: :attr:`pyvista.themes._LightingConfig.specular_power`
+-        The specular power. Between 0.0 and 128.0.
++        The specular power. Must be between 0.0 and 128.0.
+ 
+     show_edges : bool, default: :attr:`pyvista.themes.DefaultTheme.show_edges`
+         Shows the edges.  Does not apply to a wireframe representation.
+@@ -395,6 +395,7 @@ def opacity(self) -> float:
+ 
+     @opacity.setter
+     def opacity(self, value: float):
++        _check_range(value, (0, 1), 'opacity')
+         self.SetOpacity(value)
+ 
+     @property
+@@ -460,10 +461,11 @@ def lighting(self, value: bool):
+     def ambient(self) -> float:
+         """Return or set ambient.
+ 
+-        When lighting is enabled, this is the amount of light in
+-        the range of 0 to 1 (default 0.0) that reaches the actor
+-        when not directed at the light source emitted from the
+-        viewer.
++        Default Default :attr:`pyvista.themes._LightingConfig.ambient`.
++
++        When lighting is enabled, this is the amount of light in the range
++        of 0 to 1 that reaches the actor when not directed at the light
++        source emitted from the viewer.
+ 
+         Examples
+         --------
+@@ -493,17 +495,19 @@ def ambient(self) -> float:
+ 
+     @ambient.setter
+     def ambient(self, value: float):
++        _check_range(value, (0, 1), 'ambient')
+         self.SetAmbient(value)
+ 
+     @property
+     def diffuse(self) -> float:
+         """Return or set the diffuse lighting coefficient.
+ 
+-        Default 1.0.
++        Default :attr:`pyvista.themes._LightingConfig.diffuse`.
+ 
+-        This is the scattering of light by reflection or transmission. Diffuse
+-        reflection results when light strikes an irregular surface such as a
+-        frosted window or the surface of a frosted or coated light bulb.
++        This is the scattering of light by reflection or
++        transmission. Diffuse reflection results when light strikes an
++        irregular surface such as a frosted window or the surface of a
++        frosted or coated light bulb. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -533,16 +537,17 @@ def diffuse(self) -> float:
+ 
+     @diffuse.setter
+     def diffuse(self, value: float):
++        _check_range(value, (0, 1), 'diffuse')
+         self.SetDiffuse(value)
+ 
+     @property
+     def specular(self) -> float:
+         """Return or set specular.
+ 
+-        Default 0.0
++        Default Default :attr:`pyvista.themes._LightingConfig.specular`.
+ 
+-        Specular lighting simulates the bright spot of a light that appears on
+-        shiny objects.
++        Specular lighting simulates the bright spot of a light that appears
++        on shiny objects. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -572,13 +577,16 @@ def specular(self) -> float:
+ 
+     @specular.setter
+     def specular(self, value: float):
++        _check_range(value, (0, 1), 'specular')
+         self.SetSpecular(value)
+ 
+     @property
+     def specular_power(self) -> float:
+         """Return or set specular power.
+ 
+-        The specular power. Between 0.0 and 128.0. Default 1.0
++        Default :attr:`pyvista.themes._LightingConfig.specular_power`.
++
++        The specular power. Must be between 0.0 and 128.0.
+ 
+         Examples
+         --------
+@@ -616,14 +624,17 @@ def specular_power(self) -> float:
+ 
+     @specular_power.setter
+     def specular_power(self, value: float):
++        _check_range(value, (0, 128), 'specular_power')
+         self.SetSpecularPower(value)
+ 
+     @property
+     def metallic(self) -> float:
+         """Return or set metallic.
+ 
++        Default :attr:`pyvista.themes._LightingConfig.metallic`.
++
+         This requires that the interpolation be set to ``'Physically based
+-        rendering'``
++        rendering'``. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -657,14 +668,17 @@ def metallic(self) -> float:
+ 
+     @metallic.setter
+     def metallic(self, value: float):
++        _check_range(value, (0, 1), 'metallic')
+         self.SetMetallic(value)
+ 
+     @property
+     def roughness(self) -> float:
+         """Return or set roughness.
+ 
++        Default :attr:`pyvista.themes._LightingConfig.roughness`.
++
+         This requires that the interpolation be set to ``'Physically based
+-        rendering'``
++        rendering'``. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -699,12 +713,15 @@ def roughness(self) -> float:
+ 
+     @roughness.setter
+     def roughness(self, value: bool):
++        _check_range(value, (0, 1), 'roughness')
+         self.SetRoughness(value)
+ 
+     @property
+     def interpolation(self) -> InterpolationType:
+         """Return or set the method of shading.
+ 
++        Defaults to :attr:`pyvista.themes._LightingConfig.interpolation`.
++
+         One of the following options.
+ 
+         * ``'Physically based rendering'`` - Physically based rendering.
+@@ -760,11 +777,13 @@ def interpolation(self, value: Union[str, int, InterpolationType]):
+     def render_points_as_spheres(self) -> bool:
+         """Return or set rendering points as spheres.
+ 
++        Defaults to :attr:`pyvista.themes.DefaultTheme.render_points_as_spheres`.
++
+         Requires representation style be set to ``'points'``.
+ 
+         Examples
+         --------
+-        Enable rendering points as spheres
++        Enable rendering points as spheres.
+ 
+         >>> import pyvista as pv
+         >>> prop = pv.Property()
+@@ -795,6 +814,8 @@ def render_points_as_spheres(self, value: bool):
+     def render_lines_as_tubes(self) -> bool:
+         """Return or set rendering lines as tubes.
+ 
++        Defaults to :attr:`pyvista.themes.DefaultTheme.render_lines_as_tubes`.
++
+         Requires representation style be set to ``'wireframe'``.
+ 
+         Examples
+@@ -830,6 +851,8 @@ def render_lines_as_tubes(self, value: bool):
+     def line_width(self) -> float:
+         """Return or set the line width.
+ 
++        Defaults to :attr:`pyvista.themes.DefaultTheme.line_width`.
++
+         Examples
+         --------
+         Change the line width to ``10``.
+@@ -862,6 +885,8 @@ def line_width(self, value: bool):
+     def point_size(self):
+         """Return or set the point size.
+ 
++        Defaults to :attr:`pyvista.themes.DefaultTheme.point_size`.
++
+         Examples
+         --------
+         Change the point size to ``10.0``.
+@@ -1095,6 +1120,7 @@ def anisotropy(self, value: float):
+             from pyvista.core.errors import VTKVersionError
+ 
+             raise VTKVersionError('Anisotropy requires VTK v9.1.0 or newer.')
++        _check_range(value, (0, 1), 'anisotropy')
+         self.SetAnisotropy(value)
+ 
+     def plot(self, **kwargs) -> None:
+diff --git a/pyvista/plotting/composite_mapper.py b/pyvista/plotting/composite_mapper.py
+--- a/pyvista/plotting/composite_mapper.py
++++ b/pyvista/plotting/composite_mapper.py
+@@ -11,7 +11,7 @@
+ from pyvista import _vtk
+ from pyvista.utilities import convert_array, convert_string_array
+ 
+-from ..utilities.misc import vtk_version_info
++from ..utilities.misc import _check_range, vtk_version_info
+ from .colors import Color
+ from .mapper import _BaseMapper
+ 
+@@ -205,6 +205,7 @@ def opacity(self, new_opacity: float):
+             self._attr.Modified()
+             return
+ 
++        _check_range(new_opacity, (0, 1), 'opacity')
+         self._attr.SetBlockOpacity(self._block, new_opacity)
+ 
+     @property
+diff --git a/pyvista/themes.py b/pyvista/themes.py
+--- a/pyvista/themes.py
++++ b/pyvista/themes.py
+@@ -41,7 +41,7 @@
+ from .plotting.opts import InterpolationType
+ from .plotting.plotting import Plotter
+ from .plotting.tools import parse_font_family
+-from .utilities.misc import PyVistaDeprecationWarning
++from .utilities.misc import PyVistaDeprecationWarning, _check_range
+ 
+ 
+ class _rcParams(dict):  # pragma: no cover
+@@ -73,12 +73,6 @@ def __repr__(self):
+         return repr(pyvista.global_theme)
+ 
+ 
+-def _check_between_zero_and_one(value: float, value_name: str = 'value'):
+-    """Check if a value is between zero and one."""
+-    if value < 0 or value > 1:
+-        raise ValueError(f'{value_name} must be between 0 and 1.')
+-
+-
+ def load_theme(filename):
+     """Load a theme from a file.
+ 
+@@ -288,9 +282,8 @@ def interpolation(self, interpolation: Union[str, int, InterpolationType]):
+     def metallic(self) -> float:
+         """Return or set the metallic value.
+ 
+-        Usually this value is either 0 or 1 for a real material but any
+-        value in between is valid. This parameter is only used by PBR
+-        interpolation.
++        This requires that the interpolation be set to ``'Physically based
++        rendering'``. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -307,6 +300,7 @@ def metallic(self) -> float:
+ 
+     @metallic.setter
+     def metallic(self, metallic: float):
++        _check_range(metallic, (0, 1), 'metallic')
+         self._metallic = metallic
+ 
+     @property
+@@ -332,6 +326,7 @@ def roughness(self) -> float:
+ 
+     @roughness.setter
+     def roughness(self, roughness: float):
++        _check_range(roughness, (0, 1), 'roughness')
+         self._roughness = roughness
+ 
+     @property
+@@ -356,12 +351,18 @@ def ambient(self) -> float:
+ 
+     @ambient.setter
+     def ambient(self, ambient: float):
++        _check_range(ambient, (0, 1), 'ambient')
+         self._ambient = ambient
+ 
+     @property
+     def diffuse(self) -> float:
+         """Return or set the diffuse value.
+ 
++        This is the scattering of light by reflection or
++        transmission. Diffuse reflection results when light strikes an
++        irregular surface such as a frosted window or the surface of a
++        frosted or coated light bulb. Must be between 0 and 1.
++
+         Examples
+         --------
+         Set the global diffuse lighting value to ``0.5``.
+@@ -376,13 +377,15 @@ def diffuse(self) -> float:
+ 
+     @diffuse.setter
+     def diffuse(self, diffuse: float):
++        _check_range(diffuse, (0, 1), 'diffuse')
+         self._diffuse = diffuse
+ 
+     @property
+     def specular(self) -> float:
+         """Return or set the specular value.
+ 
+-        Should be between 0 and 1.
++        Specular lighting simulates the bright spot of a light that appears
++        on shiny objects. Must be between 0 and 1.
+ 
+         Examples
+         --------
+@@ -398,12 +401,15 @@ def specular(self) -> float:
+ 
+     @specular.setter
+     def specular(self, specular: float):
++        _check_range(specular, (0, 1), 'specular')
+         self._specular = specular
+ 
+     @property
+     def specular_power(self) -> float:
+         """Return or set the specular power value.
+ 
++        Must be between 0.0 and 128.0.
++
+         Examples
+         --------
+         Set the global specular power value to ``50``.
+@@ -418,6 +424,7 @@ def specular_power(self) -> float:
+ 
+     @specular_power.setter
+     def specular_power(self, specular_power: float):
++        _check_range(specular_power, (0, 128), 'specular_power')
+         self._specular_power = specular_power
+ 
+     @property
+@@ -603,7 +610,7 @@ def opacity(self) -> float:
+ 
+     @opacity.setter
+     def opacity(self, opacity: float):
+-        _check_between_zero_and_one(opacity, 'opacity')
++        _check_range(opacity, (0, 1), 'opacity')
+         self._opacity = float(opacity)
+ 
+     @property
+@@ -641,7 +648,7 @@ def decimate(self, decimate: float):
+         if decimate is None:
+             self._decimate = None
+         else:
+-            _check_between_zero_and_one(decimate, 'decimate')
++            _check_range(decimate, (0, 1), 'decimate')
+             self._decimate = float(decimate)
+ 
+     def __repr__(self):
+@@ -1138,6 +1145,7 @@ def cap_opacity(self) -> float:
+ 
+     @cap_opacity.setter
+     def cap_opacity(self, cap_opacity: float):
++        _check_range(cap_opacity, (0, 1), 'cap_opacity')
+         self._cap_opacity = float(cap_opacity)
+ 
+     @property
+@@ -1723,7 +1731,7 @@ def opacity(self) -> float:
+ 
+     @opacity.setter
+     def opacity(self, opacity: float):
+-        _check_between_zero_and_one(opacity, 'opacity')
++        _check_range(opacity, (0, 1), 'opacity')
+         self._opacity = float(opacity)
+ 
+     @property
+diff --git a/pyvista/utilities/misc.py b/pyvista/utilities/misc.py
+--- a/pyvista/utilities/misc.py
++++ b/pyvista/utilities/misc.py
+@@ -27,6 +27,14 @@ def _set_plot_theme_from_env():
+             )
+ 
+ 
++def _check_range(value, rng, parm_name):
++    """Check if a parameter is within a range."""
++    if value < rng[0] or value > rng[1]:
++        raise ValueError(
++            f'The value {float(value)} for `{parm_name}` is outside the acceptable range {tuple(rng)}.'
++        )
++
++
+ @lru_cache(maxsize=None)
+ def has_module(module_name):
+     """Return if a module can be imported."""

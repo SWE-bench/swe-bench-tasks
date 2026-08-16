@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references0-targets0-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references1-targets1-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references2-targets2-False]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references3-targets3-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references4-targets4-False]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references5-targets5-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references6-targets6-False]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references7-targets7-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references8-targets8-False]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references9-targets9-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references10-targets10-False]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references11-targets11-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references12-targets12-True]",
+    "test/core/rules/reference_test.py::test_object_ref_matches_table[possible_references13-targets13-False]"
+  ],
+  "PASS_TO_PASS": []
+}

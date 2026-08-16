@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/ivtools/test_utils.py::test__numdiff",
+    "pvlib/tests/ivtools/test_utils.py::test_rectify_iv_curve",
+    "pvlib/tests/ivtools/test_utils.py::test__schmumaker_qspline[x0-y0-expected0]",
+    "pvlib/tests/ivtools/test_utils.py::test__schmumaker_qspline[x1-y1-expected1]",
+    "pvlib/tests/ivtools/test_utils.py::test__schmumaker_qspline[x2-y2-expected2]"
+  ],
+  "PASS_TO_PASS": []
+}

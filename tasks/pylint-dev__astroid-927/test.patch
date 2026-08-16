@@ -1,0 +1,86 @@
+diff --git a/tests/unittest_brain_numpy_core_umath.py b/tests/unittest_brain_numpy_core_umath.py
+--- a/tests/unittest_brain_numpy_core_umath.py
++++ b/tests/unittest_brain_numpy_core_umath.py
+@@ -14,7 +14,7 @@
+ except ImportError:
+     HAS_NUMPY = False
+ 
+-from astroid import bases, builder, nodes, util
++from astroid import bases, builder, nodes
+ 
+ 
+ @unittest.skipUnless(HAS_NUMPY, "This test requires the numpy library.")
+@@ -220,9 +220,7 @@ def test_numpy_core_umath_functions_return_type(self):
+             with self.subTest(typ=func_):
+                 inferred_values = list(self._inferred_numpy_func_call(func_))
+                 self.assertTrue(
+-                    len(inferred_values) == 1
+-                    or len(inferred_values) == 2
+-                    and inferred_values[-1].pytype() is util.Uninferable,
++                    len(inferred_values) == 1,
+                     msg="Too much inferred values ({}) for {:s}".format(
+                         inferred_values[-1].pytype(), func_
+                     ),
+diff --git a/tests/unittest_inference.py b/tests/unittest_inference.py
+--- a/tests/unittest_inference.py
++++ b/tests/unittest_inference.py
+@@ -1704,7 +1704,8 @@ def __init__(self):
+         """
+         ast = extract_node(code, __name__)
+         expr = ast.func.expr
+-        self.assertIs(next(expr.infer()), util.Uninferable)
++        with pytest.raises(exceptions.InferenceError):
++            next(expr.infer())
+ 
+     def test_tuple_builtin_inference(self):
+         code = """
+@@ -6032,5 +6033,37 @@ def test_infer_list_of_uninferables_does_not_crash():
+     assert not inferred.elts
+ 
+ 
++# https://github.com/PyCQA/astroid/issues/926
++def test_issue926_infer_stmts_referencing_same_name_is_not_uninferable():
++    code = """
++    pair = [1, 2]
++    ex = pair[0]
++    if 1 + 1 == 2:
++        ex = pair[1]
++    ex
++    """
++    node = extract_node(code)
++    inferred = list(node.infer())
++    assert len(inferred) == 2
++    assert isinstance(inferred[0], nodes.Const)
++    assert inferred[0].value == 1
++    assert isinstance(inferred[1], nodes.Const)
++    assert inferred[1].value == 2
++
++
++# https://github.com/PyCQA/astroid/issues/926
++def test_issue926_binop_referencing_same_name_is_not_uninferable():
++    code = """
++    pair = [1, 2]
++    ex = pair[0] + pair[1]
++    ex
++    """
++    node = extract_node(code)
++    inferred = list(node.infer())
++    assert len(inferred) == 1
++    assert isinstance(inferred[0], nodes.Const)
++    assert inferred[0].value == 3
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/tests/unittest_regrtest.py b/tests/unittest_regrtest.py
+--- a/tests/unittest_regrtest.py
++++ b/tests/unittest_regrtest.py
+@@ -99,7 +99,7 @@ def test_numpy_crash(self):
+         astroid = builder.string_build(data, __name__, __file__)
+         callfunc = astroid.body[1].value.func
+         inferred = callfunc.inferred()
+-        self.assertEqual(len(inferred), 2)
++        self.assertEqual(len(inferred), 1)
+ 
+     def test_nameconstant(self):
+         # used to fail for Python 3.4

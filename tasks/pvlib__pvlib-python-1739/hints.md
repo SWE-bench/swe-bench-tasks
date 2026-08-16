@@ -1,0 +1,1 @@
+Since `get_pvgis_hourly` is only using `surface_azimuth` to pass a value to a pvgis keyword `aspect`, we could add `aspect` with the South=0 convention and deprecate `surface_azimuth` as is. Then later, we can deprecate `aspect` and add `surface_azimuth` back with its pvlib meaning. Now that I write that out, seems better just to make the breaking change.

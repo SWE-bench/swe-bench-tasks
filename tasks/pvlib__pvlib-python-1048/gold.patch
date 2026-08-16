@@ -1,0 +1,166 @@
+diff --git a/pvlib/ivtools/__init__.py b/pvlib/ivtools/__init__.py
+--- a/pvlib/ivtools/__init__.py
++++ b/pvlib/ivtools/__init__.py
+@@ -4,4 +4,4 @@
+ 
+ """
+ 
+-from pvlib.ivtools import sde, sdm, utility  # noqa: F401
++from pvlib.ivtools import sde, sdm, utils  # noqa: F401
+diff --git a/pvlib/ivtools/sde.py b/pvlib/ivtools/sde.py
+--- a/pvlib/ivtools/sde.py
++++ b/pvlib/ivtools/sde.py
+@@ -7,7 +7,7 @@
+ 
+ import numpy as np
+ 
+-from pvlib.ivtools.utility import _schumaker_qspline
++from pvlib.ivtools.utils import _schumaker_qspline
+ 
+ 
+ # set constant for numpy.linalg.lstsq parameter rcond
+diff --git a/pvlib/ivtools/sdm.py b/pvlib/ivtools/sdm.py
+--- a/pvlib/ivtools/sdm.py
++++ b/pvlib/ivtools/sdm.py
+@@ -10,7 +10,7 @@
+ 
+ from pvlib.pvsystem import singlediode, v_from_i
+ 
+-from pvlib.ivtools.utility import constants, rectify_iv_curve, _numdiff
++from pvlib.ivtools.utils import rectify_iv_curve, _numdiff
+ from pvlib.ivtools.sde import _fit_sandia_cocontent
+ 
+ 
+@@ -301,7 +301,7 @@ def _system_of_equations_desoto(params, specs):
+     return y
+ 
+ 
+-def fit_pvsyst_sandia(ivcurves, specs, const=constants, maxiter=5, eps1=1.e-3):
++def fit_pvsyst_sandia(ivcurves, specs, const=None, maxiter=5, eps1=1.e-3):
+     """
+     Estimate parameters for the PVsyst module performance model.
+ 
+@@ -416,6 +416,9 @@ def fit_pvsyst_sandia(ivcurves, specs, const=constants, maxiter=5, eps1=1.e-3):
+     .. [7] PVLib MATLAB https://github.com/sandialabs/MATLAB_PV_LIB
+     """
+ 
++    if const is None:
++        const = {'E0': 1000.0, 'T0': 25.0, 'k': 1.38066e-23, 'q': 1.60218e-19}
++
+     ee = ivcurves['ee']
+     tc = ivcurves['tc']
+     tck = tc + 273.15
+@@ -476,7 +479,7 @@ def fit_pvsyst_sandia(ivcurves, specs, const=constants, maxiter=5, eps1=1.e-3):
+     return pvsyst
+ 
+ 
+-def fit_desoto_sandia(ivcurves, specs, const=constants, maxiter=5, eps1=1.e-3):
++def fit_desoto_sandia(ivcurves, specs, const=None, maxiter=5, eps1=1.e-3):
+     """
+     Estimate parameters for the De Soto module performance model.
+ 
+@@ -575,6 +578,9 @@ def fit_desoto_sandia(ivcurves, specs, const=constants, maxiter=5, eps1=1.e-3):
+     .. [4] PVLib MATLAB https://github.com/sandialabs/MATLAB_PV_LIB
+     """
+ 
++    if const is None:
++        const = {'E0': 1000.0, 'T0': 25.0, 'k': 1.38066e-23, 'q': 1.60218e-19}
++
+     ee = ivcurves['ee']
+     tc = ivcurves['tc']
+     tck = tc + 273.15
+@@ -939,10 +945,11 @@ def _update_io(voc, iph, io, rs, rsh, nnsvth):
+         dvoc = pvoc - voc
+ 
+         # Update Io
+-        new_io = tio * (1. + (2. * dvoc) / (2. * nnsvth - dvoc))
++        with np.errstate(invalid="ignore", divide="ignore"):
++            new_io = tio * (1. + (2. * dvoc) / (2. * nnsvth - dvoc))
++            # Calculate Maximum Percent Difference
++            maxerr = np.max(np.abs(new_io - tio) / tio) * 100.
+ 
+-        # Calculate Maximum Percent Difference
+-        maxerr = np.max(np.abs(new_io - tio) / tio) * 100.
+         tio = new_io
+         k += 1.
+ 
+@@ -1131,8 +1138,9 @@ def _update_rsh_fixed_pt(vmp, imp, iph, io, rs, rsh, nnsvth):
+ 
+     for i in range(niter):
+         _, z = _calc_theta_phi_exact(vmp, imp, iph, io, rs, x1, nnsvth)
+-        next_x1 = (1 + z) / z * ((iph + io) * x1 / imp - nnsvth * z / imp - 2 *
+-                                 vmp / imp)
++        with np.errstate(divide="ignore"):
++            next_x1 = (1 + z) / z * ((iph + io) * x1 / imp - nnsvth * z / imp
++                                     - 2 * vmp / imp)
+         x1 = next_x1
+ 
+     return x1
+@@ -1200,12 +1208,12 @@ def _calc_theta_phi_exact(vmp, imp, iph, io, rs, rsh, nnsvth):
+ 
+     # Argument for Lambert W function involved in V = V(I) [2] Eq. 12; [3]
+     # Eq. 3
+-    with np.errstate(over="ignore"):
++    with np.errstate(over="ignore", divide="ignore", invalid="ignore"):
+         argw = np.where(
+             nnsvth == 0,
+             np.nan,
+             rsh * io / nnsvth * np.exp(rsh * (iph + io - imp) / nnsvth))
+-    phi = np.where(argw > 0, lambertw(argw).real, np.nan)
++        phi = np.where(argw > 0, lambertw(argw).real, np.nan)
+ 
+     # NaN where argw overflows. Switch to log space to evaluate
+     u = np.isinf(argw)
+@@ -1225,21 +1233,23 @@ def _calc_theta_phi_exact(vmp, imp, iph, io, rs, rsh, nnsvth):
+ 
+     # Argument for Lambert W function involved in I = I(V) [2] Eq. 11; [3]
+     # E1. 2
+-    with np.errstate(over="ignore"):
++    with np.errstate(over="ignore", divide="ignore", invalid="ignore"):
+         argw = np.where(
+             nnsvth == 0,
+             np.nan,
+             rsh / (rsh + rs) * rs * io / nnsvth * np.exp(
+                 rsh / (rsh + rs) * (rs * (iph + io) + vmp) / nnsvth))
+-    theta = np.where(argw > 0, lambertw(argw).real, np.nan)
++        theta = np.where(argw > 0, lambertw(argw).real, np.nan)
+ 
+     # NaN where argw overflows. Switch to log space to evaluate
+     u = np.isinf(argw)
+     if np.any(u):
+-        logargw = (
+-            np.log(rsh[u]) / (rsh[u] + rs[u]) + np.log(rs[u]) + np.log(io[u])
+-            - np.log(nnsvth[u]) + (rsh[u] / (rsh[u] + rs[u]))
+-            * (rs[u] * (iph[u] + io[u]) + vmp[u]) / nnsvth[u])
++        with np.errstate(divide="ignore"):
++            logargw = (
++                np.log(rsh[u]) - np.log(rsh[u] + rs[u]) + np.log(rs[u])
++                + np.log(io[u]) - np.log(nnsvth[u])
++                + (rsh[u] / (rsh[u] + rs[u]))
++                * (rs[u] * (iph[u] + io[u]) + vmp[u]) / nnsvth[u])
+         # Three iterations of Newton-Raphson method to solve w+log(w)=logargW.
+         # The initial guess is w=logargW. Where direct evaluation (above)
+         # results in NaN from overflow, 3 iterations of Newton's method gives
+diff --git a/pvlib/ivtools/utility.py b/pvlib/ivtools/utils.py
+similarity index 98%
+rename from pvlib/ivtools/utility.py
+rename to pvlib/ivtools/utils.py
+--- a/pvlib/ivtools/utility.py
++++ b/pvlib/ivtools/utils.py
+@@ -1,5 +1,5 @@
+ """
+-The ``pvlib.ivtools.utility.py`` module contains utility functions related to
++The ``pvlib.ivtools.utils.py`` module contains utility functions related to
+ working with IV curves, or fitting equations to IV curve data.
+ 
+ """
+@@ -12,9 +12,6 @@
+ EPS = np.finfo('float').eps**(1/3)
+ 
+ 
+-constants = {'E0': 1000.0, 'T0': 25.0, 'k': 1.38066e-23, 'q': 1.60218e-19}
+-
+-
+ def _numdiff(x, f):
+     """
+     Compute first and second order derivative using possibly unequally

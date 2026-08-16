@@ -1,0 +1,32 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/test_pointset.py::test_pointset_basic",
+    "tests/test_pointset.py::test_pointset_from_vtk",
+    "tests/test_pointset.py::test_pointset_wrap",
+    "tests/test_pointset.py::test_pointset",
+    "tests/test_pointset.py::test_save",
+    "tests/test_pointset.py::test_cast_to_polydata[True]",
+    "tests/test_pointset.py::test_cast_to_polydata[False]",
+    "tests/test_pointset.py::test_filters_return_pointset",
+    "tests/test_pointset.py::test_pointset_force_float[False-int64]",
+    "tests/test_pointset.py::test_pointset_force_float[True-float32]",
+    "tests/test_pointset.py::test_center_of_mass",
+    "tests/test_pointset.py::test_points_to_double",
+    "tests/test_pointset.py::test_translate",
+    "tests/test_pointset.py::test_scale",
+    "tests/test_pointset.py::test_flip_x",
+    "tests/test_pointset.py::test_flip_y",
+    "tests/test_pointset.py::test_flip_z",
+    "tests/test_pointset.py::test_flip_normal",
+    "tests/test_pointset.py::test_threshold",
+    "tests/test_pointset.py::test_threshold_percent",
+    "tests/test_pointset.py::test_explode",
+    "tests/test_pointset.py::test_delaunay_3d",
+    "tests/test_pointset.py::test_raise_unsupported",
+    "tests/test_pointset.py::test_rotate_x",
+    "tests/test_pointset.py::test_rotate_y",
+    "tests/test_pointset.py::test_rotate_z",
+    "tests/test_pointset.py::test_rotate_vector"
+  ],
+  "PASS_TO_PASS": []
+}

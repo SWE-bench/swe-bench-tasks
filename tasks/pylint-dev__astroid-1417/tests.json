@@ -1,0 +1,10 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/unittest_decorators.py::test_deprecation_warning_on_cachedproperty"
+  ],
+  "PASS_TO_PASS": [
+    "tests/unittest_decorators.py::TestDeprecationDecorators::test_deprecated_default_argument_values_one_arg",
+    "tests/unittest_decorators.py::TestDeprecationDecorators::test_deprecated_default_argument_values_two_args",
+    "tests/unittest_decorators.py::TestDeprecationDecorators::test_deprecated_default_argument_values_ok"
+  ]
+}

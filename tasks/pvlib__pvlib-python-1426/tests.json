@@ -1,0 +1,12 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_forecast.py::test_latest",
+    "pvlib/tests/test_forecast.py::test_full",
+    "pvlib/tests/test_forecast.py::test_temp_convert",
+    "pvlib/tests/test_forecast.py::test_set_location",
+    "pvlib/tests/test_forecast.py::test_set_query_time_range_tzfail",
+    "pvlib/tests/test_forecast.py::test_cloud_cover_to_transmittance_linear",
+    "pvlib/tests/test_forecast.py::test_cloud_cover_to_ghi_linear"
+  ],
+  "PASS_TO_PASS": []
+}

@@ -1,0 +1,12 @@
+base_commit: 3db44d72070ccd6e8fc5c7f708500424011bcc47
+created_at: '2022-12-25T02:44:32Z'
+datasets:
+- SWE-bench/SWE-bench
+environment_setup_commit: 8dd8eeb80248cea4360c753847bd622e8652e059
+eval_type: pass_and_fail
+image: swebench/sweb.eval.x86_64.pyvista_1776_pyvista-3750:latest
+instance_id: pyvista__pyvista-3750
+log_parser: parse_log_pyvista
+repo: pyvista/pyvista
+split: dev
+version: '0.38'

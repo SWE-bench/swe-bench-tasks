@@ -1,0 +1,18 @@
+{
+  "FAIL_TO_PASS": [
+    "pydicom/tests/test_json.py::TestPersonName::test_PN_components_to_json",
+    "pydicom/tests/test_json.py::TestPersonName::test_PN_components_from_json",
+    "pydicom/tests/test_json.py::TestPersonName::test_empty_value",
+    "pydicom/tests/test_json.py::TestPersonName::test_multi_value_to_json",
+    "pydicom/tests/test_json.py::TestAT::test_to_json",
+    "pydicom/tests/test_json.py::TestAT::test_from_json",
+    "pydicom/tests/test_json.py::TestAT::test_invalid_json",
+    "pydicom/tests/test_json.py::TestDataSetToJson::test_json_from_dicom_file",
+    "pydicom/tests/test_json.py::TestDataSetToJson::test_roundtrip"
+  ],
+  "PASS_TO_PASS": [
+    "pydicom/tests/test_json.py::TestPersonName::test_json_PN_from_file",
+    "pydicom/tests/test_json.py::TestPersonName::test_dataelem_from_json",
+    "pydicom/tests/test_json.py::TestDataSetToJson::test_json_private_DS_VM"
+  ]
+}

@@ -1,0 +1,65 @@
+diff --git a/pydicom/tests/test_json.py b/pydicom/tests/test_json.py
+--- a/pydicom/tests/test_json.py
++++ b/pydicom/tests/test_json.py
+@@ -1,6 +1,7 @@
+ # -*- coding: utf-8 -*-
+ # Copyright 2008-2019 pydicom authors. See LICENSE file for details.
+ import json
++from unittest import mock
+ 
+ import pytest
+ 
+@@ -271,13 +272,14 @@ def test_sort_order(self):
+         assert ds_json.index('"00100020"') < ds_json.index('"00100030"')
+         assert ds_json.index('"00100030"') < ds_json.index('"00100040"')
+ 
+-    def test_suppress_invalid_tags(self):
++    @mock.patch("pydicom.DataElement.to_json_dict", side_effect=ValueError)
++    def test_suppress_invalid_tags(self, _):
+         """Test tags that raise exceptions don't if suppress_invalid_tags True.
+         """
+         ds = Dataset()
+-        ds.add_new(0x00100010, 'PN', ['Jane^Doe'])
++        ds.add_new(0x00100010, 'PN', 'Jane^Doe')
+ 
+-        with pytest.raises(Exception):
++        with pytest.raises(ValueError):
+             ds.to_json_dict()
+ 
+         ds_json = ds.to_json_dict(suppress_invalid_tags=True)
+diff --git a/pydicom/tests/test_valuerep.py b/pydicom/tests/test_valuerep.py
+--- a/pydicom/tests/test_valuerep.py
++++ b/pydicom/tests/test_valuerep.py
+@@ -1540,20 +1540,27 @@ def test_set_value(vr, pytype, vm0, vmN, keyword, disable_value_validation):
+         assert value == elem.value
+ 
+     # Test VM = 1
++    if vr != 'SQ':
++        ds = Dataset()
++        value = vmN[0]
++        setattr(ds, keyword, value)
++        elem = ds[keyword]
++        assert elem.value == value
++        assert value == elem.value
++
++    # Test VM = 1 as list
+     ds = Dataset()
+     value = vmN[0]
++    setattr(ds, keyword, [value])
++    elem = ds[keyword]
+     if vr == 'SQ':
+-        setattr(ds, keyword, [value])
+-        elem = ds[keyword]
+         assert elem.value[0] == value
+         assert value == elem.value[0]
+     else:
+-        setattr(ds, keyword, value)
+-        elem = ds[keyword]
+         assert elem.value == value
+         assert value == elem.value
+ 
+-    if vr[0] == 'O':
++    if vr[0] == 'O' or vr == 'UN':
+         return
+ 
+     # Test VM > 1

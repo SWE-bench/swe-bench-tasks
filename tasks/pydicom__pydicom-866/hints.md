@@ -1,0 +1,6 @@
+I agree that this would be sensible. Checking the mentioned PR, I also found that we had [discussed this briefly](https://github.com/pydicom/pydicom/pull/601#issuecomment-374710953) (with no result, obviously).
+@darcymason - I think this is another case of "try to handle broken DICOM, only raise in 'strict' mode", especially as these images have been written by pydicom itself...
+unsponsored plug: I like reviewable.io to keep track of what comments are resolved/unresolved/just-a-nit before merging. Looks like its free for open source repos.
+> @darcymason - I think this is another case of "try to handle broken DICOM, only raise in 'strict' mode", especially as these images have been written by pydicom itself...
+
+Yes, I agree, for sure.  Even without it being written by pydicom, it is better to be tolerant on reading.

@@ -1,0 +1,12 @@
+diff --git a/src/sqlfluff/rules/L031.py b/src/sqlfluff/rules/L031.py
+--- a/src/sqlfluff/rules/L031.py
++++ b/src/sqlfluff/rules/L031.py
+@@ -211,7 +211,7 @@ def _lint_aliases_in_join(
+             violation_buff.append(
+                 LintResult(
+                     anchor=alias_info.alias_identifier_ref,
+-                    description="Avoid using aliases in join condition",
++                    description="Avoid aliases in from clauses and join conditions.",
+                     fixes=fixes,
+                 )
+             )

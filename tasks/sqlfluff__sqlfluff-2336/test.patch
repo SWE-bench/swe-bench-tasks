@@ -1,0 +1,145 @@
+diff --git a/test/core/rules/reference_test.py b/test/core/rules/reference_test.py
+new file mode 100644
+--- /dev/null
++++ b/test/core/rules/reference_test.py
+@@ -0,0 +1,72 @@
++"""Test components for working with object and table references."""
++import pytest
++
++from sqlfluff.core.rules import reference
++
++
++@pytest.mark.parametrize(
++    "possible_references, targets, result",
++    [
++        # Empty list of references is always True.
++        [[], [("abc",)], True],
++        # Simple cases: one reference, one target.
++        [[("agent1",)], [("agent1",)], True],
++        [[("agent1",)], [("customer",)], False],
++        # Multiple references. If any match, good.
++        [[("bar",), ("user_id",)], [("bar",)], True],
++        [[("foo",), ("user_id",)], [("bar",)], False],
++        # Multiple targets. If any reference matches, good.
++        [[("table1",)], [("table1",), ("table2",), ("table3",)], True],
++        [[("tbl2",)], [("db", "sc", "tbl1")], False],
++        [[("tbl2",)], [("db", "sc", "tbl2")], True],
++        # Multi-part references and targets. If one tuple is shorter than
++        # the other, checks for a suffix match.
++        [
++            [
++                (
++                    "rc",
++                    "tbl1",
++                )
++            ],
++            [("db", "sc", "tbl1")],
++            False,
++        ],
++        [
++            [
++                (
++                    "sc",
++                    "tbl1",
++                )
++            ],
++            [("db", "sc", "tbl1")],
++            True,
++        ],
++        [
++            [
++                (
++                    "cb",
++                    "sc",
++                    "tbl1",
++                )
++            ],
++            [("db", "sc", "tbl1")],
++            False,
++        ],
++        [
++            [
++                (
++                    "db",
++                    "sc",
++                    "tbl1",
++                )
++            ],
++            [("db", "sc", "tbl1")],
++            True,
++        ],
++        [[("public", "agent1")], [("agent1",)], True],
++        [[("public", "agent1")], [("public",)], False],
++    ],
++)
++def test_object_ref_matches_table(possible_references, targets, result):
++    """Test object_ref_matches_table()."""
++    assert reference.object_ref_matches_table(possible_references, targets) == result
+diff --git a/test/fixtures/rules/std_rule_cases/L026.yml b/test/fixtures/rules/std_rule_cases/L026.yml
+--- a/test/fixtures/rules/std_rule_cases/L026.yml
++++ b/test/fixtures/rules/std_rule_cases/L026.yml
+@@ -110,3 +110,64 @@ test_pass_object_referenced_6:
+                 table3
+                 on table2.y_id = table3.y_id
+     ) as cc
++
++test_pass_object_referenced_7:
++  pass_str: |
++    UPDATE my_table
++    SET row_sum = (
++        SELECT COUNT(*) AS row_sum
++        FROM
++            another_table
++        WHERE
++            another_table.id = my_table.id
++    )
++
++test_fail_object_referenced_7:
++  fail_str: |
++    UPDATE my_table
++    SET row_sum = (
++        SELECT COUNT(*) AS row_sum
++        FROM
++            another_table
++        WHERE
++            another_table.id = my_tableeee.id
++    )
++
++test_pass_object_referenced_8:
++  pass_str: |
++    DELETE FROM agent1
++    WHERE EXISTS(
++        SELECT customer.cust_id FROM customer
++        WHERE agent1.agent_code <> customer.agent_code);
++
++test_pass_two_part_reference_8:
++  pass_str: |
++    delete from public.agent1
++    where exists(
++        select customer.cust_id from customer
++        where agent1.agent_code <> customer.agent_code)
++
++test_pass_two_part_reference_9:
++  pass_str: |
++    delete from public.agent1
++    where exists(
++        select customer.cust_id from customer
++        where public.agent1.agent_code <> customer.agent_code)
++
++test_fail_two_part_reference_10:
++  fail_str: |
++    select *
++    from schema1.agent1
++    where schema2.agent1.agent_code <> 'abc'
++
++test_fail_two_part_reference_11:
++  fail_str: |
++    delete from schema1.agent1
++    where exists(
++        select customer.cust_id from customer
++        where schema2.agent1.agent_code <> customer.agent_code)
++
++test_pass_two_part_reference_11:
++  pass_str: |
++    select * from agent1
++    where public.agent1.agent_code <> '3'

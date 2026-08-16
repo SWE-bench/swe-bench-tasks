@@ -1,0 +1,397 @@
+diff --git a/pvlib/clearsky.py b/pvlib/clearsky.py
+--- a/pvlib/clearsky.py
++++ b/pvlib/clearsky.py
+@@ -960,8 +960,8 @@ def bird(zenith, airmass_relative, aod380, aod500, precipitable_water,
+         Extraterrestrial radiation [W/m^2], defaults to 1364[W/m^2]
+     asymmetry : numeric
+         Asymmetry factor, defaults to 0.85
+-    albedo : numeric
+-        Albedo, defaults to 0.2
++    albedo : numeric, default 0.2
++        Ground surface albedo. [unitless]
+ 
+     Returns
+     -------
+diff --git a/pvlib/irradiance.py b/pvlib/irradiance.py
+--- a/pvlib/irradiance.py
++++ b/pvlib/irradiance.py
+@@ -304,7 +304,7 @@ def beam_component(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+ def get_total_irradiance(surface_tilt, surface_azimuth,
+                          solar_zenith, solar_azimuth,
+                          dni, ghi, dhi, dni_extra=None, airmass=None,
+-                         albedo=.25, surface_type=None,
++                         albedo=0.25, surface_type=None,
+                          model='isotropic',
+                          model_perez='allsitescomposite1990'):
+     r"""
+@@ -344,7 +344,7 @@ def get_total_irradiance(surface_tilt, surface_azimuth,
+     airmass : None or numeric, default None
+         Relative airmass (not adjusted for pressure). [unitless]
+     albedo : numeric, default 0.25
+-        Surface albedo. [unitless]
++        Ground surface albedo. [unitless]
+     surface_type : None or str, default None
+         Surface type. See :py:func:`~pvlib.irradiance.get_ground_diffuse` for
+         the list of accepted values.
+@@ -1872,7 +1872,7 @@ def gti_dirint(poa_global, aoi, solar_zenith, solar_azimuth, times,
+         applied.
+ 
+     albedo : numeric, default 0.25
+-        Surface albedo
++        Ground surface albedo. [unitless]
+ 
+     model : String, default 'perez'
+         Irradiance model.  See :py:func:`get_sky_diffuse` for allowed values.
+diff --git a/pvlib/modelchain.py b/pvlib/modelchain.py
+--- a/pvlib/modelchain.py
++++ b/pvlib/modelchain.py
+@@ -1339,6 +1339,16 @@ def _prep_inputs_solar_pos(self, weather):
+             **kwargs)
+         return self
+ 
++    def _prep_inputs_albedo(self, weather):
++        """
++        Get albedo from weather
++        """
++        try:
++            self.results.albedo = _tuple_from_dfs(weather, 'albedo')
++        except KeyError:
++            self.results.albedo = None
++        return self
++
+     def _prep_inputs_airmass(self):
+         """
+         Assign airmass
+@@ -1471,11 +1481,17 @@ def prepare_inputs(self, weather):
+ 
+         Parameters
+         ----------
+-        weather : DataFrame, or tuple or list of DataFrame
++        weather : DataFrame, or tuple or list of DataFrames
+             Required column names include ``'dni'``, ``'ghi'``, ``'dhi'``.
+-            Optional column names are ``'wind_speed'``, ``'temp_air'``; if not
++            Optional column names are ``'wind_speed'``, ``'temp_air'``,
++            ``'albedo'``.
++
++            If optional columns ``'wind_speed'``, ``'temp_air'`` are not
+             provided, air temperature of 20 C and wind speed
+-            of 0 m/s will be added to the DataFrame.
++            of 0 m/s will be added to the `weather` DataFrame.
++
++            If optional column ``'albedo'`` is provided, albedo values in the
++            ModelChain's PVSystem.arrays are ignored.
+ 
+             If `weather` is a tuple or list, it must be of the same length and
+             order as the Arrays of the ModelChain's PVSystem.
+@@ -1494,7 +1510,7 @@ def prepare_inputs(self, weather):
+         Notes
+         -----
+         Assigns attributes to ``results``: ``times``, ``weather``,
+-        ``solar_position``, ``airmass``, ``total_irrad``, ``aoi``
++        ``solar_position``, ``airmass``, ``total_irrad``, ``aoi``, ``albedo``.
+ 
+         See also
+         --------
+@@ -1507,6 +1523,7 @@ def prepare_inputs(self, weather):
+ 
+         self._prep_inputs_solar_pos(weather)
+         self._prep_inputs_airmass()
++        self._prep_inputs_albedo(weather)
+ 
+         # PVSystem.get_irradiance and SingleAxisTracker.get_irradiance
+         # and PVSystem.get_aoi and SingleAxisTracker.get_aoi
+@@ -1531,6 +1548,7 @@ def prepare_inputs(self, weather):
+             _tuple_from_dfs(self.results.weather, 'dni'),
+             _tuple_from_dfs(self.results.weather, 'ghi'),
+             _tuple_from_dfs(self.results.weather, 'dhi'),
++            albedo=self.results.albedo,
+             airmass=self.results.airmass['airmass_relative'],
+             model=self.transposition_model
+         )
+@@ -1724,16 +1742,32 @@ def run_model(self, weather):
+         Parameters
+         ----------
+         weather : DataFrame, or tuple or list of DataFrame
+-            Irradiance column names must include ``'dni'``, ``'ghi'``, and
+-            ``'dhi'``. If optional columns ``'temp_air'`` and ``'wind_speed'``
++            Column names must include:
++
++            - ``'dni'``
++            - ``'ghi'``
++            - ``'dhi'``
++
++            Optional columns are:
++
++            - ``'temp_air'``
++            - ``'cell_temperature'``
++            - ``'module_temperature'``
++            - ``'wind_speed'``
++            - ``'albedo'``
++
++            If optional columns ``'temp_air'`` and ``'wind_speed'``
+             are not provided, air temperature of 20 C and wind speed of 0 m/s
+             are added to the DataFrame. If optional column
+             ``'cell_temperature'`` is provided, these values are used instead
+-            of `temperature_model`. If optional column `module_temperature`
++            of `temperature_model`. If optional column ``'module_temperature'``
+             is provided, `temperature_model` must be ``'sapm'``.
+ 
+-            If list or tuple, must be of the same length and order as the
+-            Arrays of the ModelChain's PVSystem.
++            If optional column ``'albedo'`` is provided, ``'albedo'`` may not
++            be present on the ModelChain's PVSystem.Arrays.
++
++            If weather is a list or tuple, it must be of the same length and
++            order as the Arrays of the ModelChain's PVSystem.
+ 
+         Returns
+         -------
+diff --git a/pvlib/pvsystem.py b/pvlib/pvsystem.py
+--- a/pvlib/pvsystem.py
++++ b/pvlib/pvsystem.py
+@@ -134,7 +134,7 @@ class PVSystem:
+         a single array is created from the other parameters (e.g.
+         `surface_tilt`, `surface_azimuth`). Must contain at least one Array,
+         if length of arrays is 0 a ValueError is raised. If `arrays` is
+-        specified the following parameters are ignored:
++        specified the following PVSystem parameters are ignored:
+ 
+         - `surface_tilt`
+         - `surface_azimuth`
+@@ -157,13 +157,16 @@ class PVSystem:
+         North=0, East=90, South=180, West=270.
+ 
+     albedo : None or float, default None
+-        The ground albedo. If ``None``, will attempt to use
+-        ``surface_type`` and ``irradiance.SURFACE_ALBEDOS``
+-        to lookup albedo.
++        Ground surface albedo. If ``None``, then ``surface_type`` is used
++        to look up a value in ``irradiance.SURFACE_ALBEDOS``.
++        If ``surface_type`` is also None then a ground surface albedo
++        of 0.25 is used. For time-dependent albedos, add ``'albedo'`` to
++        the input ``'weather'`` DataFrame for
++        :py:class:`pvlib.modelchain.ModelChain` methods.
+ 
+     surface_type : None or string, default None
+-        The ground surface type. See ``irradiance.SURFACE_ALBEDOS``
+-        for valid values.
++        The ground surface type. See ``irradiance.SURFACE_ALBEDOS`` for
++        valid values.
+ 
+     module : None or string, default None
+         The model name of the modules.
+@@ -333,30 +336,32 @@ def get_aoi(self, solar_zenith, solar_azimuth):
+ 
+     @_unwrap_single_value
+     def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+-                       dni_extra=None, airmass=None, model='haydavies',
+-                       **kwargs):
++                       albedo=None, dni_extra=None, airmass=None,
++                       model='haydavies', **kwargs):
+         """
+         Uses the :py:func:`irradiance.get_total_irradiance` function to
+         calculate the plane of array irradiance components on a tilted
+-        surface defined by ``self.surface_tilt``,
+-        ``self.surface_azimuth``, and ``self.albedo``.
++        surface defined by ``self.surface_tilt`` and ``self.surface_azimuth```.
+ 
+         Parameters
+         ----------
+-        solar_zenith : float or Series.
++        solar_zenith : float or Series
+             Solar zenith angle.
+-        solar_azimuth : float or Series.
++        solar_azimuth : float or Series
+             Solar azimuth angle.
+         dni : float or Series or tuple of float or Series
+-            Direct Normal Irradiance
++            Direct Normal Irradiance. [W/m2]
+         ghi : float or Series or tuple of float or Series
+-            Global horizontal irradiance
++            Global horizontal irradiance. [W/m2]
+         dhi : float or Series or tuple of float or Series
+-            Diffuse horizontal irradiance
+-        dni_extra : None, float or Series, default None
+-            Extraterrestrial direct normal irradiance
++            Diffuse horizontal irradiance. [W/m2]
++        albedo : None, float or Series, default None
++            Ground surface albedo. [unitless]
++        dni_extra : None, float, Series or tuple of float or Series,
++            default None
++            Extraterrestrial direct normal irradiance. [W/m2]
+         airmass : None, float or Series, default None
+-            Airmass
++            Airmass. [unitless]
+         model : String, default 'haydavies'
+             Irradiance model.
+ 
+@@ -376,17 +381,26 @@ def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+         poa_irradiance : DataFrame or tuple of DataFrame
+             Column names are: ``'poa_global', 'poa_direct', 'poa_diffuse',
+             'poa_sky_diffuse', 'poa_ground_diffuse'``.
++
++        See also
++        --------
++        :py:func:`pvlib.irradiance.get_total_irradiance`
+         """
+         dni = self._validate_per_array(dni, system_wide=True)
+         ghi = self._validate_per_array(ghi, system_wide=True)
+         dhi = self._validate_per_array(dhi, system_wide=True)
++
++        albedo = self._validate_per_array(albedo, system_wide=True)
++
+         return tuple(
+             array.get_irradiance(solar_zenith, solar_azimuth,
+                                  dni, ghi, dhi,
+-                                 dni_extra, airmass, model,
++                                 albedo=albedo,
++                                 dni_extra=dni_extra, airmass=airmass,
++                                 model=model,
+                                  **kwargs)
+-            for array, dni, ghi, dhi in zip(
+-                self.arrays, dni, ghi, dhi
++            for array, dni, ghi, dhi, albedo in zip(
++                self.arrays, dni, ghi, dhi, albedo
+             )
+         )
+ 
+@@ -1258,14 +1272,14 @@ class Array:
+         If not provided, a FixedMount with zero tilt is used.
+ 
+     albedo : None or float, default None
+-        The ground albedo. If ``None``, will attempt to use
+-        ``surface_type`` to look up an albedo value in
+-        ``irradiance.SURFACE_ALBEDOS``. If a surface albedo
+-        cannot be found then 0.25 is used.
++        Ground surface albedo. If ``None``, then ``surface_type`` is used
++        to look up a value in ``irradiance.SURFACE_ALBEDOS``.
++        If ``surface_type`` is also None then a ground surface albedo
++        of 0.25 is used.
+ 
+     surface_type : None or string, default None
+-        The ground surface type. See ``irradiance.SURFACE_ALBEDOS``
+-        for valid values.
++        The ground surface type. See ``irradiance.SURFACE_ALBEDOS`` for valid
++        values.
+ 
+     module : None or string, default None
+         The model name of the modules.
+@@ -1425,15 +1439,14 @@ def get_aoi(self, solar_zenith, solar_azimuth):
+                               solar_zenith, solar_azimuth)
+ 
+     def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+-                       dni_extra=None, airmass=None, model='haydavies',
+-                       **kwargs):
++                       albedo=None, dni_extra=None, airmass=None,
++                       model='haydavies', **kwargs):
+         """
+         Get plane of array irradiance components.
+ 
+         Uses the :py:func:`pvlib.irradiance.get_total_irradiance` function to
+         calculate the plane of array irradiance components for a surface
+-        defined by ``self.surface_tilt`` and ``self.surface_azimuth`` with
+-        albedo ``self.albedo``.
++        defined by ``self.surface_tilt`` and ``self.surface_azimuth``.
+ 
+         Parameters
+         ----------
+@@ -1442,15 +1455,17 @@ def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+         solar_azimuth : float or Series.
+             Solar azimuth angle.
+         dni : float or Series
+-            Direct Normal Irradiance
+-        ghi : float or Series
++            Direct normal irradiance. [W/m2]
++        ghi : float or Series. [W/m2]
+             Global horizontal irradiance
+         dhi : float or Series
+-            Diffuse horizontal irradiance
++            Diffuse horizontal irradiance. [W/m2]
++        albedo : None, float or Series, default None
++            Ground surface albedo. [unitless]
+         dni_extra : None, float or Series, default None
+-            Extraterrestrial direct normal irradiance
++            Extraterrestrial direct normal irradiance. [W/m2]
+         airmass : None, float or Series, default None
+-            Airmass
++            Airmass. [unitless]
+         model : String, default 'haydavies'
+             Irradiance model.
+ 
+@@ -1463,7 +1478,14 @@ def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+         poa_irradiance : DataFrame
+             Column names are: ``'poa_global', 'poa_direct', 'poa_diffuse',
+             'poa_sky_diffuse', 'poa_ground_diffuse'``.
++
++        See also
++        --------
++        :py:func:`pvlib.irradiance.get_total_irradiance`
+         """
++        if albedo is None:
++            albedo = self.albedo
++
+         # not needed for all models, but this is easier
+         if dni_extra is None:
+             dni_extra = irradiance.get_extra_radiation(solar_zenith.index)
+@@ -1476,10 +1498,10 @@ def get_irradiance(self, solar_zenith, solar_azimuth, dni, ghi, dhi,
+                                                orientation['surface_azimuth'],
+                                                solar_zenith, solar_azimuth,
+                                                dni, ghi, dhi,
++                                               albedo=albedo,
+                                                dni_extra=dni_extra,
+                                                airmass=airmass,
+                                                model=model,
+-                                               albedo=self.albedo,
+                                                **kwargs)
+ 
+     def get_iam(self, aoi, iam_model='physical'):
+diff --git a/pvlib/tracking.py b/pvlib/tracking.py
+--- a/pvlib/tracking.py
++++ b/pvlib/tracking.py
+@@ -187,7 +187,8 @@ def get_aoi(self, surface_tilt, surface_azimuth, solar_zenith,
+     @_unwrap_single_value
+     def get_irradiance(self, surface_tilt, surface_azimuth,
+                        solar_zenith, solar_azimuth, dni, ghi, dhi,
+-                       dni_extra=None, airmass=None, model='haydavies',
++                       albedo=None, dni_extra=None, airmass=None,
++                       model='haydavies',
+                        **kwargs):
+         """
+         Uses the :func:`irradiance.get_total_irradiance` function to
+@@ -214,6 +215,8 @@ def get_irradiance(self, surface_tilt, surface_azimuth,
+             Global horizontal irradiance
+         dhi : float or Series
+             Diffuse horizontal irradiance
++        albedo : None, float or Series, default None
++            Ground surface albedo. [unitless]
+         dni_extra : float or Series, default None
+             Extraterrestrial direct normal irradiance
+         airmass : float or Series, default None
+@@ -244,6 +247,13 @@ def get_irradiance(self, surface_tilt, surface_azimuth,
+         ghi = self._validate_per_array(ghi, system_wide=True)
+         dhi = self._validate_per_array(dhi, system_wide=True)
+ 
++        if albedo is None:
++            # assign default albedo here because SingleAxisTracker
++            # initializes albedo to None
++            albedo = 0.25
++
++        albedo = self._validate_per_array(albedo, system_wide=True)
++
+         return tuple(
+             irradiance.get_total_irradiance(
+                 surface_tilt,
+@@ -254,10 +264,10 @@ def get_irradiance(self, surface_tilt, surface_azimuth,
+                 dni_extra=dni_extra,
+                 airmass=airmass,
+                 model=model,
+-                albedo=self.arrays[0].albedo,
++                albedo=albedo,
+                 **kwargs)
+-            for array, dni, ghi, dhi in zip(
+-                self.arrays, dni, ghi, dhi
++            for array, dni, ghi, dhi, albedo in zip(
++                self.arrays, dni, ghi, dhi, albedo
+             )
+         )
+ 

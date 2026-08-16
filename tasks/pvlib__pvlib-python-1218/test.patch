@@ -1,0 +1,207 @@
+diff --git a/pvlib/tests/test_modelchain.py b/pvlib/tests/test_modelchain.py
+--- a/pvlib/tests/test_modelchain.py
++++ b/pvlib/tests/test_modelchain.py
+@@ -201,7 +201,7 @@ def pvwatts_dc_pvwatts_ac_faiman_temp_system():
+ @pytest.fixture(scope="function")
+ def pvwatts_dc_pvwatts_ac_pvsyst_temp_system():
+     module_parameters = {'pdc0': 220, 'gamma_pdc': -0.003}
+-    temp_model_params = {'u_c': 29.0, 'u_v': 0.0, 'eta_m': 0.1,
++    temp_model_params = {'u_c': 29.0, 'u_v': 0.0, 'module_efficiency': 0.1,
+                          'alpha_absorption': 0.9}
+     inverter_parameters = {'pdc0': 220, 'eta_inv_nom': 0.95}
+     system = PVSystem(surface_tilt=32.2, surface_azimuth=180,
+@@ -226,7 +226,7 @@ def pvwatts_dc_pvwatts_ac_fuentes_temp_system():
+ @pytest.fixture(scope="function")
+ def pvwatts_dc_pvwatts_ac_noct_sam_temp_system():
+     module_parameters = {'pdc0': 220, 'gamma_pdc': -0.003}
+-    temp_model_params = {'noct': 45, 'eta_m_ref': 0.2}
++    temp_model_params = {'noct': 45, 'module_efficiency': 0.2}
+     inverter_parameters = {'pdc0': 220, 'eta_inv_nom': 0.95}
+     system = PVSystem(surface_tilt=32.2, surface_azimuth=180,
+                       module_parameters=module_parameters,
+@@ -710,7 +710,7 @@ def test_run_model_with_weather_noct_sam_temp(sapm_dc_snl_ac_system, location,
+     weather['wind_speed'] = 5
+     weather['temp_air'] = 10
+     sapm_dc_snl_ac_system.temperature_model_parameters = {
+-        'noct': 45, 'eta_m_ref': 0.2
++        'noct': 45, 'module_efficiency': 0.2
+     }
+     mc = ModelChain(sapm_dc_snl_ac_system, location)
+     mc.temperature_model = 'noct_sam'
+@@ -941,7 +941,7 @@ def test__prepare_temperature_arrays_weather(sapm_dc_snl_ac_system_same_arrays,
+                            ModelChain.faiman_temp),
+                           ({'noct_installed': 45},
+                            ModelChain.fuentes_temp),
+-                          ({'noct': 45, 'eta_m_ref': 0.2},
++                          ({'noct': 45, 'module_efficiency': 0.2},
+                            ModelChain.noct_sam_temp)])
+ def test_temperature_models_arrays_multi_weather(
+         temp_params, temp_model,
+diff --git a/pvlib/tests/test_pvsystem.py b/pvlib/tests/test_pvsystem.py
+--- a/pvlib/tests/test_pvsystem.py
++++ b/pvlib/tests/test_pvsystem.py
+@@ -392,7 +392,7 @@ def two_array_system(pvsyst_module_params, cec_module_params):
+     temperature_model['noct_installed'] = 45
+     # parameters for noct_sam temperature model
+     temperature_model['noct'] = 45.
+-    temperature_model['eta_m_ref'] = 0.2
++    temperature_model['module_efficiency'] = 0.2
+     module_params = {**pvsyst_module_params, **cec_module_params}
+     return pvsystem.PVSystem(
+         arrays=[
+@@ -471,8 +471,9 @@ def test_PVSystem_pvsyst_celltemp(mocker):
+     temp_model_params = temperature.TEMPERATURE_MODEL_PARAMETERS['pvsyst'][
+         parameter_set]
+     alpha_absorption = 0.85
+-    eta_m = 0.17
+-    module_parameters = {'alpha_absorption': alpha_absorption, 'eta_m': eta_m}
++    module_efficiency = 0.17
++    module_parameters = {'alpha_absorption': alpha_absorption,
++                         'module_efficiency': module_efficiency}
+     system = pvsystem.PVSystem(module_parameters=module_parameters,
+                                temperature_model_parameters=temp_model_params)
+     mocker.spy(temperature, 'pvsyst_cell')
+@@ -481,8 +482,9 @@ def test_PVSystem_pvsyst_celltemp(mocker):
+     wind = 0.5
+     out = system.pvsyst_celltemp(irrad, temp, wind_speed=wind)
+     temperature.pvsyst_cell.assert_called_once_with(
+-        irrad, temp, wind, temp_model_params['u_c'], temp_model_params['u_v'],
+-        eta_m, alpha_absorption)
++        irrad, temp, wind_speed=wind, u_c=temp_model_params['u_c'],
++        u_v=temp_model_params['u_v'], module_efficiency=module_efficiency,
++        alpha_absorption=alpha_absorption)
+     assert (out < 90) and (out > 70)
+ 
+ 
+@@ -500,16 +502,16 @@ def test_PVSystem_faiman_celltemp(mocker):
+ 
+ 
+ def test_PVSystem_noct_celltemp(mocker):
+-    poa_global, temp_air, wind_speed, noct, eta_m_ref = (1000., 25., 1., 45.,
+-                                                         0.2)
++    poa_global, temp_air, wind_speed, noct, module_efficiency = (
++        1000., 25., 1., 45., 0.2)
+     expected = 55.230790492
+-    temp_model_params = {'noct': noct, 'eta_m_ref': eta_m_ref}
++    temp_model_params = {'noct': noct, 'module_efficiency': module_efficiency}
+     system = pvsystem.PVSystem(temperature_model_parameters=temp_model_params)
+     mocker.spy(temperature, 'noct_sam')
+     out = system.noct_sam_celltemp(poa_global, temp_air, wind_speed)
+     temperature.noct_sam.assert_called_once_with(
+         poa_global, temp_air, wind_speed, effective_irradiance=None, noct=noct,
+-        eta_m_ref=eta_m_ref)
++        module_efficiency=module_efficiency)
+     assert_allclose(out, expected)
+     # dufferent types
+     out = system.noct_sam_celltemp(np.array(poa_global), np.array(temp_air),
+@@ -533,8 +535,8 @@ def test_PVSystem_noct_celltemp(mocker):
+ 
+ 
+ def test_PVSystem_noct_celltemp_error():
+-    poa_global, temp_air, wind_speed, eta_m_ref = (1000., 25., 1., 0.2)
+-    temp_model_params = {'eta_m_ref': eta_m_ref}
++    poa_global, temp_air, wind_speed, module_efficiency = (1000., 25., 1., 0.2)
++    temp_model_params = {'module_efficiency': module_efficiency}
+     system = pvsystem.PVSystem(temperature_model_parameters=temp_model_params)
+     with pytest.raises(KeyError):
+         system.noct_sam_celltemp(poa_global, temp_air, wind_speed)
+diff --git a/pvlib/tests/test_temperature.py b/pvlib/tests/test_temperature.py
+--- a/pvlib/tests/test_temperature.py
++++ b/pvlib/tests/test_temperature.py
+@@ -6,6 +6,7 @@
+ from numpy.testing import assert_allclose
+ 
+ from pvlib import temperature, tools
++from pvlib._deprecation import pvlibDeprecationWarning
+ 
+ 
+ @pytest.fixture
+@@ -72,7 +73,7 @@ def test_pvsyst_cell_default():
+ 
+ def test_pvsyst_cell_kwargs():
+     result = temperature.pvsyst_cell(900, 20, wind_speed=5.0, u_c=23.5,
+-                                     u_v=6.25, eta_m=0.1)
++                                     u_v=6.25, module_efficiency=0.1)
+     assert_allclose(result, 33.315, 0.001)
+ 
+ 
+@@ -96,6 +97,13 @@ def test_pvsyst_cell_series():
+     assert_series_equal(expected, result)
+ 
+ 
++def test_pvsyst_cell_eta_m_deprecated():
++    with pytest.warns(pvlibDeprecationWarning):
++        result = temperature.pvsyst_cell(900, 20, wind_speed=5.0, u_c=23.5,
++                                         u_v=6.25, eta_m=0.1)
++        assert_allclose(result, 33.315, 0.001)
++
++
+ def test_faiman_default():
+     result = temperature.faiman(900, 20, 5)
+     assert_allclose(result, 35.203, 0.001)
+@@ -215,16 +223,16 @@ def test_fuentes_timezone(tz):
+ 
+ 
+ def test_noct_sam():
+-    poa_global, temp_air, wind_speed, noct, eta_m_ref = (1000., 25., 1., 45.,
+-                                                         0.2)
++    poa_global, temp_air, wind_speed, noct, module_efficiency = (
++        1000., 25., 1., 45., 0.2)
+     expected = 55.230790492
+     result = temperature.noct_sam(poa_global, temp_air, wind_speed, noct,
+-                                  eta_m_ref)
++                                  module_efficiency)
+     assert_allclose(result, expected)
+     # test with different types
+     result = temperature.noct_sam(np.array(poa_global), np.array(temp_air),
+                                   np.array(wind_speed), np.array(noct),
+-                                  np.array(eta_m_ref))
++                                  np.array(module_efficiency))
+     assert_allclose(result, expected)
+     dr = pd.date_range(start='2020-01-01 12:00:00', end='2020-01-01 13:00:00',
+                        freq='1H')
+@@ -232,7 +240,7 @@ def test_noct_sam():
+                                   pd.Series(index=dr, data=temp_air),
+                                   pd.Series(index=dr, data=wind_speed),
+                                   pd.Series(index=dr, data=noct),
+-                                  eta_m_ref)
++                                  module_efficiency)
+     assert_series_equal(result, pd.Series(index=dr, data=expected))
+ 
+ 
+@@ -242,7 +250,7 @@ def test_noct_sam_against_sam():
+     # NOCT cell temperature model), with the only change being the soiling
+     # loss is set to 0. Weather input is TMY3 for Phoenix AZ.
+     # Values are taken from the Jan 1 12:00:00 timestamp.
+-    poa_total, temp_air, wind_speed, noct, eta_m_ref = (
++    poa_total, temp_air, wind_speed, noct, module_efficiency = (
+         860.673, 25, 3, 46.4, 0.20551)
+     poa_total_after_refl = 851.458  # from SAM output
+     # compute effective irradiance
+@@ -259,7 +267,7 @@ def test_noct_sam_against_sam():
+     array_height = 1
+     mount_standoff = 4.0
+     result = temperature.noct_sam(poa_total, temp_air, wind_speed, noct,
+-                                  eta_m_ref, effective_irradiance,
++                                  module_efficiency, effective_irradiance,
+                                   transmittance_absorptance, array_height,
+                                   mount_standoff)
+     expected = 43.0655
+@@ -268,14 +276,14 @@ def test_noct_sam_against_sam():
+ 
+ 
+ def test_noct_sam_options():
+-    poa_global, temp_air, wind_speed, noct, eta_m_ref = (1000., 25., 1., 45.,
+-                                                         0.2)
++    poa_global, temp_air, wind_speed, noct, module_efficiency = (
++        1000., 25., 1., 45., 0.2)
+     effective_irradiance = 1100.
+     transmittance_absorptance = 0.8
+     array_height = 2
+     mount_standoff = 2.0
+     result = temperature.noct_sam(poa_global, temp_air, wind_speed, noct,
+-                                  eta_m_ref, effective_irradiance,
++                                  module_efficiency, effective_irradiance,
+                                   transmittance_absorptance, array_height,
+                                   mount_standoff)
+     expected = 60.477703576

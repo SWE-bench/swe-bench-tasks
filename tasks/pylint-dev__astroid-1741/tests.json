@@ -1,0 +1,19 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/unittest_protocols.py::ProtocolTests::test_assign_stmts_starred_fails",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_annassignments",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_assignments",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_nested_for_dict",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_nested_for_tuple",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_simple_for",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_starred_assnames",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_starred_for",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_starred_inside_call",
+    "tests/unittest_protocols.py::ProtocolTests::test_assigned_stmts_starred_yes",
+    "tests/unittest_protocols.py::ProtocolTests::test_not_passing_uninferable_in_seq_inference",
+    "tests/unittest_protocols.py::ProtocolTests::test_sequence_assigned_stmts_not_accepting_empty_node",
+    "tests/unittest_protocols.py::ProtocolTests::test_uninferable_exponents",
+    "tests/unittest_protocols.py::test_named_expr_inference"
+  ],
+  "PASS_TO_PASS": []
+}

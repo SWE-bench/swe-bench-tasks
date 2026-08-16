@@ -1,0 +1,120 @@
+diff --git a/pyvista/core/composite.py b/pyvista/core/composite.py
+--- a/pyvista/core/composite.py
++++ b/pyvista/core/composite.py
+@@ -132,7 +132,7 @@ def wrap_nested(self):
+                 self.SetBlock(i, pyvista.wrap(block))
+ 
+     @property
+-    def bounds(self) -> List[float]:
++    def bounds(self) -> Tuple[float, float, float, float, float, float]:
+         """Find min/max for bounds across blocks.
+ 
+         Returns
+@@ -148,21 +148,23 @@ def bounds(self) -> List[float]:
+         >>> data = [pv.Sphere(center=(2, 0, 0)), pv.Cube(center=(0, 2, 0)), pv.Cone()]
+         >>> blocks = pv.MultiBlock(data)
+         >>> blocks.bounds
+-        [-0.5, 2.5, -0.5, 2.5, -0.5, 0.5]
++        (-0.5, 2.5, -0.5, 2.5, -0.5, 0.5)
+ 
+         """
+         # apply reduction of min and max over each block
+         all_bounds = [block.bounds for block in self if block]
+         # edge case where block has no bounds
+         if not all_bounds:  # pragma: no cover
+-            minima = np.array([0, 0, 0])
+-            maxima = np.array([0, 0, 0])
++            minima = np.array([0.0, 0.0, 0.0])
++            maxima = np.array([0.0, 0.0, 0.0])
+         else:
+             minima = np.minimum.reduce(all_bounds)[::2]
+             maxima = np.maximum.reduce(all_bounds)[1::2]
+ 
+         # interleave minima and maxima for bounds
+-        return np.stack([minima, maxima]).ravel('F').tolist()
++        the_bounds = np.stack([minima, maxima]).ravel('F')
++
++        return cast(Tuple[float, float, float, float, float, float], tuple(the_bounds))
+ 
+     @property
+     def center(self) -> Any:
+diff --git a/pyvista/plotting/actor.py b/pyvista/plotting/actor.py
+--- a/pyvista/plotting/actor.py
++++ b/pyvista/plotting/actor.py
+@@ -1,6 +1,6 @@
+ """Wrap vtkActor."""
+ 
+-from typing import Optional, Union
++from typing import Optional, Tuple, Union
+ import weakref
+ 
+ import numpy as np
+@@ -556,7 +556,7 @@ def user_matrix(self, value: Union[pv._vtk.vtkMatrix4x4, np.ndarray]):
+         self.SetUserMatrix(value)
+ 
+     @property
+-    def bounds(self) -> tuple:
++    def bounds(self) -> Tuple[float, float, float, float, float, float]:
+         """Return the bounds of the actor.
+ 
+         Bounds are ``(-X, +X, -Y, +Y, -Z, +Z)``
+diff --git a/pyvista/plotting/plotting.py b/pyvista/plotting/plotting.py
+--- a/pyvista/plotting/plotting.py
++++ b/pyvista/plotting/plotting.py
+@@ -11,7 +11,7 @@
+ import textwrap
+ from threading import Thread
+ import time
+-from typing import Dict
++from typing import Dict, Tuple
+ import warnings
+ import weakref
+ 
+@@ -1388,7 +1388,7 @@ def camera_set(self, is_set):
+         self.renderer.camera_set = is_set
+ 
+     @property
+-    def bounds(self):
++    def bounds(self) -> Tuple[float, float, float, float, float, float]:
+         """Return the bounds of the active renderer.
+ 
+         Returns
+@@ -1402,7 +1402,7 @@ def bounds(self):
+         >>> pl = pyvista.Plotter()
+         >>> _ = pl.add_mesh(pyvista.Cube())
+         >>> pl.bounds
+-        [-0.5, 0.5, -0.5, 0.5, -0.5, 0.5]
++        (-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+ 
+         """
+         return self.renderer.bounds
+diff --git a/pyvista/plotting/renderer.py b/pyvista/plotting/renderer.py
+--- a/pyvista/plotting/renderer.py
++++ b/pyvista/plotting/renderer.py
+@@ -2,7 +2,7 @@
+ 
+ import collections.abc
+ from functools import partial
+-from typing import Sequence
++from typing import Sequence, Tuple, cast
+ import warnings
+ from weakref import proxy
+ 
+@@ -325,7 +325,7 @@ def camera(self, source):
+         self.camera_set = True
+ 
+     @property
+-    def bounds(self):
++    def bounds(self) -> Tuple[float, float, float, float, float, float]:
+         """Return the bounds of all actors present in the rendering window."""
+         the_bounds = np.array([np.inf, -np.inf, np.inf, -np.inf, np.inf, -np.inf])
+ 
+@@ -354,7 +354,7 @@ def update_axis(ax):
+             the_bounds[the_bounds == np.inf] = -1.0
+             the_bounds[the_bounds == -np.inf] = 1.0
+ 
+-        return the_bounds.tolist()
++        return cast(Tuple[float, float, float, float, float, float], tuple(the_bounds))
+ 
+     @property
+     def length(self):

@@ -1,0 +1,4 @@
+OK with me to refactor to the same pattern as #842 in particular the get / read / parse [trio](https://github.com/pvlib/pvlib-python/pull/842#issuecomment-570309454).
+I just started in this, but didn't push it yet, sorry. Kinda important now to have a static/remoteless test that checks parsing, since all of the tests are decorated
+OK with me to refactor to the same pattern as #842 in particular the get / read / parse [trio](https://github.com/pvlib/pvlib-python/pull/842#issuecomment-570309454).
+I just started in this, but didn't push it yet, sorry. Kinda important now to have a static/remoteless test that checks parsing, since all of the tests are decorated

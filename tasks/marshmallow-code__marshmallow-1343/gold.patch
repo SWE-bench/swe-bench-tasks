@@ -1,0 +1,21 @@
+diff --git a/src/marshmallow/schema.py b/src/marshmallow/schema.py
+--- a/src/marshmallow/schema.py
++++ b/src/marshmallow/schema.py
+@@ -877,7 +877,7 @@ def _invoke_field_validators(self, unmarshal, data, many):
+                 for idx, item in enumerate(data):
+                     try:
+                         value = item[field_obj.attribute or field_name]
+-                    except KeyError:
++                    except (KeyError, TypeError):
+                         pass
+                     else:
+                         validated_value = unmarshal.call_and_store(
+@@ -892,7 +892,7 @@ def _invoke_field_validators(self, unmarshal, data, many):
+             else:
+                 try:
+                     value = data[field_obj.attribute or field_name]
+-                except KeyError:
++                except (KeyError, TypeError):
+                     pass
+                 else:
+                     validated_value = unmarshal.call_and_store(

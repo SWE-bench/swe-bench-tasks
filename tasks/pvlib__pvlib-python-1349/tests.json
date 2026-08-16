@@ -1,0 +1,11 @@
+{
+  "FAIL_TO_PASS": [
+    "pvlib/tests/test_spectrum.py::test_aoi_gt_90"
+  ],
+  "PASS_TO_PASS": [
+    "pvlib/tests/test_spectrum.py::test_spectrl2",
+    "pvlib/tests/test_spectrum.py::test_spectrl2_array",
+    "pvlib/tests/test_spectrum.py::test_spectrl2_series",
+    "pvlib/tests/test_spectrum.py::test_dayofyear_missing"
+  ]
+}

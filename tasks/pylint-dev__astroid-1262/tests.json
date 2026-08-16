@@ -1,0 +1,28 @@
+{
+  "FAIL_TO_PASS": [
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_module"
+  ],
+  "PASS_TO_PASS": [
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_container",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_name",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_attribute",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_call",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_assignment",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_mix_stmts",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_mix_nodes",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_ops",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_if",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_for",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_const",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_function",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_dict",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_try",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_subscript",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_import",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_with",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_while",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_string",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_comprehension",
+    "tests/unittest_nodes_lineno.py::TestLinenoColOffset::test_end_lineno_class"
+  ]
+}

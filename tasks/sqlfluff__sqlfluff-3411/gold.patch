@@ -1,0 +1,64 @@
+diff --git a/src/sqlfluff/cli/commands.py b/src/sqlfluff/cli/commands.py
+--- a/src/sqlfluff/cli/commands.py
++++ b/src/sqlfluff/cli/commands.py
+@@ -1079,8 +1079,10 @@ def _print_out_violations_and_timing(
+             output_stream.write("==== parsing violations ====")  # pragma: no cover
+         for v in parsed_string.violations:
+             output_stream.write(format_violation(v))  # pragma: no cover
+-        if parsed_string.violations and parsed_string.config.get("dialect") == "ansi":
+-            output_stream.write(format_dialect_warning())  # pragma: no cover
++        if parsed_string.violations:
++            output_stream.write(
++                format_dialect_warning(parsed_string.config.get("dialect"))
++            )
+ 
+         if verbose >= 2:
+             output_stream.write("==== timings ====")
+diff --git a/src/sqlfluff/cli/formatters.py b/src/sqlfluff/cli/formatters.py
+--- a/src/sqlfluff/cli/formatters.py
++++ b/src/sqlfluff/cli/formatters.py
+@@ -187,12 +187,12 @@ def format_dialects(dialect_readout, verbose=0):
+     return text_buffer.getvalue()
+ 
+ 
+-def format_dialect_warning():  # pragma: no cover
+-    """Output a warning for parsing errors found on the ansi dialect."""
++def format_dialect_warning(dialect):
++    """Output a warning for parsing errors."""
+     return colorize(
+         (
+             "WARNING: Parsing errors found and dialect is set to "
+-            "'ansi'. Have you configured your dialect?"
++            f"'{dialect}'. Have you configured your dialect correctly?"
+         ),
+         Color.lightgrey,
+     )
+@@ -321,9 +321,9 @@ def dispatch_compilation_header(self, templater, message):
+             f"=== [{colorize(templater, Color.lightgrey)}] {message}"
+         )  # pragma: no cover
+ 
+-    def dispatch_dialect_warning(self) -> None:
++    def dispatch_dialect_warning(self, dialect) -> None:
+         """Dispatch a warning for dialects."""
+-        self._dispatch(format_dialect_warning())  # pragma: no cover
++        self._dispatch(format_dialect_warning(dialect))  # pragma: no cover
+ 
+     def _format_file_violations(
+         self, fname: str, violations: List[SQLBaseError]
+diff --git a/src/sqlfluff/core/linter/linter.py b/src/sqlfluff/core/linter/linter.py
+--- a/src/sqlfluff/core/linter/linter.py
++++ b/src/sqlfluff/core/linter/linter.py
+@@ -723,11 +723,11 @@ def lint_parsed(
+             )
+ 
+         # Safety flag for unset dialects
+-        if parsed.config.get("dialect") == "ansi" and linted_file.get_violations(
++        if linted_file.get_violations(
+             fixable=True if fix else None, types=SQLParseError
+         ):
+             if formatter:  # pragma: no cover TODO?
+-                formatter.dispatch_dialect_warning()
++                formatter.dispatch_dialect_warning(parsed.config.get("dialect"))
+ 
+         return linted_file
+ 

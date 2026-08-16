@@ -1,0 +1,6 @@
+{
+  "FAIL_TO_PASS": [
+    "test/rules/std_L045_test.py::test__rules__std_L045_multiple_unused_ctes"
+  ],
+  "PASS_TO_PASS": []
+}

@@ -1,0 +1,912 @@
+diff --git a/astroid/arguments.py b/astroid/arguments.py
+--- a/astroid/arguments.py
++++ b/astroid/arguments.py
+@@ -8,7 +8,7 @@
+ from astroid.bases import Instance
+ from astroid.context import CallContext, InferenceContext
+ from astroid.exceptions import InferenceError, NoDefault
+-from astroid.util import Uninferable
++from astroid.util import Uninferable, UninferableBase
+ 
+ 
+ class CallSite:
+@@ -44,12 +44,12 @@ def __init__(
+         self._unpacked_kwargs = self._unpack_keywords(keywords, context=context)
+ 
+         self.positional_arguments = [
+-            arg for arg in self._unpacked_args if arg is not Uninferable
++            arg for arg in self._unpacked_args if not isinstance(arg, UninferableBase)
+         ]
+         self.keyword_arguments = {
+             key: value
+             for key, value in self._unpacked_kwargs.items()
+-            if value is not Uninferable
++            if not isinstance(value, UninferableBase)
+         }
+ 
+     @classmethod
+@@ -142,7 +142,7 @@ def _unpack_args(self, args, context: InferenceContext | None = None):
+                 except StopIteration:
+                     continue
+ 
+-                if inferred is Uninferable:
++                if isinstance(inferred, UninferableBase):
+                     values.append(Uninferable)
+                     continue
+                 if not hasattr(inferred, "elts"):
+diff --git a/astroid/bases.py b/astroid/bases.py
+--- a/astroid/bases.py
++++ b/astroid/bases.py
+@@ -28,7 +28,7 @@
+     NameInferenceError,
+ )
+ from astroid.typing import InferBinaryOp, InferenceErrorInfo, InferenceResult
+-from astroid.util import Uninferable, lazy_descriptor, lazy_import
++from astroid.util import Uninferable, UninferableBase, lazy_descriptor, lazy_import
+ 
+ if sys.version_info >= (3, 8):
+     from typing import Literal
+@@ -79,7 +79,9 @@ def _is_property(meth, context: InferenceContext | None = None) -> bool:
+     if PROPERTIES.intersection(decoratornames):
+         return True
+     stripped = {
+-        name.split(".")[-1] for name in decoratornames if name is not Uninferable
++        name.split(".")[-1]
++        for name in decoratornames
++        if not isinstance(name, UninferableBase)
+     }
+     if any(name in stripped for name in POSSIBLE_PROPERTIES):
+         return True
+@@ -89,7 +91,7 @@ def _is_property(meth, context: InferenceContext | None = None) -> bool:
+         return False
+     for decorator in meth.decorators.nodes or ():
+         inferred = helpers.safe_infer(decorator, context=context)
+-        if inferred is None or inferred is Uninferable:
++        if inferred is None or isinstance(inferred, UninferableBase):
+             continue
+         if inferred.__class__.__name__ == "ClassDef":
+             for base_class in inferred.bases:
+@@ -144,7 +146,7 @@ def infer(  # type: ignore[return]
+ 
+ 
+ def _infer_stmts(
+-    stmts: Sequence[nodes.NodeNG | type[Uninferable] | Instance],
++    stmts: Sequence[nodes.NodeNG | UninferableBase | Instance],
+     context: InferenceContext | None,
+     frame: nodes.NodeNG | Instance | None = None,
+ ) -> collections.abc.Generator[InferenceResult, None, None]:
+@@ -161,7 +163,7 @@ def _infer_stmts(
+         context = InferenceContext()
+ 
+     for stmt in stmts:
+-        if stmt is Uninferable:
++        if isinstance(stmt, UninferableBase):
+             yield stmt
+             inferred = True
+             continue
+@@ -172,8 +174,7 @@ def _infer_stmts(
+             for constraint_stmt, potential_constraints in constraints.items():
+                 if not constraint_stmt.parent_of(stmt):
+                     stmt_constraints.update(potential_constraints)
+-            # Mypy doesn't recognize that 'stmt' can't be Uninferable
+-            for inf in stmt.infer(context=context):  # type: ignore[union-attr]
++            for inf in stmt.infer(context=context):
+                 if all(constraint.satisfied_by(inf) for constraint in stmt_constraints):
+                     yield inf
+                     inferred = True
+@@ -206,7 +207,7 @@ def _infer_method_result_truth(instance, method_name, context):
+         try:
+             context.callcontext = CallContext(args=[], callee=meth)
+             for value in meth.infer_call_result(instance, context=context):
+-                if value is Uninferable:
++                if isinstance(value, UninferableBase):
+                     return value
+                 try:
+                     inferred = next(value.infer(context=context))
+@@ -316,7 +317,7 @@ def infer_call_result(
+ 
+         # Otherwise we infer the call to the __call__ dunder normally
+         for node in self._proxied.igetattr("__call__", context):
+-            if node is Uninferable or not node.callable():
++            if isinstance(node, UninferableBase) or not node.callable():
+                 continue
+             for res in node.infer_call_result(caller, context):
+                 inferred = True
+@@ -458,7 +459,7 @@ def _infer_builtin_new(
+         caller: nodes.Call,
+         context: InferenceContext,
+     ) -> collections.abc.Generator[
+-        nodes.Const | Instance | type[Uninferable], None, None
++        nodes.Const | Instance | UninferableBase, None, None
+     ]:
+         if not caller.args:
+             return
+@@ -477,7 +478,7 @@ def _infer_builtin_new(
+ 
+         node_context = context.extra_context.get(caller.args[0])
+         for inferred in caller.args[0].infer(context=node_context):
+-            if inferred is Uninferable:
++            if isinstance(inferred, UninferableBase):
+                 yield inferred
+             if isinstance(inferred, nodes.ClassDef):
+                 yield Instance(inferred)
+diff --git a/astroid/brain/brain_builtin_inference.py b/astroid/brain/brain_builtin_inference.py
+--- a/astroid/brain/brain_builtin_inference.py
++++ b/astroid/brain/brain_builtin_inference.py
+@@ -209,10 +209,10 @@ def _container_generic_inference(node, context, node_type, transform):
+             inferred = next(arg.infer(context=context))
+         except (InferenceError, StopIteration) as exc:
+             raise UseInferenceDefault from exc
+-        if inferred is util.Uninferable:
++        if isinstance(inferred, util.UninferableBase):
+             raise UseInferenceDefault
+         transformed = transform(inferred)
+-    if not transformed or transformed is util.Uninferable:
++    if not transformed or isinstance(transformed, util.UninferableBase):
+         raise UseInferenceDefault
+     return transformed
+ 
+@@ -423,7 +423,9 @@ def infer_super(node, context: InferenceContext | None = None):
+         except (InferenceError, StopIteration) as exc:
+             raise UseInferenceDefault from exc
+ 
+-    if mro_pointer is util.Uninferable or mro_type is util.Uninferable:
++    if isinstance(mro_pointer, util.UninferableBase) or isinstance(
++        mro_type, util.UninferableBase
++    ):
+         # No way we could understand this.
+         raise UseInferenceDefault
+ 
+@@ -445,7 +447,7 @@ def _infer_getattr_args(node, context):
+     except (InferenceError, StopIteration) as exc:
+         raise UseInferenceDefault from exc
+ 
+-    if obj is util.Uninferable or attr is util.Uninferable:
++    if isinstance(obj, util.UninferableBase) or isinstance(attr, util.UninferableBase):
+         # If one of the arguments is something we can't infer,
+         # then also make the result of the getattr call something
+         # which is unknown.
+@@ -467,8 +469,8 @@ def infer_getattr(node, context: InferenceContext | None = None):
+     """
+     obj, attr = _infer_getattr_args(node, context)
+     if (
+-        obj is util.Uninferable
+-        or attr is util.Uninferable
++        isinstance(obj, util.UninferableBase)
++        or isinstance(attr, util.UninferableBase)
+         or not hasattr(obj, "igetattr")
+     ):
+         return util.Uninferable
+@@ -498,8 +500,8 @@ def infer_hasattr(node, context: InferenceContext | None = None):
+     try:
+         obj, attr = _infer_getattr_args(node, context)
+         if (
+-            obj is util.Uninferable
+-            or attr is util.Uninferable
++            isinstance(obj, util.UninferableBase)
++            or isinstance(attr, util.UninferableBase)
+             or not hasattr(obj, "getattr")
+         ):
+             return util.Uninferable
+@@ -530,7 +532,7 @@ def infer_callable(node, context: InferenceContext | None = None):
+         inferred = next(argument.infer(context=context))
+     except (InferenceError, StopIteration):
+         return util.Uninferable
+-    if inferred is util.Uninferable:
++    if isinstance(inferred, util.UninferableBase):
+         return util.Uninferable
+     return nodes.Const(inferred.callable())
+ 
+@@ -585,11 +587,11 @@ def infer_bool(node, context: InferenceContext | None = None):
+         inferred = next(argument.infer(context=context))
+     except (InferenceError, StopIteration):
+         return util.Uninferable
+-    if inferred is util.Uninferable:
++    if isinstance(inferred, util.UninferableBase):
+         return util.Uninferable
+ 
+     bool_value = inferred.bool_value(context=context)
+-    if bool_value is util.Uninferable:
++    if isinstance(bool_value, util.UninferableBase):
+         return util.Uninferable
+     return nodes.Const(bool_value)
+ 
+@@ -611,7 +613,7 @@ def infer_slice(node, context: InferenceContext | None = None):
+     infer_func = partial(helpers.safe_infer, context=context)
+     args = [infer_func(arg) for arg in args]
+     for arg in args:
+-        if not arg or arg is util.Uninferable:
++        if not arg or isinstance(arg, util.UninferableBase):
+             raise UseInferenceDefault
+         if not isinstance(arg, nodes.Const):
+             raise UseInferenceDefault
+@@ -725,7 +727,7 @@ def infer_isinstance(callnode, context: InferenceContext | None = None):
+         raise UseInferenceDefault("TypeError: " + str(exc)) from exc
+     except MroError as exc:
+         raise UseInferenceDefault from exc
+-    if isinstance_bool is util.Uninferable:
++    if isinstance(isinstance_bool, util.UninferableBase):
+         raise UseInferenceDefault
+     return nodes.Const(isinstance_bool)
+ 
+@@ -811,7 +813,7 @@ def infer_int(node, context: InferenceContext | None = None):
+         except (InferenceError, StopIteration) as exc:
+             raise UseInferenceDefault(str(exc)) from exc
+ 
+-        if first_value is util.Uninferable:
++        if isinstance(first_value, util.UninferableBase):
+             raise UseInferenceDefault
+ 
+         if isinstance(first_value, nodes.Const) and isinstance(
+@@ -924,7 +926,7 @@ def _is_str_format_call(node: nodes.Call) -> bool:
+ 
+ def _infer_str_format_call(
+     node: nodes.Call, context: InferenceContext | None = None
+-) -> Iterator[nodes.Const | type[util.Uninferable]]:
++) -> Iterator[nodes.Const | util.UninferableBase]:
+     """Return a Const node based on the template and passed arguments."""
+     call = arguments.CallSite.from_call(node, context=context)
+     if isinstance(node.func.expr, nodes.Name):
+diff --git a/astroid/brain/brain_dataclasses.py b/astroid/brain/brain_dataclasses.py
+--- a/astroid/brain/brain_dataclasses.py
++++ b/astroid/brain/brain_dataclasses.py
+@@ -25,7 +25,7 @@
+ from astroid.inference_tip import inference_tip
+ from astroid.manager import AstroidManager
+ from astroid.typing import InferenceResult
+-from astroid.util import Uninferable
++from astroid.util import Uninferable, UninferableBase
+ 
+ if sys.version_info >= (3, 8):
+     from typing import Literal
+@@ -446,7 +446,7 @@ def _looks_like_dataclass_decorator(
+     except (InferenceError, StopIteration):
+         inferred = Uninferable
+ 
+-    if inferred is Uninferable:
++    if isinstance(inferred, UninferableBase):
+         if isinstance(node, nodes.Name):
+             return node.name in decorator_names
+         if isinstance(node, nodes.Attribute):
+@@ -594,7 +594,7 @@ def _is_init_var(node: nodes.NodeNG) -> bool:
+ 
+ def _infer_instance_from_annotation(
+     node: nodes.NodeNG, ctx: context.InferenceContext | None = None
+-) -> Iterator[type[Uninferable] | bases.Instance]:
++) -> Iterator[UninferableBase | bases.Instance]:
+     """Infer an instance corresponding to the type annotation represented by node.
+ 
+     Currently has limited support for the typing module.
+diff --git a/astroid/brain/brain_functools.py b/astroid/brain/brain_functools.py
+--- a/astroid/brain/brain_functools.py
++++ b/astroid/brain/brain_functools.py
+@@ -18,7 +18,7 @@
+ from astroid.manager import AstroidManager
+ from astroid.nodes.node_classes import AssignName, Attribute, Call, Name
+ from astroid.nodes.scoped_nodes import FunctionDef
+-from astroid.util import Uninferable
++from astroid.util import UninferableBase
+ 
+ LRU_CACHE = "functools.lru_cache"
+ 
+@@ -84,7 +84,7 @@ def _functools_partial_inference(
+         inferred_wrapped_function = next(partial_function.infer(context=context))
+     except (InferenceError, StopIteration) as exc:
+         raise UseInferenceDefault from exc
+-    if inferred_wrapped_function is Uninferable:
++    if isinstance(inferred_wrapped_function, UninferableBase):
+         raise UseInferenceDefault("Cannot infer the wrapped function")
+     if not isinstance(inferred_wrapped_function, FunctionDef):
+         raise UseInferenceDefault("The wrapped function is not a function")
+diff --git a/astroid/brain/brain_namedtuple_enum.py b/astroid/brain/brain_namedtuple_enum.py
+--- a/astroid/brain/brain_namedtuple_enum.py
++++ b/astroid/brain/brain_namedtuple_enum.py
+@@ -52,13 +52,13 @@
+ 
+ 
+ def _infer_first(node, context):
+-    if node is util.Uninferable:
++    if isinstance(node, util.UninferableBase):
+         raise UseInferenceDefault
+     try:
+         value = next(node.infer(context=context))
+     except StopIteration as exc:
+         raise InferenceError from exc
+-    if value is util.Uninferable:
++    if isinstance(value, util.UninferableBase):
+         raise UseInferenceDefault()
+     return value
+ 
+diff --git a/astroid/brain/brain_typing.py b/astroid/brain/brain_typing.py
+--- a/astroid/brain/brain_typing.py
++++ b/astroid/brain/brain_typing.py
+@@ -33,7 +33,6 @@
+     Tuple,
+ )
+ from astroid.nodes.scoped_nodes import ClassDef, FunctionDef
+-from astroid.util import Uninferable
+ 
+ if sys.version_info >= (3, 8):
+     from typing import Final
+@@ -297,7 +296,7 @@ def infer_typing_alias(
+         col_offset=assign_name.col_offset,
+         parent=node.parent,
+     )
+-    if res != Uninferable and isinstance(res, ClassDef):
++    if isinstance(res, ClassDef):
+         # Only add `res` as base if it's a `ClassDef`
+         # This isn't the case for `typing.Pattern` and `typing.Match`
+         class_def.postinit(bases=[res], body=[], decorators=None)
+diff --git a/astroid/builder.py b/astroid/builder.py
+--- a/astroid/builder.py
++++ b/astroid/builder.py
+@@ -238,7 +238,7 @@ def delayed_assattr(self, node: nodes.AssignAttr) -> None:
+         try:
+             frame = node.frame(future=True)
+             for inferred in node.expr.infer():
+-                if inferred is util.Uninferable:
++                if isinstance(inferred, util.UninferableBase):
+                     continue
+                 try:
+                     # pylint: disable=unidiomatic-typecheck # We want a narrow check on the
+@@ -255,10 +255,7 @@ def delayed_assattr(self, node: nodes.AssignAttr) -> None:
+                         # Const, Tuple or other containers that inherit from
+                         # `Instance`
+                         continue
+-                    elif (
+-                        isinstance(inferred, bases.Proxy)
+-                        or inferred is util.Uninferable
+-                    ):
++                    elif isinstance(inferred, (bases.Proxy, util.UninferableBase)):
+                         continue
+                     elif inferred.is_function:
+                         iattrs = inferred.instance_attrs
+diff --git a/astroid/constraint.py b/astroid/constraint.py
+--- a/astroid/constraint.py
++++ b/astroid/constraint.py
+@@ -74,7 +74,7 @@ def match(
+     def satisfied_by(self, inferred: InferenceResult) -> bool:
+         """Return True if this constraint is satisfied by the given inferred value."""
+         # Assume true if uninferable
+-        if inferred is util.Uninferable:
++        if isinstance(inferred, util.UninferableBase):
+             return True
+ 
+         # Return the XOR of self.negate and matches(inferred, self.CONST_NONE)
+diff --git a/astroid/helpers.py b/astroid/helpers.py
+--- a/astroid/helpers.py
++++ b/astroid/helpers.py
+@@ -63,7 +63,7 @@ def _object_type(
+             yield _build_proxy_class("module", builtins)
+         elif isinstance(inferred, nodes.Unknown):
+             raise InferenceError
+-        elif inferred is util.Uninferable:
++        elif isinstance(inferred, util.UninferableBase):
+             yield inferred
+         elif isinstance(inferred, (bases.Proxy, nodes.Slice)):
+             yield inferred._proxied
+@@ -100,7 +100,7 @@ def _object_type_is_subclass(
+     else:
+         class_seq = class_or_seq
+ 
+-    if obj_type is util.Uninferable:
++    if isinstance(obj_type, util.UninferableBase):
+         return util.Uninferable
+ 
+     # Instances are not types
+@@ -112,7 +112,7 @@ def _object_type_is_subclass(
+     # issubclass(type, (object, 1)) evaluates to true
+     # issubclass(object, (1, type)) raises TypeError
+     for klass in class_seq:
+-        if klass is util.Uninferable:
++        if isinstance(klass, util.UninferableBase):
+             raise AstroidTypeError("arg 2 must be a type or tuple of types")
+ 
+         for obj_subclass in obj_type.mro():
+@@ -131,7 +131,7 @@ def object_isinstance(node, class_or_seq, context: InferenceContext | None = Non
+     :raises AstroidTypeError: if the given ``classes_or_seq`` are not types
+     """
+     obj_type = object_type(node, context)
+-    if obj_type is util.Uninferable:
++    if isinstance(obj_type, util.UninferableBase):
+         return util.Uninferable
+     return _object_type_is_subclass(obj_type, class_or_seq, context=context)
+ 
+@@ -275,7 +275,7 @@ def object_len(node, context: InferenceContext | None = None):
+         )
+         raise InferenceError(message)
+ 
+-    if inferred_node is None or inferred_node is util.Uninferable:
++    if inferred_node is None or isinstance(inferred_node, util.UninferableBase):
+         raise InferenceError(node=node)
+     if isinstance(inferred_node, nodes.Const) and isinstance(
+         inferred_node.value, (bytes, str)
+@@ -300,7 +300,7 @@ def object_len(node, context: InferenceContext | None = None):
+         ) from e
+ 
+     inferred = len_call.infer_call_result(node, context)
+-    if inferred is util.Uninferable:
++    if isinstance(inferred, util.UninferableBase):
+         raise InferenceError(node=node, context=context)
+     result_of_len = next(inferred, None)
+     if (
+diff --git a/astroid/inference.py b/astroid/inference.py
+--- a/astroid/inference.py
++++ b/astroid/inference.py
+@@ -268,7 +268,7 @@ def infer_call(
+         callcontext.extra_context = _populate_context_lookup(self, context.clone())
+ 
+     for callee in self.func.infer(context):
+-        if callee is util.Uninferable:
++        if isinstance(callee, util.UninferableBase):
+             yield callee
+             continue
+         try:
+@@ -356,7 +356,7 @@ def infer_attribute(
+ ) -> Generator[InferenceResult, None, InferenceErrorInfo]:
+     """Infer an Attribute node by using getattr on the associated object."""
+     for owner in self.expr.infer(context):
+-        if owner is util.Uninferable:
++        if isinstance(owner, util.UninferableBase):
+             yield owner
+             continue
+ 
+@@ -424,11 +424,11 @@ def infer_subscript(
+ 
+     found_one = False
+     for value in self.value.infer(context):
+-        if value is util.Uninferable:
++        if isinstance(value, util.UninferableBase):
+             yield util.Uninferable
+             return None
+         for index in self.slice.infer(context):
+-            if index is util.Uninferable:
++            if isinstance(index, util.UninferableBase):
+                 yield util.Uninferable
+                 return None
+ 
+@@ -459,7 +459,7 @@ def infer_subscript(
+ 
+             # Prevent inferring if the inferred subscript
+             # is the same as the original subscripted object.
+-            if self is assigned or assigned is util.Uninferable:
++            if self is assigned or isinstance(assigned, util.UninferableBase):
+                 yield util.Uninferable
+                 return None
+             yield from assigned.infer(context)
+@@ -502,13 +502,13 @@ def _infer_boolop(
+         return None
+ 
+     for pair in itertools.product(*inferred_values):
+-        if any(item is util.Uninferable for item in pair):
++        if any(isinstance(item, util.UninferableBase) for item in pair):
+             # Can't infer the final result, just yield Uninferable.
+             yield util.Uninferable
+             continue
+ 
+         bool_values = [item.bool_value() for item in pair]
+-        if any(item is util.Uninferable for item in bool_values):
++        if any(isinstance(item, util.UninferableBase) for item in bool_values):
+             # Can't infer the final result, just yield Uninferable.
+             yield util.Uninferable
+             continue
+@@ -575,7 +575,7 @@ def _infer_unaryop(
+                 # value and negate its result, unless it is
+                 # Uninferable, which will be returned as is.
+                 bool_value = operand.bool_value()
+-                if bool_value is not util.Uninferable:
++                if not isinstance(bool_value, util.UninferableBase):
+                     yield nodes.const_factory(not bool_value)
+                 else:
+                     yield util.Uninferable
+@@ -595,7 +595,10 @@ def _infer_unaryop(
+ 
+                     meth = methods[0]
+                     inferred = next(meth.infer(context=context), None)
+-                    if inferred is util.Uninferable or not inferred.callable():
++                    if (
++                        isinstance(inferred, util.UninferableBase)
++                        or not inferred.callable()
++                    ):
+                         continue
+ 
+                     context = copy_context(context)
+@@ -639,7 +642,7 @@ def _is_not_implemented(const) -> bool:
+ 
+ def _infer_old_style_string_formatting(
+     instance: nodes.Const, other: nodes.NodeNG, context: InferenceContext
+-) -> tuple[type[util.Uninferable] | nodes.Const]:
++) -> tuple[util.UninferableBase | nodes.Const]:
+     """Infer the result of '"string" % ...'.
+ 
+     TODO: Instead of returning Uninferable we should rely
+@@ -699,7 +702,7 @@ def _invoke_binop_inference(
+         inferred = next(method.infer(context=context))
+     except StopIteration as e:
+         raise InferenceError(node=method, context=context) from e
+-    if inferred is util.Uninferable:
++    if isinstance(inferred, util.UninferableBase):
+         raise InferenceError
+     if not isinstance(
+         instance, (nodes.Const, nodes.Tuple, nodes.List, nodes.ClassDef, bases.Instance)
+@@ -923,7 +926,7 @@ def _infer_binary_operation(
+             yield util.Uninferable
+             return
+         else:
+-            if any(result is util.Uninferable for result in results):
++            if any(isinstance(result, util.UninferableBase) for result in results):
+                 yield util.Uninferable
+                 return
+ 
+@@ -959,7 +962,7 @@ def _infer_binop(
+     lhs_iter = left.infer(context=lhs_context)
+     rhs_iter = right.infer(context=rhs_context)
+     for lhs, rhs in itertools.product(lhs_iter, rhs_iter):
+-        if any(value is util.Uninferable for value in (rhs, lhs)):
++        if any(isinstance(value, util.UninferableBase) for value in (rhs, lhs)):
+             # Don't know how to process this.
+             yield util.Uninferable
+             return
+@@ -1008,7 +1011,7 @@ def _to_literal(node: nodes.NodeNG) -> Any:
+ 
+ def _do_compare(
+     left_iter: Iterable[nodes.NodeNG], op: str, right_iter: Iterable[nodes.NodeNG]
+-) -> bool | type[util.Uninferable]:
++) -> bool | util.UninferableBase:
+     """
+     If all possible combinations are either True or False, return that:
+     >>> _do_compare([1, 2], '<=', [3, 4])
+@@ -1027,7 +1030,9 @@ def _do_compare(
+     op_func = COMPARE_OPS[op]
+ 
+     for left, right in itertools.product(left_iter, right_iter):
+-        if left is util.Uninferable or right is util.Uninferable:
++        if isinstance(left, util.UninferableBase) or isinstance(
++            right, util.UninferableBase
++        ):
+             return util.Uninferable
+ 
+         try:
+@@ -1052,9 +1057,9 @@ def _do_compare(
+ 
+ def _infer_compare(
+     self: nodes.Compare, context: InferenceContext | None = None, **kwargs: Any
+-) -> Generator[nodes.Const | type[util.Uninferable], None, None]:
++) -> Generator[nodes.Const | util.UninferableBase, None, None]:
+     """Chained comparison inference logic."""
+-    retval: bool | type[util.Uninferable] = True
++    retval: bool | util.UninferableBase = True
+ 
+     ops = self.ops
+     left_node = self.left
+@@ -1091,7 +1096,7 @@ def _infer_augassign(
+     lhs_iter = self.target.infer_lhs(context=context)
+     rhs_iter = self.value.infer(context=rhs_context)
+     for lhs, rhs in itertools.product(lhs_iter, rhs_iter):
+-        if any(value is util.Uninferable for value in (rhs, lhs)):
++        if any(isinstance(value, util.UninferableBase) for value in (rhs, lhs)):
+             # Don't know how to process this.
+             yield util.Uninferable
+             return
+@@ -1216,7 +1221,7 @@ def infer_ifexp(
+     except (InferenceError, StopIteration):
+         both_branches = True
+     else:
+-        if test is not util.Uninferable:
++        if not isinstance(test, util.UninferableBase):
+             if test.bool_value():
+                 yield from self.body.infer(context=lhs_context)
+             else:
+diff --git a/astroid/inference_tip.py b/astroid/inference_tip.py
+--- a/astroid/inference_tip.py
++++ b/astroid/inference_tip.py
+@@ -11,16 +11,11 @@
+ 
+ import wrapt
+ 
+-from astroid import bases, util
+ from astroid.exceptions import InferenceOverwriteError, UseInferenceDefault
+ from astroid.nodes import NodeNG
+-from astroid.typing import InferFn
++from astroid.typing import InferenceResult, InferFn
+ 
+-InferOptions = typing.Union[
+-    NodeNG, bases.Instance, bases.UnboundMethod, typing.Type[util.Uninferable]
+-]
+-
+-_cache: dict[tuple[InferFn, NodeNG], list[InferOptions] | None] = {}
++_cache: dict[tuple[InferFn, NodeNG], list[InferenceResult] | None] = {}
+ 
+ 
+ def clear_inference_tip_cache() -> None:
+@@ -31,7 +26,7 @@ def clear_inference_tip_cache() -> None:
+ @wrapt.decorator
+ def _inference_tip_cached(
+     func: InferFn, instance: None, args: typing.Any, kwargs: typing.Any
+-) -> Iterator[InferOptions]:
++) -> Iterator[InferenceResult]:
+     """Cache decorator used for inference tips."""
+     node = args[0]
+     try:
+diff --git a/astroid/interpreter/objectmodel.py b/astroid/interpreter/objectmodel.py
+--- a/astroid/interpreter/objectmodel.py
++++ b/astroid/interpreter/objectmodel.py
+@@ -358,7 +358,7 @@ def infer_call_result(
+                 except StopIteration as e:
+                     raise InferenceError(context=context, node=caller.args[0]) from e
+ 
+-                if cls is astroid.Uninferable:
++                if isinstance(cls, util.UninferableBase):
+                     raise InferenceError(
+                         "Invalid class inferred", target=self, context=context
+                     )
+diff --git a/astroid/nodes/node_classes.py b/astroid/nodes/node_classes.py
+--- a/astroid/nodes/node_classes.py
++++ b/astroid/nodes/node_classes.py
+@@ -101,7 +101,7 @@ def unpack_infer(stmt, context: InferenceContext | None = None):
+         return {"node": stmt, "context": context}
+     # else, infer recursively, except Uninferable object that should be returned as is
+     for inferred in stmt.infer(context):
+-        if inferred is util.Uninferable:
++        if isinstance(inferred, util.UninferableBase):
+             yield inferred
+         else:
+             yield from unpack_infer(inferred, context)
+@@ -2457,7 +2457,7 @@ def getitem(
+                     continue
+ 
+             for inferredkey in key.infer(context):
+-                if inferredkey is util.Uninferable:
++                if isinstance(inferredkey, util.UninferableBase):
+                     continue
+                 if isinstance(inferredkey, Const) and isinstance(index, Const):
+                     if inferredkey.value == index.value:
+@@ -4951,13 +4951,11 @@ class EvaluatedObject(NodeNG):
+     _astroid_fields = ("original",)
+     _other_fields = ("value",)
+ 
+-    def __init__(
+-        self, original: NodeNG, value: NodeNG | type[util.Uninferable]
+-    ) -> None:
++    def __init__(self, original: NodeNG, value: NodeNG | util.UninferableBase) -> None:
+         self.original: NodeNG = original
+         """The original node that has already been evaluated"""
+ 
+-        self.value: NodeNG | type[util.Uninferable] = value
++        self.value: NodeNG | util.UninferableBase = value
+         """The inferred value"""
+ 
+         super().__init__(
+@@ -4968,7 +4966,7 @@ def __init__(
+ 
+     def _infer(
+         self, context: InferenceContext | None = None, **kwargs: Any
+-    ) -> Generator[NodeNG | type[util.Uninferable], None, None]:
++    ) -> Generator[NodeNG | util.UninferableBase, None, None]:
+         yield self.value
+ 
+ 
+diff --git a/astroid/nodes/scoped_nodes/scoped_nodes.py b/astroid/nodes/scoped_nodes/scoped_nodes.py
+--- a/astroid/nodes/scoped_nodes/scoped_nodes.py
++++ b/astroid/nodes/scoped_nodes/scoped_nodes.py
+@@ -1705,7 +1705,11 @@ def infer_call_result(self, caller=None, context: InferenceContext | None = None
+                 new_class.hide = True
+                 new_class.parent = self
+                 new_class.postinit(
+-                    bases=[base for base in class_bases if base != util.Uninferable],
++                    bases=[
++                        base
++                        for base in class_bases
++                        if not isinstance(base, util.UninferableBase)
++                    ],
+                     body=[],
+                     decorators=[],
+                     metaclass=metaclass,
+@@ -1826,8 +1830,6 @@ def _is_metaclass(klass, seen=None) -> bool:
+                 if isinstance(baseobj, bases.Instance):
+                     # not abstract
+                     return False
+-                if baseobj is util.Uninferable:
+-                    continue
+                 if baseobj is klass:
+                     continue
+                 if not isinstance(baseobj, ClassDef):
+@@ -2817,7 +2819,7 @@ def declared_metaclass(
+                 return next(
+                     node
+                     for node in self._metaclass.infer(context=context)
+-                    if node is not util.Uninferable
++                    if not isinstance(node, util.UninferableBase)
+                 )
+             except (InferenceError, StopIteration):
+                 return None
+@@ -2883,7 +2885,7 @@ def _islots(self):
+                 values = [item[0] for item in slots.items]
+             else:
+                 values = slots.itered()
+-            if values is util.Uninferable:
++            if isinstance(values, util.UninferableBase):
+                 continue
+             if not values:
+                 # Stop the iteration, because the class
+@@ -2893,8 +2895,6 @@ def _islots(self):
+             for elt in values:
+                 try:
+                     for inferred in elt.infer():
+-                        if inferred is util.Uninferable:
+-                            continue
+                         if not isinstance(
+                             inferred, node_classes.Const
+                         ) or not isinstance(inferred.value, str):
+diff --git a/astroid/protocols.py b/astroid/protocols.py
+--- a/astroid/protocols.py
++++ b/astroid/protocols.py
+@@ -132,7 +132,7 @@ def const_infer_binary_op(
+     other: InferenceResult,
+     context: InferenceContext,
+     _: SuccessfulInferenceResult,
+-) -> Generator[ConstFactoryResult | type[util.Uninferable], None, None]:
++) -> Generator[ConstFactoryResult | util.UninferableBase, None, None]:
+     not_implemented = nodes.Const(NotImplemented)
+     if isinstance(other, nodes.Const):
+         if (
+@@ -174,7 +174,7 @@ def _multiply_seq_by_int(
+     filtered_elts = (
+         helpers.safe_infer(elt, context) or util.Uninferable
+         for elt in self.elts
+-        if elt is not util.Uninferable
++        if not isinstance(elt, util.UninferableBase)
+     )
+     node.elts = list(filtered_elts) * other.value
+     return node
+@@ -184,11 +184,11 @@ def _filter_uninferable_nodes(
+     elts: Sequence[InferenceResult], context: InferenceContext
+ ) -> Iterator[SuccessfulInferenceResult]:
+     for elt in elts:
+-        if elt is util.Uninferable:
++        if isinstance(elt, util.UninferableBase):
+             yield nodes.Unknown()
+         else:
+             for inferred in elt.infer(context):
+-                if inferred is not util.Uninferable:
++                if not isinstance(inferred, util.UninferableBase):
+                     yield inferred
+                 else:
+                     yield nodes.Unknown()
+@@ -202,7 +202,7 @@ def tl_infer_binary_op(
+     other: InferenceResult,
+     context: InferenceContext,
+     method: SuccessfulInferenceResult,
+-) -> Generator[_TupleListNodeT | nodes.Const | type[util.Uninferable], None, None]:
++) -> Generator[_TupleListNodeT | nodes.Const | util.UninferableBase, None, None]:
+     """Infer a binary operation on a tuple or list.
+ 
+     The instance on which the binary operation is performed is a tuple
+@@ -276,7 +276,7 @@ def _resolve_looppart(parts, assign_path, context):
+     assign_path = assign_path[:]
+     index = assign_path.pop(0)
+     for part in parts:
+-        if part is util.Uninferable:
++        if isinstance(part, util.UninferableBase):
+             continue
+         if not hasattr(part, "itered"):
+             continue
+@@ -299,7 +299,7 @@ def _resolve_looppart(parts, assign_path, context):
+                 # we achieved to resolved the assignment path,
+                 # don't infer the last part
+                 yield assigned
+-            elif assigned is util.Uninferable:
++            elif isinstance(assigned, util.UninferableBase):
+                 break
+             else:
+                 # we are not yet on the last part of the path
+@@ -546,7 +546,7 @@ def _resolve_assignment_parts(parts, assign_path, context):
+             # we achieved to resolved the assignment path, don't infer the
+             # last part
+             yield assigned
+-        elif assigned is util.Uninferable:
++        elif isinstance(assigned, util.UninferableBase):
+             return
+         else:
+             # we are not yet on the last part of the path search on each
+@@ -793,7 +793,7 @@ def _determine_starred_iteration_lookups(
+         except (InferenceError, StopIteration):
+             yield util.Uninferable
+             return
+-        if rhs is util.Uninferable or not hasattr(rhs, "itered"):
++        if isinstance(rhs, util.UninferableBase) or not hasattr(rhs, "itered"):
+             yield util.Uninferable
+             return
+ 
+@@ -841,7 +841,7 @@ def _determine_starred_iteration_lookups(
+         except (InferenceError, StopIteration):
+             yield util.Uninferable
+             return
+-        if inferred_iterable is util.Uninferable or not hasattr(
++        if isinstance(inferred_iterable, util.UninferableBase) or not hasattr(
+             inferred_iterable, "itered"
+         ):
+             yield util.Uninferable
+diff --git a/astroid/typing.py b/astroid/typing.py
+--- a/astroid/typing.py
++++ b/astroid/typing.py
+@@ -46,7 +46,7 @@ class AstroidManagerBrain(TypedDict):
+     _transform: transforms.TransformVisitor
+ 
+ 
+-InferenceResult = Union["nodes.NodeNG", "type[util.Uninferable]", "bases.Proxy"]
++InferenceResult = Union["nodes.NodeNG", "util.UninferableBase", "bases.Proxy"]
+ SuccessfulInferenceResult = Union["nodes.NodeNG", "bases.Proxy"]
+ 
+ ConstFactoryResult = Union[
+diff --git a/astroid/util.py b/astroid/util.py
+--- a/astroid/util.py
++++ b/astroid/util.py
+@@ -2,6 +2,9 @@
+ # For details: https://github.com/PyCQA/astroid/blob/main/LICENSE
+ # Copyright (c) https://github.com/PyCQA/astroid/blob/main/CONTRIBUTORS.txt
+ 
++
++from __future__ import annotations
++
+ import importlib
+ import sys
+ import warnings
+@@ -10,9 +13,9 @@
+ import lazy_object_proxy
+ 
+ if sys.version_info >= (3, 8):
+-    from typing import Literal
++    from typing import Final, Literal
+ else:
+-    from typing_extensions import Literal
++    from typing_extensions import Final, Literal
+ 
+ 
+ def lazy_descriptor(obj):
+@@ -29,11 +32,13 @@ def lazy_import(module_name: str) -> lazy_object_proxy.Proxy:
+     )
+ 
+ 
+-@object.__new__
+-class Uninferable:
+-    """Special inference object, which is returned when inference fails."""
++class UninferableBase:
++    """Special inference object, which is returned when inference fails.
++
++    This is meant to be used as a singleton. Use astroid.util.Uninferable to access it.
++    """
+ 
+-    def __repr__(self) -> str:
++    def __repr__(self) -> Literal["Uninferable"]:
+         return "Uninferable"
+ 
+     __str__ = __repr__
+@@ -47,7 +52,7 @@ def __getattribute__(self, name: str) -> Any:
+             return object.__getattribute__(self, name)
+         return self
+ 
+-    def __call__(self, *args, **kwargs):
++    def __call__(self, *args: Any, **kwargs: Any) -> UninferableBase:
+         return self
+ 
+     def __bool__(self) -> Literal[False]:
+@@ -59,6 +64,9 @@ def accept(self, visitor):
+         return visitor.visit_uninferable(self)
+ 
+ 
++Uninferable: Final = UninferableBase()
++
++
+ class BadOperationMessage:
+     """Object which describes a TypeError occurred somewhere in the inference chain.
+ 
+@@ -82,7 +90,7 @@ def _object_type_helper(self):
+ 
+     def _object_type(self, obj):
+         objtype = self._object_type_helper(obj)
+-        if objtype is Uninferable:
++        if isinstance(objtype, UninferableBase):
+             return None
+ 
+         return objtype

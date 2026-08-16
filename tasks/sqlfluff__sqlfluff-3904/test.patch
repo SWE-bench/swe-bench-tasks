@@ -1,0 +1,230 @@
+diff --git a/test/cli/commands_test.py b/test/cli/commands_test.py
+--- a/test/cli/commands_test.py
++++ b/test/cli/commands_test.py
+@@ -112,7 +112,7 @@ def test__cli__command_directed():
+         args=[
+             lint,
+             [
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+                 "test/fixtures/linter/indentation_error_simple.sql",
+             ],
+         ],
+@@ -1002,7 +1002,7 @@ def test__cli__command_fix_stdin(stdin, rules, stdout):
+     result = invoke_assert_code(
+         args=[
+             fix,
+-            ("-", "--rules", rules, "--disable_progress_bar", "--dialect=ansi"),
++            ("-", "--rules", rules, "--disable-progress-bar", "--dialect=ansi"),
+         ],
+         cli_input=stdin,
+     )
+@@ -1036,7 +1036,7 @@ def test__cli__command_fix_stdin_safety():
+ 
+     # just prints the very same thing
+     result = invoke_assert_code(
+-        args=[fix, ("-", "--disable_progress_bar", "--dialect=ansi")],
++        args=[fix, ("-", "--disable-progress-bar", "--dialect=ansi")],
+         cli_input=perfect_sql,
+     )
+     assert result.output.strip() == perfect_sql
+@@ -1177,7 +1177,7 @@ def test__cli__command_lint_serialize_from_stdin(serialize, sql, expected, exit_
+                 "L010",
+                 "--format",
+                 serialize,
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+                 "--dialect=ansi",
+             ),
+         ],
+@@ -1222,7 +1222,7 @@ def test__cli__command_lint_nocolor(isatty, should_strip_ansi, capsys, tmpdir):
+         "--nocolor",
+         "--dialect",
+         "ansi",
+-        "--disable_progress_bar",
++        "--disable-progress-bar",
+         fpath,
+         "--write-output",
+         output_file,
+@@ -1253,7 +1253,7 @@ def test__cli__command_lint_serialize_multiple_files(serialize, write_file, tmp_
+         fpath,
+         "--format",
+         serialize,
+-        "--disable_progress_bar",
++        "--disable-progress-bar",
+     )
+ 
+     if write_file:
+@@ -1310,7 +1310,7 @@ def test__cli__command_lint_serialize_github_annotation():
+                 "github-annotation",
+                 "--annotation-level",
+                 "warning",
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+             ),
+         ],
+         ret_code=1,
+@@ -1421,7 +1421,7 @@ def test__cli__command_lint_serialize_github_annotation_native():
+                 "github-annotation-native",
+                 "--annotation-level",
+                 "error",
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+             ),
+         ],
+         ret_code=1,
+@@ -1465,7 +1465,7 @@ def test__cli__command_lint_serialize_annotation_level_error_failure_equivalent(
+                 serialize,
+                 "--annotation-level",
+                 "error",
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+             ),
+         ],
+         ret_code=1,
+@@ -1480,7 +1480,7 @@ def test__cli__command_lint_serialize_annotation_level_error_failure_equivalent(
+                 serialize,
+                 "--annotation-level",
+                 "failure",
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+             ),
+         ],
+         ret_code=1,
+@@ -1613,6 +1613,25 @@ def test_cli_lint_disabled_progress_bar(
+         self, mock_disable_progress_bar: MagicMock
+     ) -> None:
+         """When progress bar is disabled, nothing should be printed into output."""
++        result = invoke_assert_code(
++            args=[
++                lint,
++                [
++                    "--disable-progress-bar",
++                    "test/fixtures/linter/passing.sql",
++                ],
++            ],
++        )
++        raw_output = repr(result.output)
++
++        assert "\rpath test/fixtures/linter/passing.sql:" not in raw_output
++        assert "\rparsing: 0it" not in raw_output
++        assert "\r\rlint by rules:" not in raw_output
++
++    def test_cli_lint_disabled_progress_bar_deprecated_option(
++        self, mock_disable_progress_bar: MagicMock
++    ) -> None:
++        """Same as above but checks additionally if deprecation warning is printed."""
+         result = invoke_assert_code(
+             args=[
+                 lint,
+@@ -1627,6 +1646,10 @@ def test_cli_lint_disabled_progress_bar(
+         assert "\rpath test/fixtures/linter/passing.sql:" not in raw_output
+         assert "\rparsing: 0it" not in raw_output
+         assert "\r\rlint by rules:" not in raw_output
++        assert (
++            "DeprecationWarning: The option '--disable_progress_bar' is deprecated, "
++            "use '--disable-progress-bar'"
++        ) in raw_output
+ 
+     def test_cli_lint_enabled_progress_bar(
+         self, mock_disable_progress_bar: MagicMock
+@@ -1709,7 +1732,7 @@ def test__cli__fix_multiple_errors_no_show_errors():
+         args=[
+             fix,
+             [
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+                 "test/fixtures/linter/multiple_sql_errors.sql",
+             ],
+         ],
+@@ -1729,7 +1752,7 @@ def test__cli__fix_multiple_errors_show_errors():
+         args=[
+             fix,
+             [
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+                 "--show-lint-violations",
+                 "test/fixtures/linter/multiple_sql_errors.sql",
+             ],
+@@ -1771,7 +1794,7 @@ def test__cli__multiple_files__fix_multiple_errors_show_errors():
+         args=[
+             fix,
+             [
+-                "--disable_progress_bar",
++                "--disable-progress-bar",
+                 "--show-lint-violations",
+                 sql_path,
+                 indent_path,
+diff --git a/test/cli/test_click_deprecated_option.py b/test/cli/test_click_deprecated_option.py
+new file mode 100644
+--- /dev/null
++++ b/test/cli/test_click_deprecated_option.py
+@@ -0,0 +1,68 @@
++"""The Test suite for `DeprecatedOption` - extension for click options."""
++from typing import List
++
++import click
++import pytest
++
++from sqlfluff.cli.click_deprecated_option import (
++    DeprecatedOption,
++    DeprecatedOptionsCommand,
++)
++from test.cli.commands_test import invoke_assert_code
++
++
++class TestClickDeprecatedOption:
++    """Tests for custom click's option `DeprecatedOption`."""
++
++    @pytest.mark.parametrize(
++        "option, expected_output",
++        [
++            ([], "{'old_option': False}\n"),
++            (
++                ["--old_option"],
++                "DeprecationWarning: The option '--old_option' is deprecated, "
++                "use '--new_option'.\n{'old_option': True}\n",
++            ),
++            (["--new_option"], "{'old_option': True}\n"),
++        ],
++    )
++    def test_cli_deprecated_option(
++        self, option: List[str], expected_output: str
++    ) -> None:
++        """Prepares command with option which has deprecated version and checks it."""
++
++        @click.command(cls=DeprecatedOptionsCommand)
++        @click.option(
++            "--old_option",
++            "--new_option",
++            is_flag=True,
++            cls=DeprecatedOption,
++            deprecated=["--old_option"],
++        )
++        def some_command(**kwargs):
++            click.echo("{}".format(kwargs))
++
++        result = invoke_assert_code(args=[some_command, option])
++        raw_output = result.output
++
++        assert raw_output == expected_output
++
++    def test_cli_deprecated_option_should_fail_when_missing_attr(
++        self,
++    ) -> None:
++        """The DeprecatedOption needs to have specified deprecated attr."""
++
++        @click.command(cls=DeprecatedOptionsCommand)
++        @click.option(
++            "--old_option",
++            "--new_option",
++            is_flag=True,
++            cls=DeprecatedOption,
++        )
++        def some_command(**kwargs):
++            click.echo("{}".format(kwargs))
++
++        with pytest.raises(ValueError) as exc:
++            invoke_assert_code(args=[some_command, ["--old_option"]])
++
++        assert str(exc.value) == "Expected `deprecated` value for `'old_option'`"

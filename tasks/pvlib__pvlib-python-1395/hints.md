@@ -1,0 +1,2 @@
+@mikofski @cwhanse I saw your discussions in #758 and #1290 and figured I'd share the code I had laying around for downloading the local horizon profile from SRTM. Does this have any interest to you?
+I'm lovin' this! Could we also look into retrieving pvgis horizon data, how do they compare to the SRTM from MINES?
