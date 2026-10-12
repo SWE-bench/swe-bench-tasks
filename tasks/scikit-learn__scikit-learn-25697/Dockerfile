@@ -152,7 +152,7 @@ EOF_d754637d93e6
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
 
-RUN <<EOF_98f25904d493
+RUN <<EOF_c794907e6e85
 #!/bin/bash
 set -euxo pipefail
 git clone -o origin --single-branch https://github.com/scikit-learn/scikit-learn /testbed
@@ -168,7 +168,7 @@ git gc --prune=now --aggressive
 AFTER_TIMESTAMP=$(date -d "$TARGET_TIMESTAMP + 1 second" '+%Y-%m-%d %H:%M:%S')
 COMMIT_COUNT=$(git log --oneline --all --since="$AFTER_TIMESTAMP" | wc -l)
 [ "$COMMIT_COUNT" -eq 0 ] || exit 1
-chmod -R 777 /testbed
+chmod -R a+rwX /testbed
 cd - || true
 source /opt/miniconda3/bin/activate
 conda activate testbed
@@ -180,7 +180,7 @@ python -m pip install -v --no-use-pep517 --no-build-isolation -e .
 git config --global user.email setup@swebench.com
 git config --global user.name SWE-bench
 git commit --allow-empty -am SWE-bench
-EOF_98f25904d493
+EOF_c794907e6e85
 
 
 WORKDIR /testbed/

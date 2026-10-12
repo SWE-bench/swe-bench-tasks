@@ -56,8 +56,10 @@ def git_clone_timesafe(repo: str, base_commit: str, workdir: str) -> list[str]:
         '[ "$COMMIT_COUNT" -eq 0 ] || exit 1',
         # chmod last: `git reset --hard` above re-creates working-tree files as
         # root-owned 0644, so chmod'ing before it left committed lockfiles
-        # unwritable by a non-root install user.
-        f"chmod -R 777 {workdir}",
+        # unwritable by a non-root install user. `a+rwX`, not 777: setting the
+        # exec bit on every file gets committed by the setup's `git commit -am`
+        # as a mode change, so `git diff <base_commit>` lists every file.
+        f"chmod -R a+rwX {workdir}",
         "cd - || true",
     ]
 
