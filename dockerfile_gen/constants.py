@@ -1,5 +1,5 @@
 _DOCKERFILE_BASE = r"""
-FROM --platform=linux/amd64 ubuntu:jammy
+FROM --platform=linux/{platform} ubuntu:jammy
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
@@ -21,7 +21,7 @@ tzdata \
 && rm -rf /var/lib/apt/lists/*
 
 # Download and install conda
-RUN wget 'https://repo.anaconda.com/miniconda/Miniconda3-py311_23.11.0-2-Linux-x86_64.sh' -O miniconda.sh \
+RUN wget 'https://repo.anaconda.com/miniconda/Miniconda3-py311_23.11.0-2-Linux-{conda_arch}.sh' -O miniconda.sh \
     && bash miniconda.sh -b -p /opt/miniconda3
 # Add conda to PATH
 ENV PATH=/opt/miniconda3/bin:$PATH

@@ -43,7 +43,8 @@ def load_task(task_dir: Path) -> dict:
     return instance
 
 
-def write_generated(task_dir: Path, dockerfile: str, eval_script: str) -> None:
+def write_generated(task_dir: Path, dockerfile: str, eval_script: str, arch: str = "amd64") -> None:
     """Overwrite the two derived files in place."""
-    _write(task_dir / "Dockerfile", dockerfile)
+    filename = "Dockerfile" if arch == "amd64" else "Dockerfile.arm64"
+    _write(task_dir / filename, dockerfile)
     _write(task_dir / "eval.sh", eval_script)

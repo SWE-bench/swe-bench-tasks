@@ -208,13 +208,16 @@ def make_repo_script_list(specs, repo, base_commit) -> str:
     return make_heredoc_run_command(setup_commands)
 
 
-def load_cached_environment_yml(instance_id: str) -> str | None:
-    """The environment file kept with the task, else the cache for tasks not yet materialized."""
+def load_cached_environment_yml(instance_id: str, arch: str = "amd64") -> str | None:
+    """Read a task's environment; ARM64 requires an explicit architecture-specific file."""
     from .tasks import TASKS_DIR
 
-    task_copy = TASKS_DIR / instance_id / "environment.yml"
+    filename = "environment.yml" if arch == "amd64" else "environment.arm64.yml"
+    task_copy = TASKS_DIR / instance_id / filename
     if task_copy.is_file():
         return task_copy.read_text()
+    if arch == "arm64":
+        raise ValueError(f"{instance_id}: add {filename} before generating an arm64 image")
     owner = instance_id.split("__")[0]
     cached = (
         pathlib.Path(__file__).parent / "data" / "environments" / owner / f"{instance_id}.yml"
@@ -232,8 +235,8 @@ def make_env_script_list_from_conda(instance, specs, cached_environment_yml) -> 
     ]
 
 
-def make_env_script_list(instance, specs) -> str:
-    cached_environment_yml = load_cached_environment_yml(instance["instance_id"])
+def make_env_script_list(instance, specs, arch="amd64") -> str:
+    cached_environment_yml = load_cached_environment_yml(instance["instance_id"], arch)
     if cached_environment_yml:
         return make_heredoc_run_command(
             make_env_script_list_from_conda(instance, specs, cached_environment_yml)
@@ -286,14 +289,15 @@ def make_env_script_list(instance, specs) -> str:
 # ── Dockerfile generation ──────────────────────────────────────────────
 
 
-def _get_dockerfile(instance) -> str:
+def _get_dockerfile(instance, arch="amd64") -> str:
     repo = instance["repo"]
     version = instance.get("version")
     base_commit = instance["base_commit"]
     specs = MAP_REPO_VERSION_TO_SPECS[repo][version]
-    env_script = make_env_script_list(instance, specs)
+    env_script = make_env_script_list(instance, specs, arch)
     repo_script = make_repo_script_list(specs, repo, base_commit)
-    dockerfile = _DOCKERFILE_BASE
+    conda_arch = {"amd64": "x86_64", "arm64": "aarch64"}[arch]
+    dockerfile = _DOCKERFILE_BASE.format(platform=arch, conda_arch=conda_arch)
     dockerfile += f"\n{env_script}\n" if env_script else ""
     dockerfile += '\nRUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc\n'
     dockerfile += f"\n{repo_script}\n" if repo_script else ""
@@ -423,7 +427,7 @@ def load_instances(
     )
 
 
-def regenerate(instance_ids: list[str] | None = None) -> int:
+def regenerate(instance_ids: list[str] | None = None, arch: str = "amd64") -> int:
     """Rewrite Dockerfile and eval.sh for each task, from its task.yaml."""
     from .tasks import load_task, task_dirs, write_generated
 
@@ -433,7 +437,7 @@ def regenerate(instance_ids: list[str] | None = None) -> int:
         if wanted and task_dir.name not in wanted:
             continue
         instance = load_task(task_dir)
-        write_generated(task_dir, _get_dockerfile(instance), _get_eval_script(instance))
+        write_generated(task_dir, _get_dockerfile(instance, arch), _get_eval_script(instance), arch)
         count += 1
     return count
 
@@ -443,8 +447,9 @@ def main():
         description="Regenerate Dockerfile and eval.sh for SWE-bench tasks"
     )
     parser.add_argument("--instance_ids", nargs="+", default=None)
+    parser.add_argument("--arch", choices=("amd64", "arm64"), default="amd64")
     args = parser.parse_args()
-    print(f"regenerated {regenerate(args.instance_ids)} tasks")
+    print(f"regenerated {regenerate(args.instance_ids, args.arch)} tasks")
 
 
 if __name__ == "__main__":
