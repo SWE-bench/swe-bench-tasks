@@ -29,6 +29,8 @@ from .constants import (
 )
 from .utils import (
     generate_heredoc_delimiter,
+    get_modified_files,
+    get_new_files,
     git_clone_timesafe,
     make_heredoc_run_command,
 )
@@ -342,9 +344,18 @@ def _get_eval_script(instance: dict) -> str:
     test_patch = instance["test_patch"]
     specs = MAP_REPO_VERSION_TO_SPECS[repo][version]
 
-    # Files modified by the test patch
-    test_files = re.findall(r"diff --git a/.* b/(.*)", test_patch)
-    reset_tests_command = f"git checkout {base_commit} {' '.join(test_files)}"
+    # Put the test patch's files back to base_commit, so the tests that run are the
+    # test patch's and not the submission's. A file the patch creates is not in
+    # base_commit: naming it in `git checkout` fails the whole command and restores
+    # nothing, and leaving it in place makes `git apply` reject the whole patch.
+    # Those are removed instead.
+    reset_tests_commands = []
+    if modified_files := get_modified_files(test_patch):
+        reset_tests_commands.append(
+            f"git checkout {base_commit} {' '.join(modified_files)}"
+        )
+    if new_files := get_new_files(test_patch):
+        reset_tests_commands.append(f"rm -f {' '.join(new_files)}")
 
     HEREDOC_DELIMITER = "EOF_114329324912"
     apply_test_patch_command = (
@@ -377,7 +388,7 @@ def _get_eval_script(instance: dict) -> str:
         eval_commands.append(specs["install"])
     override = INSTANCE_OVERRIDES.get(instance["instance_id"], {})
     eval_commands += [
-        reset_tests_command,
+        *reset_tests_commands,
         apply_test_patch_command,
         # eval_pre may come from the repo/version spec or a per-instance override
         *specs.get("eval_pre", []),
@@ -385,7 +396,7 @@ def _get_eval_script(instance: dict) -> str:
         f": '{START_TEST_OUTPUT}'",
         test_command,
         f": '{END_TEST_OUTPUT}'",
-        reset_tests_command,
+        *reset_tests_commands,
     ]
     return "\n".join(eval_commands) + "\n"
 

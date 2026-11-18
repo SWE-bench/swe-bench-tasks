@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72 tests/roots/test-linkcheck-localserver/conf.py tests/roots/test-linkcheck-localserver/index.rst tests/test_build_linkcheck.py
+git checkout 1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72 tests/test_build_linkcheck.py
+rm -f tests/roots/test-linkcheck-localserver/conf.py tests/roots/test-linkcheck-localserver/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-linkcheck-localserver/conf.py b/tests/roots/test-linkcheck-localserver/conf.py
 new file mode 100644
@@ -90,4 +91,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-linkcheck-localserver/conf.py tests/roots/test-linkcheck-localserver/index.rst tests/test_build_linkcheck.py
 : '>>>>> End Test Output'
-git checkout 1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72 tests/roots/test-linkcheck-localserver/conf.py tests/roots/test-linkcheck-localserver/index.rst tests/test_build_linkcheck.py
+git checkout 1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72 tests/test_build_linkcheck.py
+rm -f tests/roots/test-linkcheck-localserver/conf.py tests/roots/test-linkcheck-localserver/index.rst

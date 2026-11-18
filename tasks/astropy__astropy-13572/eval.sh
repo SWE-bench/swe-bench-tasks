@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 986123f73ce94d4511f453dbdd4470c72f47402a
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test] --verbose
-git checkout 986123f73ce94d4511f453dbdd4470c72f47402a astropy/coordinates/tests/test_earth_orientation.py astropy/coordinates/tests/test_sky_coord.py
+git checkout 986123f73ce94d4511f453dbdd4470c72f47402a astropy/coordinates/tests/test_sky_coord.py
+rm -f astropy/coordinates/tests/test_earth_orientation.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/astropy/coordinates/tests/test_earth_orientation.py b/astropy/coordinates/tests/test_earth_orientation.py
 new file mode 100644
@@ -83,4 +84,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA astropy/coordinates/tests/test_earth_orientation.py astropy/coordinates/tests/test_sky_coord.py
 : '>>>>> End Test Output'
-git checkout 986123f73ce94d4511f453dbdd4470c72f47402a astropy/coordinates/tests/test_earth_orientation.py astropy/coordinates/tests/test_sky_coord.py
+git checkout 986123f73ce94d4511f453dbdd4470c72f47402a astropy/coordinates/tests/test_sky_coord.py
+rm -f astropy/coordinates/tests/test_earth_orientation.py

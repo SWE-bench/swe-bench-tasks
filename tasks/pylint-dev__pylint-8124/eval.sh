@@ -11,7 +11,8 @@ git -c core.fileMode=false diff eb950615d77a6b979af6e0d9954fdb4197f4a722
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout eb950615d77a6b979af6e0d9954fdb4197f4a722 tests/checkers/unittest_imports.py tests/functional/i/import_aliasing.txt tests/regrtest_data/allow_reexport/__init__.py tests/regrtest_data/allow_reexport/file.py
+git checkout eb950615d77a6b979af6e0d9954fdb4197f4a722 tests/checkers/unittest_imports.py tests/functional/i/import_aliasing.txt
+rm -f tests/regrtest_data/allow_reexport/__init__.py tests/regrtest_data/allow_reexport/file.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/checkers/unittest_imports.py b/tests/checkers/unittest_imports.py
 --- a/tests/checkers/unittest_imports.py
@@ -102,4 +103,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/checkers/unittest_imports.py tests/regrtest_data/allow_reexport/__init__.py tests/regrtest_data/allow_reexport/file.py
 : '>>>>> End Test Output'
-git checkout eb950615d77a6b979af6e0d9954fdb4197f4a722 tests/checkers/unittest_imports.py tests/functional/i/import_aliasing.txt tests/regrtest_data/allow_reexport/__init__.py tests/regrtest_data/allow_reexport/file.py
+git checkout eb950615d77a6b979af6e0d9954fdb4197f4a722 tests/checkers/unittest_imports.py tests/functional/i/import_aliasing.txt
+rm -f tests/regrtest_data/allow_reexport/__init__.py tests/regrtest_data/allow_reexport/file.py

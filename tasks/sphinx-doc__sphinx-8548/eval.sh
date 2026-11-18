@@ -11,7 +11,8 @@ git -c core.fileMode=false diff dd1615c59dc6fff633e27dbb3861f2d27e1fb976
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout dd1615c59dc6fff633e27dbb3861f2d27e1fb976 tests/roots/test-ext-autodoc/target/instance_variable.py tests/test_ext_autodoc_autoclass.py
+git checkout dd1615c59dc6fff633e27dbb3861f2d27e1fb976 tests/test_ext_autodoc_autoclass.py
+rm -f tests/roots/test-ext-autodoc/target/instance_variable.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-ext-autodoc/target/instance_variable.py b/tests/roots/test-ext-autodoc/target/instance_variable.py
 new file mode 100644
@@ -98,4 +99,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-ext-autodoc/target/instance_variable.py tests/test_ext_autodoc_autoclass.py
 : '>>>>> End Test Output'
-git checkout dd1615c59dc6fff633e27dbb3861f2d27e1fb976 tests/roots/test-ext-autodoc/target/instance_variable.py tests/test_ext_autodoc_autoclass.py
+git checkout dd1615c59dc6fff633e27dbb3861f2d27e1fb976 tests/test_ext_autodoc_autoclass.py
+rm -f tests/roots/test-ext-autodoc/target/instance_variable.py

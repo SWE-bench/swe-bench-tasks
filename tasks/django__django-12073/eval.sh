@@ -15,7 +15,8 @@ git -c core.fileMode=false diff cbe4d6203ff2d702b63dae52adbe7a50830a5cbe
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout cbe4d6203ff2d702b63dae52adbe7a50830a5cbe tests/defer/tests.py tests/queries/test_deprecation.py tests/raw_query/tests.py
+git checkout cbe4d6203ff2d702b63dae52adbe7a50830a5cbe tests/defer/tests.py tests/raw_query/tests.py
+rm -f tests/queries/test_deprecation.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/defer/tests.py b/tests/defer/tests.py
 --- a/tests/defer/tests.py
@@ -107,4 +108,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 defer.tests queries.test_deprecation raw_query.tests
 : '>>>>> End Test Output'
-git checkout cbe4d6203ff2d702b63dae52adbe7a50830a5cbe tests/defer/tests.py tests/queries/test_deprecation.py tests/raw_query/tests.py
+git checkout cbe4d6203ff2d702b63dae52adbe7a50830a5cbe tests/defer/tests.py tests/raw_query/tests.py
+rm -f tests/queries/test_deprecation.py

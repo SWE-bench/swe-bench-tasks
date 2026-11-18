@@ -11,7 +11,8 @@ git -c core.fileMode=false diff cd86e3c3335a7f43379185c239619c576522ef4a
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout cd86e3c3335a7f43379185c239619c576522ef4a sympy/combinatorics/tests/test_schur_number.py sympy/core/tests/test_args.py
+git checkout cd86e3c3335a7f43379185c239619c576522ef4a sympy/core/tests/test_args.py
+rm -f sympy/combinatorics/tests/test_schur_number.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sympy/combinatorics/tests/test_schur_number.py b/sympy/combinatorics/tests/test_schur_number.py
 new file mode 100644
@@ -89,4 +90,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 PYTHONWARNINGS='ignore::UserWarning,ignore::SyntaxWarning' bin/test -C --verbose sympy/combinatorics/tests/test_schur_number.py sympy/core/tests/test_args.py
 : '>>>>> End Test Output'
-git checkout cd86e3c3335a7f43379185c239619c576522ef4a sympy/combinatorics/tests/test_schur_number.py sympy/core/tests/test_args.py
+git checkout cd86e3c3335a7f43379185c239619c576522ef4a sympy/core/tests/test_args.py
+rm -f sympy/combinatorics/tests/test_schur_number.py

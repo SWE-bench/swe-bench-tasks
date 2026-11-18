@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 49691cc04f2d38b174787280f7ed38f818c828bd
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 49691cc04f2d38b174787280f7ed38f818c828bd tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py
+git checkout 49691cc04f2d38b174787280f7ed38f818c828bd tests/unittest_raw_building.py
+rm -f tests/testdata/python3/data/fake_module_with_broken_getattr.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/testdata/python3/data/fake_module_with_broken_getattr.py b/tests/testdata/python3/data/fake_module_with_broken_getattr.py
 new file mode 100644
@@ -67,4 +68,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py
 : '>>>>> End Test Output'
-git checkout 49691cc04f2d38b174787280f7ed38f818c828bd tests/testdata/python3/data/fake_module_with_broken_getattr.py tests/unittest_raw_building.py
+git checkout 49691cc04f2d38b174787280f7ed38f818c828bd tests/unittest_raw_building.py
+rm -f tests/testdata/python3/data/fake_module_with_broken_getattr.py

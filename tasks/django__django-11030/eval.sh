@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 2aaabe2004e1953eb7d7057edcf2fabd37f7394d
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 2aaabe2004e1953eb7d7057edcf2fabd37f7394d tests/aggregation/tests.py tests/annotations/tests.py tests/expressions/test_deprecation.py
+git checkout 2aaabe2004e1953eb7d7057edcf2fabd37f7394d tests/aggregation/tests.py tests/annotations/tests.py
+rm -f tests/expressions/test_deprecation.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
 --- a/tests/aggregation/tests.py
@@ -125,4 +126,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 aggregation.tests annotations.tests expressions.test_deprecation
 : '>>>>> End Test Output'
-git checkout 2aaabe2004e1953eb7d7057edcf2fabd37f7394d tests/aggregation/tests.py tests/annotations/tests.py tests/expressions/test_deprecation.py
+git checkout 2aaabe2004e1953eb7d7057edcf2fabd37f7394d tests/aggregation/tests.py tests/annotations/tests.py
+rm -f tests/expressions/test_deprecation.py

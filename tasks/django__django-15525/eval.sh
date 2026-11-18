@@ -11,7 +11,8 @@ git -c core.fileMode=false diff fbacaa58ffc5a62456ee68b90efa13957f761ce4
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout fbacaa58ffc5a62456ee68b90efa13957f761ce4 tests/backends/sqlite/test_features.py tests/fixtures_regress/fixtures/nk_with_foreign_key.json tests/fixtures_regress/models.py tests/fixtures_regress/tests.py
+git checkout fbacaa58ffc5a62456ee68b90efa13957f761ce4 tests/backends/sqlite/test_features.py tests/fixtures_regress/models.py tests/fixtures_regress/tests.py
+rm -f tests/fixtures_regress/fixtures/nk_with_foreign_key.json
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/backends/sqlite/test_features.py b/tests/backends/sqlite/test_features.py
 --- a/tests/backends/sqlite/test_features.py
@@ -120,4 +121,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 backends.sqlite.test_features fixtures_regress.models fixtures_regress.tests
 : '>>>>> End Test Output'
-git checkout fbacaa58ffc5a62456ee68b90efa13957f761ce4 tests/backends/sqlite/test_features.py tests/fixtures_regress/fixtures/nk_with_foreign_key.json tests/fixtures_regress/models.py tests/fixtures_regress/tests.py
+git checkout fbacaa58ffc5a62456ee68b90efa13957f761ce4 tests/backends/sqlite/test_features.py tests/fixtures_regress/models.py tests/fixtures_regress/tests.py
+rm -f tests/fixtures_regress/fixtures/nk_with_foreign_key.json

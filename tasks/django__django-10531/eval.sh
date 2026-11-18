@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 1564e42ad397021093585147875a21dae1a3b3fc
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 1564e42ad397021093585147875a21dae1a3b3fc tests/admin_utils/admin.py tests/admin_utils/test_logentry.py tests/admin_views/admin.py tests/admin_views/models.py tests/admin_views/test_history_view.py tests/admin_views/tests.py tests/auth_tests/test_views.py
+git checkout 1564e42ad397021093585147875a21dae1a3b3fc tests/admin_utils/admin.py tests/admin_utils/test_logentry.py tests/admin_views/admin.py tests/admin_views/models.py tests/admin_views/tests.py tests/auth_tests/test_views.py
+rm -f tests/admin_views/test_history_view.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/admin_utils/admin.py b/tests/admin_utils/admin.py
 --- a/tests/admin_utils/admin.py
@@ -235,4 +236,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 admin_utils.admin admin_utils.test_logentry admin_views.admin admin_views.models admin_views.test_history_view admin_views.tests auth_tests.test_views
 : '>>>>> End Test Output'
-git checkout 1564e42ad397021093585147875a21dae1a3b3fc tests/admin_utils/admin.py tests/admin_utils/test_logentry.py tests/admin_views/admin.py tests/admin_views/models.py tests/admin_views/test_history_view.py tests/admin_views/tests.py tests/auth_tests/test_views.py
+git checkout 1564e42ad397021093585147875a21dae1a3b3fc tests/admin_utils/admin.py tests/admin_utils/test_logentry.py tests/admin_views/admin.py tests/admin_views/models.py tests/admin_views/tests.py tests/auth_tests/test_views.py
+rm -f tests/admin_views/test_history_view.py

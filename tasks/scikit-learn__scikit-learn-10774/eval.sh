@@ -11,7 +11,8 @@ git -c core.fileMode=false diff ccbf9975fcf1676f6ac4f311e388529d3a3c4d3f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -v --no-use-pep517 --no-build-isolation -e .
-git checkout ccbf9975fcf1676f6ac4f311e388529d3a3c4d3f sklearn/datasets/tests/test_20news.py sklearn/datasets/tests/test_base.py sklearn/datasets/tests/test_california_housing.py sklearn/datasets/tests/test_common.py sklearn/datasets/tests/test_covtype.py sklearn/datasets/tests/test_kddcup99.py sklearn/datasets/tests/test_lfw.py sklearn/datasets/tests/test_rcv1.py
+git checkout ccbf9975fcf1676f6ac4f311e388529d3a3c4d3f sklearn/datasets/tests/test_20news.py sklearn/datasets/tests/test_base.py sklearn/datasets/tests/test_covtype.py sklearn/datasets/tests/test_kddcup99.py sklearn/datasets/tests/test_lfw.py sklearn/datasets/tests/test_rcv1.py
+rm -f sklearn/datasets/tests/test_california_housing.py sklearn/datasets/tests/test_common.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sklearn/datasets/tests/test_20news.py b/sklearn/datasets/tests/test_20news.py
 --- a/sklearn/datasets/tests/test_20news.py
@@ -306,4 +307,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA sklearn/datasets/tests/test_20news.py sklearn/datasets/tests/test_base.py sklearn/datasets/tests/test_california_housing.py sklearn/datasets/tests/test_common.py sklearn/datasets/tests/test_covtype.py sklearn/datasets/tests/test_kddcup99.py sklearn/datasets/tests/test_lfw.py sklearn/datasets/tests/test_rcv1.py
 : '>>>>> End Test Output'
-git checkout ccbf9975fcf1676f6ac4f311e388529d3a3c4d3f sklearn/datasets/tests/test_20news.py sklearn/datasets/tests/test_base.py sklearn/datasets/tests/test_california_housing.py sklearn/datasets/tests/test_common.py sklearn/datasets/tests/test_covtype.py sklearn/datasets/tests/test_kddcup99.py sklearn/datasets/tests/test_lfw.py sklearn/datasets/tests/test_rcv1.py
+git checkout ccbf9975fcf1676f6ac4f311e388529d3a3c4d3f sklearn/datasets/tests/test_20news.py sklearn/datasets/tests/test_base.py sklearn/datasets/tests/test_covtype.py sklearn/datasets/tests/test_kddcup99.py sklearn/datasets/tests/test_lfw.py sklearn/datasets/tests/test_rcv1.py
+rm -f sklearn/datasets/tests/test_california_housing.py sklearn/datasets/tests/test_common.py

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff d2ae3940a1a374253cc95d8fe83cb96f7a57e843
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout d2ae3940a1a374253cc95d8fe83cb96f7a57e843 requirements_test.txt script/test_bump_changelog.py tests/unittest_nodes.py
+git checkout d2ae3940a1a374253cc95d8fe83cb96f7a57e843 requirements_test.txt tests/unittest_nodes.py
+rm -f script/test_bump_changelog.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/requirements_test.txt b/requirements_test.txt
 --- a/requirements_test.txt
@@ -127,4 +128,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA script/test_bump_changelog.py tests/unittest_nodes.py
 : '>>>>> End Test Output'
-git checkout d2ae3940a1a374253cc95d8fe83cb96f7a57e843 requirements_test.txt script/test_bump_changelog.py tests/unittest_nodes.py
+git checkout d2ae3940a1a374253cc95d8fe83cb96f7a57e843 requirements_test.txt tests/unittest_nodes.py
+rm -f script/test_bump_changelog.py

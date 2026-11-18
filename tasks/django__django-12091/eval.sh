@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 5d654e1e7104d2ce86ec1b9fe52865a7dca4b4be
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 5d654e1e7104d2ce86ec1b9fe52865a7dca4b4be tests/requests/test_is_ajax_deprecations.py tests/view_tests/tests/test_debug.py tests/view_tests/tests/test_i18n.py
+git checkout 5d654e1e7104d2ce86ec1b9fe52865a7dca4b4be tests/view_tests/tests/test_debug.py tests/view_tests/tests/test_i18n.py
+rm -f tests/requests/test_is_ajax_deprecations.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/requests/test_is_ajax_deprecations.py b/tests/requests/test_is_ajax_deprecations.py
 new file mode 100644
@@ -150,4 +151,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 requests.test_is_ajax_deprecations view_tests.tests.test_debug view_tests.tests.test_i18n
 : '>>>>> End Test Output'
-git checkout 5d654e1e7104d2ce86ec1b9fe52865a7dca4b4be tests/requests/test_is_ajax_deprecations.py tests/view_tests/tests/test_debug.py tests/view_tests/tests/test_i18n.py
+git checkout 5d654e1e7104d2ce86ec1b9fe52865a7dca4b4be tests/view_tests/tests/test_debug.py tests/view_tests/tests/test_i18n.py
+rm -f tests/requests/test_is_ajax_deprecations.py

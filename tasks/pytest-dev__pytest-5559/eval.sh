@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 60a358fa2dc82a571c68d1be2d25703b51351538
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 60a358fa2dc82a571c68d1be2d25703b51351538 doc/en/example/nonpython/test_simple.yaml testing/python/raises.py testing/test_stepwise.py
+git checkout 60a358fa2dc82a571c68d1be2d25703b51351538 doc/en/example/nonpython/test_simple.yml testing/python/raises.py testing/test_stepwise.py
+rm -f doc/en/example/nonpython/test_simple.yaml
 git apply -v - <<'EOF_114329324912'
 diff --git a/doc/en/example/nonpython/test_simple.yml b/doc/en/example/nonpython/test_simple.yaml
 similarity index 75%
@@ -115,4 +116,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA testing/python/raises.py testing/test_stepwise.py
 : '>>>>> End Test Output'
-git checkout 60a358fa2dc82a571c68d1be2d25703b51351538 doc/en/example/nonpython/test_simple.yaml testing/python/raises.py testing/test_stepwise.py
+git checkout 60a358fa2dc82a571c68d1be2d25703b51351538 doc/en/example/nonpython/test_simple.yml testing/python/raises.py testing/test_stepwise.py
+rm -f doc/en/example/nonpython/test_simple.yaml

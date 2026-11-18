@@ -15,7 +15,8 @@ git -c core.fileMode=false diff c9bf1910e2c1a72244dbd1e3dd9a3ff7215b8b4a
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout c9bf1910e2c1a72244dbd1e3dd9a3ff7215b8b4a tests/flatpages_tests/absolute_urls.py tests/flatpages_tests/no_slash_urls.py tests/flatpages_tests/test_models.py tests/flatpages_tests/test_sitemaps.py tests/flatpages_tests/urls.py
+git checkout c9bf1910e2c1a72244dbd1e3dd9a3ff7215b8b4a tests/flatpages_tests/test_models.py tests/flatpages_tests/test_sitemaps.py tests/flatpages_tests/urls.py
+rm -f tests/flatpages_tests/absolute_urls.py tests/flatpages_tests/no_slash_urls.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/flatpages_tests/absolute_urls.py b/tests/flatpages_tests/absolute_urls.py
 new file mode 100644
@@ -95,4 +96,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 flatpages_tests.absolute_urls flatpages_tests.no_slash_urls flatpages_tests.test_models flatpages_tests.test_sitemaps flatpages_tests.urls
 : '>>>>> End Test Output'
-git checkout c9bf1910e2c1a72244dbd1e3dd9a3ff7215b8b4a tests/flatpages_tests/absolute_urls.py tests/flatpages_tests/no_slash_urls.py tests/flatpages_tests/test_models.py tests/flatpages_tests/test_sitemaps.py tests/flatpages_tests/urls.py
+git checkout c9bf1910e2c1a72244dbd1e3dd9a3ff7215b8b4a tests/flatpages_tests/test_models.py tests/flatpages_tests/test_sitemaps.py tests/flatpages_tests/urls.py
+rm -f tests/flatpages_tests/absolute_urls.py tests/flatpages_tests/no_slash_urls.py

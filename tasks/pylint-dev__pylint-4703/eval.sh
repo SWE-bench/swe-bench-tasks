@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 3a6f08e4a1155e5098c3bec2d779cb3e654a1b11
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 3a6f08e4a1155e5098c3bec2d779cb3e654a1b11 tests/input/func_noerror_cycle/__init__.py tests/input/func_noerror_cycle/a.py tests/input/func_noerror_cycle/b.py tests/messages/func_noerror_cycle.txt tests/test_func.py
+git checkout 3a6f08e4a1155e5098c3bec2d779cb3e654a1b11 tests/test_func.py
+rm -f tests/input/func_noerror_cycle/__init__.py tests/input/func_noerror_cycle/a.py tests/input/func_noerror_cycle/b.py tests/messages/func_noerror_cycle.txt
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/input/func_noerror_cycle/__init__.py b/tests/input/func_noerror_cycle/__init__.py
 new file mode 100644
@@ -65,4 +66,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/input/func_noerror_cycle/__init__.py tests/input/func_noerror_cycle/a.py tests/input/func_noerror_cycle/b.py tests/test_func.py
 : '>>>>> End Test Output'
-git checkout 3a6f08e4a1155e5098c3bec2d779cb3e654a1b11 tests/input/func_noerror_cycle/__init__.py tests/input/func_noerror_cycle/a.py tests/input/func_noerror_cycle/b.py tests/messages/func_noerror_cycle.txt tests/test_func.py
+git checkout 3a6f08e4a1155e5098c3bec2d779cb3e654a1b11 tests/test_func.py
+rm -f tests/input/func_noerror_cycle/__init__.py tests/input/func_noerror_cycle/a.py tests/input/func_noerror_cycle/b.py tests/messages/func_noerror_cycle.txt

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff cd4da34fc1f1df08f593e461b2f670bfd61d0d2f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout cd4da34fc1f1df08f593e461b2f670bfd61d0d2f tests/migrations/test_commands.py tests/migrations/test_migrations_noop/0001_initial.py tests/migrations/test_migrations_noop/__init__.py
+git checkout cd4da34fc1f1df08f593e461b2f670bfd61d0d2f tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_noop/0001_initial.py tests/migrations/test_migrations_noop/__init__.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
 --- a/tests/migrations/test_commands.py
@@ -297,4 +298,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 migrations.test_commands migrations.test_migrations_noop.0001_initial migrations.test_migrations_noop.__init__
 : '>>>>> End Test Output'
-git checkout cd4da34fc1f1df08f593e461b2f670bfd61d0d2f tests/migrations/test_commands.py tests/migrations/test_migrations_noop/0001_initial.py tests/migrations/test_migrations_noop/__init__.py
+git checkout cd4da34fc1f1df08f593e461b2f670bfd61d0d2f tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_noop/0001_initial.py tests/migrations/test_migrations_noop/__init__.py

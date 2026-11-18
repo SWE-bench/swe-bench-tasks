@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 2ddfa3e2b63d7a77270711dbe63aafb86abf4ddd
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 2ddfa3e2b63d7a77270711dbe63aafb86abf4ddd tests/check_framework/test_urls.py tests/check_framework/urls/path_compatibility/matched_angle_brackets.py tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py
+git checkout 2ddfa3e2b63d7a77270711dbe63aafb86abf4ddd tests/check_framework/test_urls.py
+rm -f tests/check_framework/urls/path_compatibility/matched_angle_brackets.py tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/check_framework/test_urls.py b/tests/check_framework/test_urls.py
 --- a/tests/check_framework/test_urls.py
@@ -92,4 +93,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 check_framework.test_urls check_framework.urls.path_compatibility.matched_angle_brackets check_framework.urls.path_compatibility.unmatched_angle_brackets
 : '>>>>> End Test Output'
-git checkout 2ddfa3e2b63d7a77270711dbe63aafb86abf4ddd tests/check_framework/test_urls.py tests/check_framework/urls/path_compatibility/matched_angle_brackets.py tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py
+git checkout 2ddfa3e2b63d7a77270711dbe63aafb86abf4ddd tests/check_framework/test_urls.py
+rm -f tests/check_framework/urls/path_compatibility/matched_angle_brackets.py tests/check_framework/urls/path_compatibility/unmatched_angle_brackets.py

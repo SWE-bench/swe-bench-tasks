@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 75500feecddcb27b6ab65c9057e7317024cef761
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 75500feecddcb27b6ab65c9057e7317024cef761 tests/staticfiles_tests/project/documents/staticfiles_v1.json tests/staticfiles_tests/test_storage.py
+git checkout 75500feecddcb27b6ab65c9057e7317024cef761 tests/staticfiles_tests/test_storage.py
+rm -f tests/staticfiles_tests/project/documents/staticfiles_v1.json
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/staticfiles_tests/project/documents/staticfiles_v1.json b/tests/staticfiles_tests/project/documents/staticfiles_v1.json
 new file mode 100644
@@ -98,4 +99,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 staticfiles_tests.test_storage
 : '>>>>> End Test Output'
-git checkout 75500feecddcb27b6ab65c9057e7317024cef761 tests/staticfiles_tests/project/documents/staticfiles_v1.json tests/staticfiles_tests/test_storage.py
+git checkout 75500feecddcb27b6ab65c9057e7317024cef761 tests/staticfiles_tests/test_storage.py
+rm -f tests/staticfiles_tests/project/documents/staticfiles_v1.json

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff ae506181f7fb9d9e74f4935686540bef29b60255
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout ae506181f7fb9d9e74f4935686540bef29b60255 tests/auth_tests/models/__init__.py tests/auth_tests/models/with_unique_constraint.py tests/auth_tests/test_management.py
+git checkout ae506181f7fb9d9e74f4935686540bef29b60255 tests/auth_tests/models/__init__.py tests/auth_tests/test_management.py
+rm -f tests/auth_tests/models/with_unique_constraint.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/auth_tests/models/__init__.py b/tests/auth_tests/models/__init__.py
 --- a/tests/auth_tests/models/__init__.py
@@ -117,4 +118,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 auth_tests.models.__init__ auth_tests.models.with_unique_constraint auth_tests.test_management
 : '>>>>> End Test Output'
-git checkout ae506181f7fb9d9e74f4935686540bef29b60255 tests/auth_tests/models/__init__.py tests/auth_tests/models/with_unique_constraint.py tests/auth_tests/test_management.py
+git checkout ae506181f7fb9d9e74f4935686540bef29b60255 tests/auth_tests/models/__init__.py tests/auth_tests/test_management.py
+rm -f tests/auth_tests/models/with_unique_constraint.py

@@ -63,10 +63,20 @@ def git_clone_timesafe(repo: str, base_commit: str, workdir: str) -> list[str]:
 
 
 def get_modified_files(patch: str) -> list[str]:
-    """Get the list of modified files in a patch."""
+    """Paths a patch touches that exist before it is applied (a rename's old path)."""
     from unidiff import PatchSet
 
     source_files = [
         f.source_file for f in PatchSet(patch) if f.source_file != "/dev/null"
     ]
     return [x[2:] for x in source_files if x.startswith("a/")]
+
+
+def get_new_files(patch: str) -> list[str]:
+    """Paths a patch creates: added files and the new path of a rename."""
+    from unidiff import PatchSet
+
+    target_files = [
+        f.target_file for f in PatchSet(patch) if f.is_added_file or f.is_rename
+    ]
+    return [x[2:] for x in target_files if x.startswith("b/")]

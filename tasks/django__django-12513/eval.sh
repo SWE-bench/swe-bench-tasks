@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 828e3b1335e2614d338a630fd5b5f88d38a6b5d2
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 828e3b1335e2614d338a630fd5b5f88d38a6b5d2 django/test/signals.py tests/dispatch/tests.py tests/signals/test_deprecation.py
+git checkout 828e3b1335e2614d338a630fd5b5f88d38a6b5d2 django/test/signals.py tests/dispatch/tests.py
+rm -f tests/signals/test_deprecation.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/django/test/signals.py b/django/test/signals.py
 --- a/django/test/signals.py
@@ -79,4 +80,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 django.test.signals dispatch.tests signals.test_deprecation
 : '>>>>> End Test Output'
-git checkout 828e3b1335e2614d338a630fd5b5f88d38a6b5d2 django/test/signals.py tests/dispatch/tests.py tests/signals/test_deprecation.py
+git checkout 828e3b1335e2614d338a630fd5b5f88d38a6b5d2 django/test/signals.py tests/dispatch/tests.py
+rm -f tests/signals/test_deprecation.py

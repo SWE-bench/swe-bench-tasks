@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 2694046c748a51125de6d460073635f1d789958e
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 2694046c748a51125de6d460073635f1d789958e xarray/tests/test_accessor_dt.py xarray/tests/test_calendar_ops.py xarray/tests/test_cftime_offsets.py xarray/tests/test_coding_times.py
+git checkout 2694046c748a51125de6d460073635f1d789958e xarray/tests/test_accessor_dt.py xarray/tests/test_cftime_offsets.py xarray/tests/test_coding_times.py
+rm -f xarray/tests/test_calendar_ops.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/xarray/tests/test_accessor_dt.py b/xarray/tests/test_accessor_dt.py
 --- a/xarray/tests/test_accessor_dt.py
@@ -499,4 +500,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA xarray/tests/test_accessor_dt.py xarray/tests/test_calendar_ops.py xarray/tests/test_cftime_offsets.py xarray/tests/test_coding_times.py
 : '>>>>> End Test Output'
-git checkout 2694046c748a51125de6d460073635f1d789958e xarray/tests/test_accessor_dt.py xarray/tests/test_calendar_ops.py xarray/tests/test_cftime_offsets.py xarray/tests/test_coding_times.py
+git checkout 2694046c748a51125de6d460073635f1d789958e xarray/tests/test_accessor_dt.py xarray/tests/test_cftime_offsets.py xarray/tests/test_coding_times.py
+rm -f xarray/tests/test_calendar_ops.py

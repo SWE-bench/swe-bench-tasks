@@ -15,7 +15,7 @@ git -c core.fileMode=false diff b996424199cca58f64b77faeaa367b7e7efb9776
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout b996424199cca58f64b77faeaa367b7e7efb9776 tests/backends/sqlite/test_features.py
+rm -f tests/backends/sqlite/test_features.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/backends/sqlite/test_features.py b/tests/backends/sqlite/test_features.py
 new file mode 100644
@@ -45,4 +45,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 backends.sqlite.test_features
 : '>>>>> End Test Output'
-git checkout b996424199cca58f64b77faeaa367b7e7efb9776 tests/backends/sqlite/test_features.py
+rm -f tests/backends/sqlite/test_features.py

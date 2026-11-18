@@ -11,7 +11,8 @@ git -c core.fileMode=false diff d2c8cd3c803b27537a4d6f871279fce93d503d82
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout d2c8cd3c803b27537a4d6f871279fce93d503d82 tests/roots/test-domain-py/canonical.rst tests/roots/test-domain-py/index.rst tests/test_domain_py.py
+git checkout d2c8cd3c803b27537a4d6f871279fce93d503d82 tests/roots/test-domain-py/index.rst tests/test_domain_py.py
+rm -f tests/roots/test-domain-py/canonical.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-domain-py/canonical.rst b/tests/roots/test-domain-py/canonical.rst
 new file mode 100644
@@ -63,4 +64,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-domain-py/canonical.rst tests/roots/test-domain-py/index.rst tests/test_domain_py.py
 : '>>>>> End Test Output'
-git checkout d2c8cd3c803b27537a4d6f871279fce93d503d82 tests/roots/test-domain-py/canonical.rst tests/roots/test-domain-py/index.rst tests/test_domain_py.py
+git checkout d2c8cd3c803b27537a4d6f871279fce93d503d82 tests/roots/test-domain-py/index.rst tests/test_domain_py.py
+rm -f tests/roots/test-domain-py/canonical.rst

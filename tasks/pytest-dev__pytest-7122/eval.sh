@@ -11,7 +11,8 @@ git -c core.fileMode=false diff be68496440508b760ba1f988bcc63d1d09ace206
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout be68496440508b760ba1f988bcc63d1d09ace206 testing/test_mark.py testing/test_mark_expression.py
+git checkout be68496440508b760ba1f988bcc63d1d09ace206 testing/test_mark.py
+rm -f testing/test_mark_expression.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/testing/test_mark.py b/testing/test_mark.py
 --- a/testing/test_mark.py
@@ -306,4 +307,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA testing/test_mark.py testing/test_mark_expression.py
 : '>>>>> End Test Output'
-git checkout be68496440508b760ba1f988bcc63d1d09ace206 testing/test_mark.py testing/test_mark_expression.py
+git checkout be68496440508b760ba1f988bcc63d1d09ace206 testing/test_mark.py
+rm -f testing/test_mark_expression.py

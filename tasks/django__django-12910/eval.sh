@@ -15,7 +15,8 @@ git -c core.fileMode=false diff a4e6030904df63b3f10aa0729b86dc6942b0458e
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout a4e6030904df63b3f10aa0729b86dc6942b0458e django/core/management/commands/test.py tests/admin_scripts/management/commands/app_command.py tests/admin_scripts/management/commands/base_command.py tests/admin_scripts/management/commands/label_command.py tests/admin_scripts/management/commands/noargs_command.py tests/admin_scripts/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/management/commands/no_system_checks.py tests/user_commands/management/commands/specific_system_checks.py tests/user_commands/tests.py
+git checkout a4e6030904df63b3f10aa0729b86dc6942b0458e django/core/management/commands/test.py tests/admin_scripts/management/commands/app_command.py tests/admin_scripts/management/commands/base_command.py tests/admin_scripts/management/commands/label_command.py tests/admin_scripts/management/commands/noargs_command.py tests/admin_scripts/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/no_system_checks.py tests/user_commands/management/commands/specific_system_checks.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/django/core/management/commands/test.py b/django/core/management/commands/test.py
 --- a/django/core/management/commands/test.py
@@ -272,4 +273,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 django.core.management.commands.test admin_scripts.management.commands.app_command admin_scripts.management.commands.base_command admin_scripts.management.commands.label_command admin_scripts.management.commands.noargs_command admin_scripts.tests user_commands.management.commands.dance user_commands.management.commands.no_system_checks user_commands.management.commands.specific_system_checks user_commands.tests
 : '>>>>> End Test Output'
-git checkout a4e6030904df63b3f10aa0729b86dc6942b0458e django/core/management/commands/test.py tests/admin_scripts/management/commands/app_command.py tests/admin_scripts/management/commands/base_command.py tests/admin_scripts/management/commands/label_command.py tests/admin_scripts/management/commands/noargs_command.py tests/admin_scripts/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/management/commands/no_system_checks.py tests/user_commands/management/commands/specific_system_checks.py tests/user_commands/tests.py
+git checkout a4e6030904df63b3f10aa0729b86dc6942b0458e django/core/management/commands/test.py tests/admin_scripts/management/commands/app_command.py tests/admin_scripts/management/commands/base_command.py tests/admin_scripts/management/commands/label_command.py tests/admin_scripts/management/commands/noargs_command.py tests/admin_scripts/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/no_system_checks.py tests/user_commands/management/commands/specific_system_checks.py

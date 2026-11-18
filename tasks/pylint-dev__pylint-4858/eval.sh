@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 676f484871a40bd0256e1cc68c28ea748a61acec
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 676f484871a40bd0256e1cc68c28ea748a61acec tests/checkers/unittest_similar.py tests/input/similar_cls_a.py tests/input/similar_cls_b.py
+git checkout 676f484871a40bd0256e1cc68c28ea748a61acec tests/checkers/unittest_similar.py
+rm -f tests/input/similar_cls_a.py tests/input/similar_cls_b.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
 --- a/tests/checkers/unittest_similar.py
@@ -161,4 +162,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/checkers/unittest_similar.py tests/input/similar_cls_a.py tests/input/similar_cls_b.py
 : '>>>>> End Test Output'
-git checkout 676f484871a40bd0256e1cc68c28ea748a61acec tests/checkers/unittest_similar.py tests/input/similar_cls_a.py tests/input/similar_cls_b.py
+git checkout 676f484871a40bd0256e1cc68c28ea748a61acec tests/checkers/unittest_similar.py
+rm -f tests/input/similar_cls_a.py tests/input/similar_cls_b.py

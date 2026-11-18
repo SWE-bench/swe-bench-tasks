@@ -15,7 +15,8 @@ git -c core.fileMode=false diff b9e2355eb07938829a1a31ed7b60e5f72d4b92e3
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout b9e2355eb07938829a1a31ed7b60e5f72d4b92e3 tests/dbshell/test_mysql.py tests/dbshell/test_oracle.py tests/dbshell/test_postgresql.py tests/dbshell/test_sqlite.py tests/dbshell/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+git checkout b9e2355eb07938829a1a31ed7b60e5f72d4b92e3 tests/dbshell/test_mysql.py tests/dbshell/test_oracle.py tests/dbshell/test_postgresql.py tests/dbshell/test_sqlite.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+rm -f tests/dbshell/tests.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/dbshell/test_mysql.py b/tests/dbshell/test_mysql.py
 --- a/tests/dbshell/test_mysql.py
@@ -223,4 +224,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 dbshell.test_mysql dbshell.test_oracle dbshell.test_postgresql dbshell.test_sqlite dbshell.tests user_commands.management.commands.dance user_commands.tests
 : '>>>>> End Test Output'
-git checkout b9e2355eb07938829a1a31ed7b60e5f72d4b92e3 tests/dbshell/test_mysql.py tests/dbshell/test_oracle.py tests/dbshell/test_postgresql.py tests/dbshell/test_sqlite.py tests/dbshell/tests.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+git checkout b9e2355eb07938829a1a31ed7b60e5f72d4b92e3 tests/dbshell/test_mysql.py tests/dbshell/test_oracle.py tests/dbshell/test_postgresql.py tests/dbshell/test_sqlite.py tests/user_commands/management/commands/dance.py tests/user_commands/tests.py
+rm -f tests/dbshell/tests.py

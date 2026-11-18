@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 37e8367c359cd115f109d82f99ff32be219f4928
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 37e8367c359cd115f109d82f99ff32be219f4928 tests/generic_views/forms.py tests/generic_views/test_edit.py tests/generic_views/urls.py tests/generic_views/views.py tests/messages_tests/models.py tests/messages_tests/test_mixins.py tests/messages_tests/urls.py
+git checkout 37e8367c359cd115f109d82f99ff32be219f4928 tests/generic_views/forms.py tests/generic_views/test_edit.py tests/generic_views/urls.py tests/generic_views/views.py tests/messages_tests/test_mixins.py tests/messages_tests/urls.py
+rm -f tests/messages_tests/models.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/generic_views/forms.py b/tests/generic_views/forms.py
 --- a/tests/generic_views/forms.py
@@ -182,4 +183,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 generic_views.forms generic_views.test_edit generic_views.urls generic_views.views messages_tests.models messages_tests.test_mixins messages_tests.urls
 : '>>>>> End Test Output'
-git checkout 37e8367c359cd115f109d82f99ff32be219f4928 tests/generic_views/forms.py tests/generic_views/test_edit.py tests/generic_views/urls.py tests/generic_views/views.py tests/messages_tests/models.py tests/messages_tests/test_mixins.py tests/messages_tests/urls.py
+git checkout 37e8367c359cd115f109d82f99ff32be219f4928 tests/generic_views/forms.py tests/generic_views/test_edit.py tests/generic_views/urls.py tests/generic_views/views.py tests/messages_tests/test_mixins.py tests/messages_tests/urls.py
+rm -f tests/messages_tests/models.py

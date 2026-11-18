@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 847f46e9bf88964484c8b76a10af753ea1018311
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 847f46e9bf88964484c8b76a10af753ea1018311 tests/migrations/test_commands.py tests/migrations/test_migrations_manual_porting/0003_third.py tests/migrations/test_migrations_manual_porting/0004_fourth.py
+git checkout 847f46e9bf88964484c8b76a10af753ea1018311 tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_manual_porting/0003_third.py tests/migrations/test_migrations_manual_porting/0004_fourth.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
 --- a/tests/migrations/test_commands.py
@@ -245,4 +246,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 migrations.test_commands migrations.test_migrations_manual_porting.0003_third migrations.test_migrations_manual_porting.0004_fourth
 : '>>>>> End Test Output'
-git checkout 847f46e9bf88964484c8b76a10af753ea1018311 tests/migrations/test_commands.py tests/migrations/test_migrations_manual_porting/0003_third.py tests/migrations/test_migrations_manual_porting/0004_fourth.py
+git checkout 847f46e9bf88964484c8b76a10af753ea1018311 tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_manual_porting/0003_third.py tests/migrations/test_migrations_manual_porting/0004_fourth.py

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 273a8b25620467c1e5686aa8d2a1dbb8c02c78d0
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 273a8b25620467c1e5686aa8d2a1dbb8c02c78d0 tests/lint/unittest_lint.py tests/regrtest_data/directory/ignored_subdirectory/failing.py tests/test_self.py
+git checkout 273a8b25620467c1e5686aa8d2a1dbb8c02c78d0 tests/lint/unittest_lint.py tests/test_self.py
+rm -f tests/regrtest_data/directory/ignored_subdirectory/failing.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
 --- a/tests/lint/unittest_lint.py
@@ -181,4 +182,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/lint/unittest_lint.py tests/regrtest_data/directory/ignored_subdirectory/failing.py tests/test_self.py
 : '>>>>> End Test Output'
-git checkout 273a8b25620467c1e5686aa8d2a1dbb8c02c78d0 tests/lint/unittest_lint.py tests/regrtest_data/directory/ignored_subdirectory/failing.py tests/test_self.py
+git checkout 273a8b25620467c1e5686aa8d2a1dbb8c02c78d0 tests/lint/unittest_lint.py tests/test_self.py
+rm -f tests/regrtest_data/directory/ignored_subdirectory/failing.py

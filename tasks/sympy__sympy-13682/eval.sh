@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 53fc684467088cdf0acccb6ad770cbde97e32268
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 53fc684467088cdf0acccb6ad770cbde97e32268 sympy/core/tests/test_args.py sympy/sets/tests/test_ordinals.py
+git checkout 53fc684467088cdf0acccb6ad770cbde97e32268 sympy/core/tests/test_args.py
+rm -f sympy/sets/tests/test_ordinals.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sympy/core/tests/test_args.py b/sympy/core/tests/test_args.py
 --- a/sympy/core/tests/test_args.py
@@ -105,4 +106,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 PYTHONWARNINGS='ignore::UserWarning,ignore::SyntaxWarning' bin/test -C --verbose sympy/core/tests/test_args.py sympy/sets/tests/test_ordinals.py
 : '>>>>> End Test Output'
-git checkout 53fc684467088cdf0acccb6ad770cbde97e32268 sympy/core/tests/test_args.py sympy/sets/tests/test_ordinals.py
+git checkout 53fc684467088cdf0acccb6ad770cbde97e32268 sympy/core/tests/test_args.py
+rm -f sympy/sets/tests/test_ordinals.py

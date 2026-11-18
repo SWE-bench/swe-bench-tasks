@@ -11,7 +11,7 @@ git -c core.fileMode=false diff f045401ca79ecd1b80a0da67f44404c4e208fe31
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout f045401ca79ecd1b80a0da67f44404c4e208fe31 xarray/tests/test_array_api.py
+rm -f xarray/tests/test_array_api.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/xarray/tests/test_array_api.py b/xarray/tests/test_array_api.py
 new file mode 100644
@@ -74,4 +74,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA xarray/tests/test_array_api.py
 : '>>>>> End Test Output'
-git checkout f045401ca79ecd1b80a0da67f44404c4e208fe31 xarray/tests/test_array_api.py
+rm -f xarray/tests/test_array_api.py

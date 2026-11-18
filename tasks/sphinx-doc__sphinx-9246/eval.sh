@@ -11,7 +11,7 @@ git -c core.fileMode=false diff 630e5bd15f43c6cd91e61723f40b6c94ef622060
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 630e5bd15f43c6cd91e61723f40b6c94ef622060 tests/roots/test-transforms-post_transforms-missing-reference/conf.py tests/roots/test-transforms-post_transforms-missing-reference/index.rst tests/test_transforms_post_transforms.py
+rm -f tests/roots/test-transforms-post_transforms-missing-reference/conf.py tests/roots/test-transforms-post_transforms-missing-reference/index.rst tests/test_transforms_post_transforms.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-transforms-post_transforms-missing-reference/conf.py b/tests/roots/test-transforms-post_transforms-missing-reference/conf.py
 new file mode 100644
@@ -97,4 +97,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-transforms-post_transforms-missing-reference/conf.py tests/roots/test-transforms-post_transforms-missing-reference/index.rst tests/test_transforms_post_transforms.py
 : '>>>>> End Test Output'
-git checkout 630e5bd15f43c6cd91e61723f40b6c94ef622060 tests/roots/test-transforms-post_transforms-missing-reference/conf.py tests/roots/test-transforms-post_transforms-missing-reference/index.rst tests/test_transforms_post_transforms.py
+rm -f tests/roots/test-transforms-post_transforms-missing-reference/conf.py tests/roots/test-transforms-post_transforms-missing-reference/index.rst tests/test_transforms_post_transforms.py

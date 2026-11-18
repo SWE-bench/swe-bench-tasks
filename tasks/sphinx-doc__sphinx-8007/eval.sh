@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 9175da437ed84e43b00ed4c28ccfe629260d3c13
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 9175da437ed84e43b00ed4c28ccfe629260d3c13 tests/roots/test-ext-autodoc/target/annotations.py tests/test_ext_autodoc_configs.py
+git checkout 9175da437ed84e43b00ed4c28ccfe629260d3c13 tests/test_ext_autodoc_configs.py
+rm -f tests/roots/test-ext-autodoc/target/annotations.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-ext-autodoc/target/annotations.py b/tests/roots/test-ext-autodoc/target/annotations.py
 new file mode 100644
@@ -106,4 +107,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-ext-autodoc/target/annotations.py tests/test_ext_autodoc_configs.py
 : '>>>>> End Test Output'
-git checkout 9175da437ed84e43b00ed4c28ccfe629260d3c13 tests/roots/test-ext-autodoc/target/annotations.py tests/test_ext_autodoc_configs.py
+git checkout 9175da437ed84e43b00ed4c28ccfe629260d3c13 tests/test_ext_autodoc_configs.py
+rm -f tests/roots/test-ext-autodoc/target/annotations.py

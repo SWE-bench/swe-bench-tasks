@@ -11,7 +11,7 @@ git -c core.fileMode=false diff 51407623e4f491f00e3b465626dd5c4b55860bd0
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -v --no-use-pep517 --no-build-isolation -e .
-git checkout 51407623e4f491f00e3b465626dd5c4b55860bd0 sklearn/utils/tests/test_print_versions.py
+rm -f sklearn/utils/tests/test_print_versions.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sklearn/utils/tests/test_print_versions.py b/sklearn/utils/tests/test_print_versions.py
 new file mode 100644
@@ -55,4 +55,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA sklearn/utils/tests/test_print_versions.py
 : '>>>>> End Test Output'
-git checkout 51407623e4f491f00e3b465626dd5c4b55860bd0 sklearn/utils/tests/test_print_versions.py
+rm -f sklearn/utils/tests/test_print_versions.py

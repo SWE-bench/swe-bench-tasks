@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 487b8436c6e8dc596db4b8d4d06e9145105a2ac2
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 487b8436c6e8dc596db4b8d4d06e9145105a2ac2 tests/roots/test-domain-py-xref-warning/conf.py tests/roots/test-domain-py-xref-warning/index.rst tests/test_domain_py.py
+git checkout 487b8436c6e8dc596db4b8d4d06e9145105a2ac2 tests/test_domain_py.py
+rm -f tests/roots/test-domain-py-xref-warning/conf.py tests/roots/test-domain-py-xref-warning/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-domain-py-xref-warning/conf.py b/tests/roots/test-domain-py-xref-warning/conf.py
 new file mode 100644
@@ -47,4 +48,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-domain-py-xref-warning/conf.py tests/roots/test-domain-py-xref-warning/index.rst tests/test_domain_py.py
 : '>>>>> End Test Output'
-git checkout 487b8436c6e8dc596db4b8d4d06e9145105a2ac2 tests/roots/test-domain-py-xref-warning/conf.py tests/roots/test-domain-py-xref-warning/index.rst tests/test_domain_py.py
+git checkout 487b8436c6e8dc596db4b8d4d06e9145105a2ac2 tests/test_domain_py.py
+rm -f tests/roots/test-domain-py-xref-warning/conf.py tests/roots/test-domain-py-xref-warning/index.rst

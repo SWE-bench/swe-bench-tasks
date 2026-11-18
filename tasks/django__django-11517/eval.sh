@@ -15,7 +15,8 @@ git -c core.fileMode=false diff f03b7bd11461e8b525c27d5344f8cd3a21c9565e
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout f03b7bd11461e8b525c27d5344f8cd3a21c9565e tests/user_commands/management/commands/subparser_dest.py tests/user_commands/management/commands/subparser_required.py tests/user_commands/tests.py
+git checkout f03b7bd11461e8b525c27d5344f8cd3a21c9565e tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/subparser_dest.py tests/user_commands/management/commands/subparser_required.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/user_commands/management/commands/subparser_dest.py b/tests/user_commands/management/commands/subparser_dest.py
 new file mode 100644
@@ -104,4 +105,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 user_commands.management.commands.subparser_dest user_commands.management.commands.subparser_required user_commands.tests
 : '>>>>> End Test Output'
-git checkout f03b7bd11461e8b525c27d5344f8cd3a21c9565e tests/user_commands/management/commands/subparser_dest.py tests/user_commands/management/commands/subparser_required.py tests/user_commands/tests.py
+git checkout f03b7bd11461e8b525c27d5344f8cd3a21c9565e tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/subparser_dest.py tests/user_commands/management/commands/subparser_required.py

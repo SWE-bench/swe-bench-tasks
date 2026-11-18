@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 7b9596b974fb0ad1868b10c8c2174e10b72be403
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 7b9596b974fb0ad1868b10c8c2174e10b72be403 tests/backends/base/app_unmigrated/__init__.py tests/backends/base/app_unmigrated/migrations/0001_initial.py tests/backends/base/app_unmigrated/migrations/__init__.py tests/backends/base/app_unmigrated/models.py tests/backends/base/test_creation.py
+git checkout 7b9596b974fb0ad1868b10c8c2174e10b72be403 tests/backends/base/test_creation.py
+rm -f tests/backends/base/app_unmigrated/__init__.py tests/backends/base/app_unmigrated/migrations/0001_initial.py tests/backends/base/app_unmigrated/migrations/__init__.py tests/backends/base/app_unmigrated/models.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/backends/base/app_unmigrated/__init__.py b/tests/backends/base/app_unmigrated/__init__.py
 new file mode 100644
@@ -135,4 +136,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 backends.base.app_unmigrated.__init__ backends.base.app_unmigrated.migrations.0001_initial backends.base.app_unmigrated.migrations.__init__ backends.base.app_unmigrated.models backends.base.test_creation
 : '>>>>> End Test Output'
-git checkout 7b9596b974fb0ad1868b10c8c2174e10b72be403 tests/backends/base/app_unmigrated/__init__.py tests/backends/base/app_unmigrated/migrations/0001_initial.py tests/backends/base/app_unmigrated/migrations/__init__.py tests/backends/base/app_unmigrated/models.py tests/backends/base/test_creation.py
+git checkout 7b9596b974fb0ad1868b10c8c2174e10b72be403 tests/backends/base/test_creation.py
+rm -f tests/backends/base/app_unmigrated/__init__.py tests/backends/base/app_unmigrated/migrations/0001_initial.py tests/backends/base/app_unmigrated/migrations/__init__.py tests/backends/base/app_unmigrated/models.py

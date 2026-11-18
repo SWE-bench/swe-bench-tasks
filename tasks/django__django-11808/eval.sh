@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 67e7dffe9543aff259f63c8f12d15642fe7be100
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 67e7dffe9543aff259f63c8f12d15642fe7be100 tests/basic/tests.py tests/constraints/tests.py tests/expressions/tests.py tests/filtered_relation/tests.py tests/messages_tests/tests.py tests/model_indexes/tests.py tests/postgres_tests/test_constraints.py tests/prefetch_related/tests.py tests/template_tests/test_context.py tests/validators/tests.py
+git checkout 67e7dffe9543aff259f63c8f12d15642fe7be100 tests/basic/tests.py tests/constraints/tests.py tests/expressions/tests.py tests/filtered_relation/tests.py tests/model_indexes/tests.py tests/postgres_tests/test_constraints.py tests/prefetch_related/tests.py tests/template_tests/test_context.py tests/validators/tests.py
+rm -f tests/messages_tests/tests.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/basic/tests.py b/tests/basic/tests.py
 --- a/tests/basic/tests.py
@@ -222,4 +223,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 basic.tests constraints.tests expressions.tests filtered_relation.tests messages_tests.tests model_indexes.tests postgres_tests.test_constraints prefetch_related.tests template_tests.test_context validators.tests
 : '>>>>> End Test Output'
-git checkout 67e7dffe9543aff259f63c8f12d15642fe7be100 tests/basic/tests.py tests/constraints/tests.py tests/expressions/tests.py tests/filtered_relation/tests.py tests/messages_tests/tests.py tests/model_indexes/tests.py tests/postgres_tests/test_constraints.py tests/prefetch_related/tests.py tests/template_tests/test_context.py tests/validators/tests.py
+git checkout 67e7dffe9543aff259f63c8f12d15642fe7be100 tests/basic/tests.py tests/constraints/tests.py tests/expressions/tests.py tests/filtered_relation/tests.py tests/model_indexes/tests.py tests/postgres_tests/test_constraints.py tests/prefetch_related/tests.py tests/template_tests/test_context.py tests/validators/tests.py
+rm -f tests/messages_tests/tests.py

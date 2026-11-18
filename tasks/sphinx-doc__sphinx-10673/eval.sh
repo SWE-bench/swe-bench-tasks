@@ -11,7 +11,8 @@ git -c core.fileMode=false diff f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8 tests/roots/test-toctree-index/conf.py tests/roots/test-toctree-index/foo.rst tests/roots/test-toctree-index/index.rst tests/test_environment_toctree.py
+git checkout f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8 tests/test_environment_toctree.py
+rm -f tests/roots/test-toctree-index/conf.py tests/roots/test-toctree-index/foo.rst tests/roots/test-toctree-index/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-toctree-index/conf.py b/tests/roots/test-toctree-index/conf.py
 new file mode 100644
@@ -74,4 +75,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-toctree-index/conf.py tests/roots/test-toctree-index/foo.rst tests/roots/test-toctree-index/index.rst tests/test_environment_toctree.py
 : '>>>>> End Test Output'
-git checkout f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8 tests/roots/test-toctree-index/conf.py tests/roots/test-toctree-index/foo.rst tests/roots/test-toctree-index/index.rst tests/test_environment_toctree.py
+git checkout f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8 tests/test_environment_toctree.py
+rm -f tests/roots/test-toctree-index/conf.py tests/roots/test-toctree-index/foo.rst tests/roots/test-toctree-index/index.rst

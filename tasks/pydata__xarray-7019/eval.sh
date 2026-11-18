@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 964d350a80fe21d4babf939c108986d5fd90a2cf
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 964d350a80fe21d4babf939c108986d5fd90a2cf xarray/tests/test_dask.py xarray/tests/test_parallelcompat.py xarray/tests/test_plugins.py
+git checkout 964d350a80fe21d4babf939c108986d5fd90a2cf xarray/tests/test_dask.py xarray/tests/test_plugins.py
+rm -f xarray/tests/test_parallelcompat.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/xarray/tests/test_dask.py b/xarray/tests/test_dask.py
 --- a/xarray/tests/test_dask.py
@@ -275,4 +276,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA xarray/tests/test_dask.py xarray/tests/test_parallelcompat.py xarray/tests/test_plugins.py
 : '>>>>> End Test Output'
-git checkout 964d350a80fe21d4babf939c108986d5fd90a2cf xarray/tests/test_dask.py xarray/tests/test_parallelcompat.py xarray/tests/test_plugins.py
+git checkout 964d350a80fe21d4babf939c108986d5fd90a2cf xarray/tests/test_dask.py xarray/tests/test_plugins.py
+rm -f xarray/tests/test_parallelcompat.py

@@ -15,7 +15,8 @@ git -c core.fileMode=false diff c2f381ef17058e5cfea58ae507983d2e459a2888
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout c2f381ef17058e5cfea58ae507983d2e459a2888 tests/empty_models/__init__.py tests/empty_models/models.py tests/empty_models/test_commands.py tests/migrations/test_commands.py tests/migrations/test_migrations_no_operations/0001_initial.py tests/migrations/test_migrations_no_operations/__init__.py
+git checkout c2f381ef17058e5cfea58ae507983d2e459a2888 tests/migrations/test_commands.py
+rm -f tests/empty_models/__init__.py tests/empty_models/models.py tests/empty_models/test_commands.py tests/migrations/test_migrations_no_operations/0001_initial.py tests/migrations/test_migrations_no_operations/__init__.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/empty_models/__init__.py b/tests/empty_models/__init__.py
 new file mode 100644
@@ -78,4 +79,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 empty_models.__init__ empty_models.models empty_models.test_commands migrations.test_commands migrations.test_migrations_no_operations.0001_initial migrations.test_migrations_no_operations.__init__
 : '>>>>> End Test Output'
-git checkout c2f381ef17058e5cfea58ae507983d2e459a2888 tests/empty_models/__init__.py tests/empty_models/models.py tests/empty_models/test_commands.py tests/migrations/test_commands.py tests/migrations/test_migrations_no_operations/0001_initial.py tests/migrations/test_migrations_no_operations/__init__.py
+git checkout c2f381ef17058e5cfea58ae507983d2e459a2888 tests/migrations/test_commands.py
+rm -f tests/empty_models/__init__.py tests/empty_models/models.py tests/empty_models/test_commands.py tests/migrations/test_migrations_no_operations/0001_initial.py tests/migrations/test_migrations_no_operations/__init__.py

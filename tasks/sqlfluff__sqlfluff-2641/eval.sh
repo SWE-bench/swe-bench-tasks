@@ -11,7 +11,8 @@ git -c core.fileMode=false diff b0ad239095b3cefb294c1b12c73c41e9f229aa81
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout b0ad239095b3cefb294c1b12c73c41e9f229aa81 test/fixtures/rules/std_rule_cases/L045.yml test/rules/std_L045_test.py
+git checkout b0ad239095b3cefb294c1b12c73c41e9f229aa81 test/fixtures/rules/std_rule_cases/L045.yml
+rm -f test/rules/std_L045_test.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/fixtures/rules/std_rule_cases/L045.yml b/test/fixtures/rules/std_rule_cases/L045.yml
 --- a/test/fixtures/rules/std_rule_cases/L045.yml
@@ -86,4 +87,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/rules/std_L045_test.py
 : '>>>>> End Test Output'
-git checkout b0ad239095b3cefb294c1b12c73c41e9f229aa81 test/fixtures/rules/std_rule_cases/L045.yml test/rules/std_L045_test.py
+git checkout b0ad239095b3cefb294c1b12c73c41e9f229aa81 test/fixtures/rules/std_rule_cases/L045.yml
+rm -f test/rules/std_L045_test.py

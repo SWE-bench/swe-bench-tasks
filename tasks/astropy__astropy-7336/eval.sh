@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 732d89c2940156bdc0e200bb36dc38b5e424bcba
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test] --verbose
-git checkout 732d89c2940156bdc0e200bb36dc38b5e424bcba astropy/units/tests/test_quantity_annotations.py astropy/units/tests/test_quantity_decorator.py
+git checkout 732d89c2940156bdc0e200bb36dc38b5e424bcba astropy/units/tests/py3_test_quantity_annotations.py astropy/units/tests/test_quantity_decorator.py
+rm -f astropy/units/tests/test_quantity_annotations.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/astropy/units/tests/py3_test_quantity_annotations.py b/astropy/units/tests/test_quantity_annotations.py
 similarity index 60%
@@ -353,4 +354,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA -vv -o console_output_style=classic --tb=no astropy/units/tests/test_quantity_annotations.py astropy/units/tests/test_quantity_decorator.py
 : '>>>>> End Test Output'
-git checkout 732d89c2940156bdc0e200bb36dc38b5e424bcba astropy/units/tests/test_quantity_annotations.py astropy/units/tests/test_quantity_decorator.py
+git checkout 732d89c2940156bdc0e200bb36dc38b5e424bcba astropy/units/tests/py3_test_quantity_annotations.py astropy/units/tests/test_quantity_decorator.py
+rm -f astropy/units/tests/test_quantity_annotations.py

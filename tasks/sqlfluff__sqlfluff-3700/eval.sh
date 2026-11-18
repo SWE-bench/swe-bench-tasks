@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 1000cf1beae75186cadf3a586c87e86e9f30ecb2
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 1000cf1beae75186cadf3a586c87e86e9f30ecb2 test/fixtures/rules/std_rule_cases/L042.yml test/utils/analysis/test_select_crawler.py
+git checkout 1000cf1beae75186cadf3a586c87e86e9f30ecb2 test/fixtures/rules/std_rule_cases/L042.yml
+rm -f test/utils/analysis/test_select_crawler.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/fixtures/rules/std_rule_cases/L042.yml b/test/fixtures/rules/std_rule_cases/L042.yml
 --- a/test/fixtures/rules/std_rule_cases/L042.yml
@@ -336,4 +337,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/utils/analysis/test_select_crawler.py
 : '>>>>> End Test Output'
-git checkout 1000cf1beae75186cadf3a586c87e86e9f30ecb2 test/fixtures/rules/std_rule_cases/L042.yml test/utils/analysis/test_select_crawler.py
+git checkout 1000cf1beae75186cadf3a586c87e86e9f30ecb2 test/fixtures/rules/std_rule_cases/L042.yml
+rm -f test/utils/analysis/test_select_crawler.py

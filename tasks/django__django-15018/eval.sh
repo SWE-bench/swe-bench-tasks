@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 1feb55d60736011ee94fbff9ba0c1c25acfd0b14
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 1feb55d60736011ee94fbff9ba0c1c25acfd0b14 tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py tests/user_commands/tests.py
+git checkout 1feb55d60736011ee94fbff9ba0c1c25acfd0b14 tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py b/tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py
 new file mode 100644
@@ -81,4 +82,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 user_commands.management.commands.mutually_exclusive_required_with_same_dest user_commands.tests
 : '>>>>> End Test Output'
-git checkout 1feb55d60736011ee94fbff9ba0c1c25acfd0b14 tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py tests/user_commands/tests.py
+git checkout 1feb55d60736011ee94fbff9ba0c1c25acfd0b14 tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/mutually_exclusive_required_with_same_dest.py

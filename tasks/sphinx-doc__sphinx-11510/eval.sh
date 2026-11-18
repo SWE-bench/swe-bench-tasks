@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 6cb783c0024a873722952a67ebb9f41771c8eb6d
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 6cb783c0024a873722952a67ebb9f41771c8eb6d tests/roots/test-directive-include/baz/baz.rst tests/roots/test-directive-include/conf.py tests/roots/test-directive-include/foo.rst tests/roots/test-directive-include/text.txt tests/test_directive_other.py
+git checkout 6cb783c0024a873722952a67ebb9f41771c8eb6d tests/test_directive_other.py
+rm -f tests/roots/test-directive-include/baz/baz.rst tests/roots/test-directive-include/conf.py tests/roots/test-directive-include/foo.rst tests/roots/test-directive-include/text.txt
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-directive-include/baz/baz.rst b/tests/roots/test-directive-include/baz/baz.rst
 new file mode 100644
@@ -93,4 +94,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-directive-include/baz/baz.rst tests/roots/test-directive-include/conf.py tests/roots/test-directive-include/foo.rst tests/test_directive_other.py
 : '>>>>> End Test Output'
-git checkout 6cb783c0024a873722952a67ebb9f41771c8eb6d tests/roots/test-directive-include/baz/baz.rst tests/roots/test-directive-include/conf.py tests/roots/test-directive-include/foo.rst tests/roots/test-directive-include/text.txt tests/test_directive_other.py
+git checkout 6cb783c0024a873722952a67ebb9f41771c8eb6d tests/test_directive_other.py
+rm -f tests/roots/test-directive-include/baz/baz.rst tests/roots/test-directive-include/conf.py tests/roots/test-directive-include/foo.rst tests/roots/test-directive-include/text.txt

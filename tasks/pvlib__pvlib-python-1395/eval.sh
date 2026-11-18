@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 26579bec7e65296223503b9e05da4af914af6777
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[all]
-git checkout 26579bec7e65296223503b9e05da4af914af6777 pvlib/data/test_read_pvgis_horizon.csv pvlib/tests/iotools/test_pvgis.py
+git checkout 26579bec7e65296223503b9e05da4af914af6777 pvlib/tests/iotools/test_pvgis.py
+rm -f pvlib/data/test_read_pvgis_horizon.csv
 git apply -v - <<'EOF_114329324912'
 diff --git a/pvlib/data/test_read_pvgis_horizon.csv b/pvlib/data/test_read_pvgis_horizon.csv
 new file mode 100644
@@ -110,4 +111,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA pvlib/tests/iotools/test_pvgis.py
 : '>>>>> End Test Output'
-git checkout 26579bec7e65296223503b9e05da4af914af6777 pvlib/data/test_read_pvgis_horizon.csv pvlib/tests/iotools/test_pvgis.py
+git checkout 26579bec7e65296223503b9e05da4af914af6777 pvlib/tests/iotools/test_pvgis.py
+rm -f pvlib/data/test_read_pvgis_horizon.csv
