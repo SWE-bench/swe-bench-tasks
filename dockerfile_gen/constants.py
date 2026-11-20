@@ -1090,6 +1090,10 @@ MAP_REPO_TO_PARSER_NAME = {
 #   dockerfile_post lines appended to the Dockerfile (needs an image rebuild)
 #   why             why the instance needs it
 INSTANCE_OVERRIDES: dict[str, dict] = {
+    "pvlib__pvlib-python-1606": {
+        "eval_pre": ["python -m pip install -q 'numpy<2' || exit $?"],
+        "why": "pvlib uses np.Inf during import; NumPy 2 removed the alias",
+    },
     "astropy__astropy-8872": {
         "eval_pre": ["export SETUPTOOLS_USE_DISTUTILS=stdlib"],
         "why": (

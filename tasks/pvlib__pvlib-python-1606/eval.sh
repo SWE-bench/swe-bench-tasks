@@ -41,6 +41,7 @@ diff --git a/pvlib/tests/test_tools.py b/pvlib/tests/test_tools.py
  def test__golden_sect_DataFrame_nans():
 
 EOF_114329324912
+python -m pip install -q 'numpy<2' || exit $?
 : '>>>>> Start Test Output'
 pytest -rA pvlib/tests/test_tools.py
 : '>>>>> End Test Output'
