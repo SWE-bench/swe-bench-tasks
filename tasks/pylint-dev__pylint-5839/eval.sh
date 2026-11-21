@@ -11,7 +11,7 @@ git -c core.fileMode=false diff 15040ee7c42958606ae27aa32ccbe54371b83049
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 15040ee7c42958606ae27aa32ccbe54371b83049 tests/message/test_no_removed_msgid_or_symbol_used.py
+rm -f tests/message/test_no_removed_msgid_or_symbol_used.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/message/test_no_removed_msgid_or_symbol_used.py b/tests/message/test_no_removed_msgid_or_symbol_used.py
 new file mode 100644
@@ -40,4 +40,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/message/test_no_removed_msgid_or_symbol_used.py
 : '>>>>> End Test Output'
-git checkout 15040ee7c42958606ae27aa32ccbe54371b83049 tests/message/test_no_removed_msgid_or_symbol_used.py
+rm -f tests/message/test_no_removed_msgid_or_symbol_used.py

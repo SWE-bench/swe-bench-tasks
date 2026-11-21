@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 859cd7c6b43bf70e2852eda10f635c70feeb397f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 859cd7c6b43bf70e2852eda10f635c70feeb397f tests/template_tests/test_autoreloader.py tests/template_tests/test_loaders.py tests/utils_tests/test_autoreload.py
+git checkout 859cd7c6b43bf70e2852eda10f635c70feeb397f tests/template_tests/test_loaders.py tests/utils_tests/test_autoreload.py
+rm -f tests/template_tests/test_autoreloader.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/template_tests/test_autoreloader.py b/tests/template_tests/test_autoreloader.py
 new file mode 100644
@@ -172,4 +173,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 template_tests.test_autoreloader template_tests.test_loaders utils_tests.test_autoreload
 : '>>>>> End Test Output'
-git checkout 859cd7c6b43bf70e2852eda10f635c70feeb397f tests/template_tests/test_autoreloader.py tests/template_tests/test_loaders.py tests/utils_tests/test_autoreload.py
+git checkout 859cd7c6b43bf70e2852eda10f635c70feeb397f tests/template_tests/test_loaders.py tests/utils_tests/test_autoreload.py
+rm -f tests/template_tests/test_autoreloader.py

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 4c288bc97ea371817199908d0d9b12de9dae327e
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 4c288bc97ea371817199908d0d9b12de9dae327e tests/static/config.toml tests/test_config.py
+git checkout 4c288bc97ea371817199908d0d9b12de9dae327e tests/test_config.py
+rm -f tests/static/config.toml
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/static/config.toml b/tests/static/config.toml
 new file mode 100644
@@ -61,4 +62,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/test_config.py
 : '>>>>> End Test Output'
-git checkout 4c288bc97ea371817199908d0d9b12de9dae327e tests/static/config.toml tests/test_config.py
+git checkout 4c288bc97ea371817199908d0d9b12de9dae327e tests/test_config.py
+rm -f tests/static/config.toml

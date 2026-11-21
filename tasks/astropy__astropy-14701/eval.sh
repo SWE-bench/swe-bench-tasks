@@ -11,7 +11,8 @@ git -c core.fileMode=false diff a429c3984a14c995584455e51a6f3d7d9c16e914
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test] --verbose
-git checkout a429c3984a14c995584455e51a6f3d7d9c16e914 astropy/cosmology/io/tests/test_latex.py astropy/cosmology/tests/test_connect.py
+git checkout a429c3984a14c995584455e51a6f3d7d9c16e914 astropy/cosmology/tests/test_connect.py
+rm -f astropy/cosmology/io/tests/test_latex.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/astropy/cosmology/io/tests/test_latex.py b/astropy/cosmology/io/tests/test_latex.py
 new file mode 100644
@@ -164,4 +165,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA astropy/cosmology/io/tests/test_latex.py astropy/cosmology/tests/test_connect.py
 : '>>>>> End Test Output'
-git checkout a429c3984a14c995584455e51a6f3d7d9c16e914 astropy/cosmology/io/tests/test_latex.py astropy/cosmology/tests/test_connect.py
+git checkout a429c3984a14c995584455e51a6f3d7d9c16e914 astropy/cosmology/tests/test_connect.py
+rm -f astropy/cosmology/io/tests/test_latex.py

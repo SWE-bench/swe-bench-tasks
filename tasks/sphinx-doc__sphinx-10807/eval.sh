@@ -11,7 +11,8 @@ git -c core.fileMode=false diff ded734d5f99756033218d29c32758049adbe52d2
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout ded734d5f99756033218d29c32758049adbe52d2 tests/roots/test-toctree-domain-objects/conf.py tests/roots/test-toctree-domain-objects/domains.rst tests/roots/test-toctree-domain-objects/index.rst tests/test_environment_toctree.py tests/test_ext_autodoc_automodule.py
+git checkout ded734d5f99756033218d29c32758049adbe52d2 tests/test_environment_toctree.py tests/test_ext_autodoc_automodule.py
+rm -f tests/roots/test-toctree-domain-objects/conf.py tests/roots/test-toctree-domain-objects/domains.rst tests/roots/test-toctree-domain-objects/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-toctree-domain-objects/conf.py b/tests/roots/test-toctree-domain-objects/conf.py
 new file mode 100644
@@ -145,4 +146,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-toctree-domain-objects/conf.py tests/roots/test-toctree-domain-objects/domains.rst tests/roots/test-toctree-domain-objects/index.rst tests/test_environment_toctree.py tests/test_ext_autodoc_automodule.py
 : '>>>>> End Test Output'
-git checkout ded734d5f99756033218d29c32758049adbe52d2 tests/roots/test-toctree-domain-objects/conf.py tests/roots/test-toctree-domain-objects/domains.rst tests/roots/test-toctree-domain-objects/index.rst tests/test_environment_toctree.py tests/test_ext_autodoc_automodule.py
+git checkout ded734d5f99756033218d29c32758049adbe52d2 tests/test_environment_toctree.py tests/test_ext_autodoc_automodule.py
+rm -f tests/roots/test-toctree-domain-objects/conf.py tests/roots/test-toctree-domain-objects/domains.rst tests/roots/test-toctree-domain-objects/index.rst

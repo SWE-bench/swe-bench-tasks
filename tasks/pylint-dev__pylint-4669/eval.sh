@@ -11,7 +11,8 @@ git -c core.fileMode=false diff c2d03c6b3881a9df7353432b109523984adf06f9
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout c2d03c6b3881a9df7353432b109523984adf06f9 tests/checkers/unittest_similar.py tests/input/similar_empty_func_1.py tests/input/similar_empty_func_2.py
+git checkout c2d03c6b3881a9df7353432b109523984adf06f9 tests/checkers/unittest_similar.py
+rm -f tests/input/similar_empty_func_1.py tests/input/similar_empty_func_2.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
 --- a/tests/checkers/unittest_similar.py
@@ -99,4 +100,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/checkers/unittest_similar.py tests/input/similar_empty_func_1.py tests/input/similar_empty_func_2.py
 : '>>>>> End Test Output'
-git checkout c2d03c6b3881a9df7353432b109523984adf06f9 tests/checkers/unittest_similar.py tests/input/similar_empty_func_1.py tests/input/similar_empty_func_2.py
+git checkout c2d03c6b3881a9df7353432b109523984adf06f9 tests/checkers/unittest_similar.py
+rm -f tests/input/similar_empty_func_1.py tests/input/similar_empty_func_2.py

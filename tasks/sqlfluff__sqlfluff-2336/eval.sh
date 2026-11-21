@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 37a993f7ad841ab3035d1db5ce6525f2e5584fd5
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 37a993f7ad841ab3035d1db5ce6525f2e5584fd5 test/core/rules/reference_test.py test/fixtures/rules/std_rule_cases/L026.yml
+git checkout 37a993f7ad841ab3035d1db5ce6525f2e5584fd5 test/fixtures/rules/std_rule_cases/L026.yml
+rm -f test/core/rules/reference_test.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/core/rules/reference_test.py b/test/core/rules/reference_test.py
 new file mode 100644
@@ -163,4 +164,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/core/rules/reference_test.py
 : '>>>>> End Test Output'
-git checkout 37a993f7ad841ab3035d1db5ce6525f2e5584fd5 test/core/rules/reference_test.py test/fixtures/rules/std_rule_cases/L026.yml
+git checkout 37a993f7ad841ab3035d1db5ce6525f2e5584fd5 test/fixtures/rules/std_rule_cases/L026.yml
+rm -f test/core/rules/reference_test.py

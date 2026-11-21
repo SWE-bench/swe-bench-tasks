@@ -11,7 +11,8 @@ git -c core.fileMode=false diff efb34f2b84c9f019ffceacef3448d8351563b6a2
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout efb34f2b84c9f019ffceacef3448d8351563b6a2 tests/brain/test_brain.py tests/brain/test_qt.py tests/test_inference.py tests/test_nodes.py tests/test_nodes_lineno.py tests/test_raw_building.py tests/test_scoped_nodes.py tests/test_type_params.py
+git checkout efb34f2b84c9f019ffceacef3448d8351563b6a2 tests/brain/test_brain.py tests/brain/test_qt.py tests/test_inference.py tests/test_nodes.py tests/test_nodes_lineno.py tests/test_raw_building.py tests/test_scoped_nodes.py
+rm -f tests/test_type_params.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/brain/test_brain.py b/tests/brain/test_brain.py
 --- a/tests/brain/test_brain.py
@@ -369,4 +370,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/brain/test_brain.py tests/brain/test_qt.py tests/test_inference.py tests/test_nodes.py tests/test_nodes_lineno.py tests/test_raw_building.py tests/test_scoped_nodes.py tests/test_type_params.py
 : '>>>>> End Test Output'
-git checkout efb34f2b84c9f019ffceacef3448d8351563b6a2 tests/brain/test_brain.py tests/brain/test_qt.py tests/test_inference.py tests/test_nodes.py tests/test_nodes_lineno.py tests/test_raw_building.py tests/test_scoped_nodes.py tests/test_type_params.py
+git checkout efb34f2b84c9f019ffceacef3448d8351563b6a2 tests/brain/test_brain.py tests/brain/test_qt.py tests/test_inference.py tests/test_nodes.py tests/test_nodes_lineno.py tests/test_raw_building.py tests/test_scoped_nodes.py
+rm -f tests/test_type_params.py

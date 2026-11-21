@@ -11,7 +11,8 @@ git -c core.fileMode=false diff d59584f4096c75af4a94fb2bf70974039f7af0bb
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout d59584f4096c75af4a94fb2bf70974039f7af0bb tests/roots/test-ext-autosummary-template/_templates/empty.rst tests/roots/test-ext-autosummary-template/conf.py tests/roots/test-ext-autosummary-template/index.rst tests/roots/test-ext-autosummary-template/target.py tests/test_ext_autosummary.py
+git checkout d59584f4096c75af4a94fb2bf70974039f7af0bb tests/test_ext_autosummary.py
+rm -f tests/roots/test-ext-autosummary-template/_templates/empty.rst tests/roots/test-ext-autosummary-template/conf.py tests/roots/test-ext-autosummary-template/index.rst tests/roots/test-ext-autosummary-template/target.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-ext-autosummary-template/_templates/empty.rst b/tests/roots/test-ext-autosummary-template/_templates/empty.rst
 new file mode 100644
@@ -74,4 +75,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-ext-autosummary-template/_templates/empty.rst tests/roots/test-ext-autosummary-template/conf.py tests/roots/test-ext-autosummary-template/index.rst tests/roots/test-ext-autosummary-template/target.py tests/test_ext_autosummary.py
 : '>>>>> End Test Output'
-git checkout d59584f4096c75af4a94fb2bf70974039f7af0bb tests/roots/test-ext-autosummary-template/_templates/empty.rst tests/roots/test-ext-autosummary-template/conf.py tests/roots/test-ext-autosummary-template/index.rst tests/roots/test-ext-autosummary-template/target.py tests/test_ext_autosummary.py
+git checkout d59584f4096c75af4a94fb2bf70974039f7af0bb tests/test_ext_autosummary.py
+rm -f tests/roots/test-ext-autosummary-template/_templates/empty.rst tests/roots/test-ext-autosummary-template/conf.py tests/roots/test-ext-autosummary-template/index.rst tests/roots/test-ext-autosummary-template/target.py

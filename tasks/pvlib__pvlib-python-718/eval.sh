@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 3c84edd644fa4db54955e2225a183fa3e0405eb0
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[all]
-git checkout 3c84edd644fa4db54955e2225a183fa3e0405eb0 pvlib/test/conftest.py pvlib/test/test_ivtools.py
+git checkout 3c84edd644fa4db54955e2225a183fa3e0405eb0 pvlib/test/conftest.py
+rm -f pvlib/test/test_ivtools.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/pvlib/test/conftest.py b/pvlib/test/conftest.py
 --- a/pvlib/test/conftest.py
@@ -284,4 +285,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA pvlib/test/conftest.py pvlib/test/test_ivtools.py
 : '>>>>> End Test Output'
-git checkout 3c84edd644fa4db54955e2225a183fa3e0405eb0 pvlib/test/conftest.py pvlib/test/test_ivtools.py
+git checkout 3c84edd644fa4db54955e2225a183fa3e0405eb0 pvlib/test/conftest.py
+rm -f pvlib/test/test_ivtools.py

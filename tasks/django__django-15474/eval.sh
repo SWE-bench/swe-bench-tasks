@@ -11,7 +11,7 @@ git -c core.fileMode=false diff c121e32082edaff817d9f69dec0c24855dc0186f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout c121e32082edaff817d9f69dec0c24855dc0186f tests/contenttypes_tests/test_migrations.py
+rm -f tests/contenttypes_tests/test_migrations.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/contenttypes_tests/test_migrations.py b/tests/contenttypes_tests/test_migrations.py
 new file mode 100644
@@ -54,4 +54,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 contenttypes_tests.test_migrations
 : '>>>>> End Test Output'
-git checkout c121e32082edaff817d9f69dec0c24855dc0186f tests/contenttypes_tests/test_migrations.py
+rm -f tests/contenttypes_tests/test_migrations.py

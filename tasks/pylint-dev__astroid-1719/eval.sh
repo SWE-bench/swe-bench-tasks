@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 5bb3ddef43b35c07485a84f90b6a453fc649e31d
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 5bb3ddef43b35c07485a84f90b6a453fc649e31d tests/testdata/python3/data/fake_module_with_warnings.py tests/unittest_raw_building.py
+git checkout 5bb3ddef43b35c07485a84f90b6a453fc649e31d tests/unittest_raw_building.py
+rm -f tests/testdata/python3/data/fake_module_with_warnings.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/testdata/python3/data/fake_module_with_warnings.py b/tests/testdata/python3/data/fake_module_with_warnings.py
 new file mode 100644
@@ -83,4 +84,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/testdata/python3/data/fake_module_with_warnings.py tests/unittest_raw_building.py
 : '>>>>> End Test Output'
-git checkout 5bb3ddef43b35c07485a84f90b6a453fc649e31d tests/testdata/python3/data/fake_module_with_warnings.py tests/unittest_raw_building.py
+git checkout 5bb3ddef43b35c07485a84f90b6a453fc649e31d tests/unittest_raw_building.py
+rm -f tests/testdata/python3/data/fake_module_with_warnings.py

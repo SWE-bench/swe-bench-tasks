@@ -1,5 +1,12 @@
 # Changelog
 
+- **[2026-11-18] Remove files the test patch creates before applying it**: eval.sh passed
+  every test-patch file to one `git checkout <base_commit>`, which fails as a whole when
+  any of them is not in the base commit, so nothing was restored; a copy of such a file
+  left by the submission then made `git apply` reject the entire test patch, and the tests
+  that ran were the submission's. Created files, and the new path of a rename, are now
+  removed with `rm -f` (as SWE-bench#539 did in the old harness). Reset lines of 140
+  instances: 18 in Verified, 11 in Lite.
 - **[2026-08-13] Remove future commits reliably when cloning**: the tag prune ran as
   `git tag -l | while read`, and a git call in the loop body ate the piped stdin so it
   stopped after ~29 tags; switched to a `for` loop and added `git gc --prune=now` so

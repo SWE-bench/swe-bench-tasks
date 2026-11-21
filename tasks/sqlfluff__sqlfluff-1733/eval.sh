@@ -11,7 +11,8 @@ git -c core.fileMode=false diff a1579a16b1d8913d9d7c7d12add374a290bcc78c
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout a1579a16b1d8913d9d7c7d12add374a290bcc78c test/rules/std_L003_L036_L039_combo_test.py test/rules/std_L016_L36_combo_test.py
+git checkout a1579a16b1d8913d9d7c7d12add374a290bcc78c test/rules/std_L016_L36_combo.py
+rm -f test/rules/std_L003_L036_L039_combo_test.py test/rules/std_L016_L36_combo_test.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/rules/std_L003_L036_L039_combo_test.py b/test/rules/std_L003_L036_L039_combo_test.py
 new file mode 100644
@@ -63,4 +64,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/rules/std_L003_L036_L039_combo_test.py test/rules/std_L016_L36_combo_test.py
 : '>>>>> End Test Output'
-git checkout a1579a16b1d8913d9d7c7d12add374a290bcc78c test/rules/std_L003_L036_L039_combo_test.py test/rules/std_L016_L36_combo_test.py
+git checkout a1579a16b1d8913d9d7c7d12add374a290bcc78c test/rules/std_L016_L36_combo.py
+rm -f test/rules/std_L003_L036_L039_combo_test.py test/rules/std_L016_L36_combo_test.py

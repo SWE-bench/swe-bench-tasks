@@ -11,7 +11,8 @@ git -c core.fileMode=false diff c941b9cb14aefc132d6e3691085ce9704c1356e6
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout c941b9cb14aefc132d6e3691085ce9704c1356e6 tests/ext_napoleon_pep526_data_google.py tests/ext_napoleon_pep526_data_numpy.py tests/test_ext_napoleon_docstring.py
+git checkout c941b9cb14aefc132d6e3691085ce9704c1356e6 tests/test_ext_napoleon_docstring.py
+rm -f tests/ext_napoleon_pep526_data_google.py tests/ext_napoleon_pep526_data_numpy.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/ext_napoleon_pep526_data_google.py b/tests/ext_napoleon_pep526_data_google.py
 new file mode 100644
@@ -152,4 +153,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/ext_napoleon_pep526_data_google.py tests/ext_napoleon_pep526_data_numpy.py tests/test_ext_napoleon_docstring.py
 : '>>>>> End Test Output'
-git checkout c941b9cb14aefc132d6e3691085ce9704c1356e6 tests/ext_napoleon_pep526_data_google.py tests/ext_napoleon_pep526_data_numpy.py tests/test_ext_napoleon_docstring.py
+git checkout c941b9cb14aefc132d6e3691085ce9704c1356e6 tests/test_ext_napoleon_docstring.py
+rm -f tests/ext_napoleon_pep526_data_google.py tests/ext_napoleon_pep526_data_numpy.py

@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 00c248441ffb8b7d46c6d855b723e696a8f5aada
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py
+git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_filewriter.py
+rm -f pydicom/tests/test_fileutil.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/pydicom/tests/test_filereader.py b/pydicom/tests/test_filereader.py
 --- a/pydicom/tests/test_filereader.py
@@ -108,4 +109,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py
 : '>>>>> End Test Output'
-git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_fileutil.py pydicom/tests/test_filewriter.py
+git checkout 00c248441ffb8b7d46c6d855b723e696a8f5aada pydicom/tests/test_filereader.py pydicom/tests/test_filewriter.py
+rm -f pydicom/tests/test_fileutil.py

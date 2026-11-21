@@ -11,7 +11,7 @@ git -c core.fileMode=false diff e326fa53038f616d949e4f981dab6187d2ca9470
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[all]
-git checkout e326fa53038f616d949e4f981dab6187d2ca9470 pvlib/test/test_scaling.py
+rm -f pvlib/test/test_scaling.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/pvlib/test/test_scaling.py b/pvlib/test/test_scaling.py
 new file mode 100644
@@ -169,4 +169,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA pvlib/test/test_scaling.py
 : '>>>>> End Test Output'
-git checkout e326fa53038f616d949e4f981dab6187d2ca9470 pvlib/test/test_scaling.py
+rm -f pvlib/test/test_scaling.py

@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 80f92177eb2a175579f4a6907ef5a358863bddca
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 80f92177eb2a175579f4a6907ef5a358863bddca tests/migrations/test_commands.py tests/migrations/test_migrations_conflict_long_name/0001_initial.py tests/migrations/test_migrations_conflict_long_name/0002_conflicting_second_migration_with_long_name.py tests/migrations/test_migrations_conflict_long_name/0002_second.py tests/migrations/test_migrations_conflict_long_name/__init__.py
+git checkout 80f92177eb2a175579f4a6907ef5a358863bddca tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_conflict_long_name/0001_initial.py tests/migrations/test_migrations_conflict_long_name/0002_conflicting_second_migration_with_long_name.py tests/migrations/test_migrations_conflict_long_name/0002_second.py tests/migrations/test_migrations_conflict_long_name/__init__.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
 --- a/tests/migrations/test_commands.py
@@ -114,4 +115,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 migrations.test_commands migrations.test_migrations_conflict_long_name.0001_initial migrations.test_migrations_conflict_long_name.0002_conflicting_second_migration_with_long_name migrations.test_migrations_conflict_long_name.0002_second migrations.test_migrations_conflict_long_name.__init__
 : '>>>>> End Test Output'
-git checkout 80f92177eb2a175579f4a6907ef5a358863bddca tests/migrations/test_commands.py tests/migrations/test_migrations_conflict_long_name/0001_initial.py tests/migrations/test_migrations_conflict_long_name/0002_conflicting_second_migration_with_long_name.py tests/migrations/test_migrations_conflict_long_name/0002_second.py tests/migrations/test_migrations_conflict_long_name/__init__.py
+git checkout 80f92177eb2a175579f4a6907ef5a358863bddca tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_conflict_long_name/0001_initial.py tests/migrations/test_migrations_conflict_long_name/0002_conflicting_second_migration_with_long_name.py tests/migrations/test_migrations_conflict_long_name/0002_second.py tests/migrations/test_migrations_conflict_long_name/__init__.py

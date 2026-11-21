@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 1de6da157c260c5a1398bc59c5f2b57abc4912a6
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 1de6da157c260c5a1398bc59c5f2b57abc4912a6 tests/regrtest_data/duplicate_code/ignore_imports/__init__.py tests/regrtest_data/duplicate_code/ignore_imports/file_one.py tests/regrtest_data/duplicate_code/ignore_imports/file_two.py tests/test_similar.py
+git checkout 1de6da157c260c5a1398bc59c5f2b57abc4912a6 tests/test_similar.py
+rm -f tests/regrtest_data/duplicate_code/ignore_imports/__init__.py tests/regrtest_data/duplicate_code/ignore_imports/file_one.py tests/regrtest_data/duplicate_code/ignore_imports/file_two.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/regrtest_data/duplicate_code/ignore_imports/__init__.py b/tests/regrtest_data/duplicate_code/ignore_imports/__init__.py
 new file mode 100644
@@ -55,4 +56,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/regrtest_data/duplicate_code/ignore_imports/__init__.py tests/regrtest_data/duplicate_code/ignore_imports/file_one.py tests/regrtest_data/duplicate_code/ignore_imports/file_two.py tests/test_similar.py
 : '>>>>> End Test Output'
-git checkout 1de6da157c260c5a1398bc59c5f2b57abc4912a6 tests/regrtest_data/duplicate_code/ignore_imports/__init__.py tests/regrtest_data/duplicate_code/ignore_imports/file_one.py tests/regrtest_data/duplicate_code/ignore_imports/file_two.py tests/test_similar.py
+git checkout 1de6da157c260c5a1398bc59c5f2b57abc4912a6 tests/test_similar.py
+rm -f tests/regrtest_data/duplicate_code/ignore_imports/__init__.py tests/regrtest_data/duplicate_code/ignore_imports/file_one.py tests/regrtest_data/duplicate_code/ignore_imports/file_two.py

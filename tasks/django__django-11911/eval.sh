@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 2839659b42ef80038152768b6cedae1016c59d90
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 2839659b42ef80038152768b6cedae1016c59d90 tests/migrations/test_commands.py tests/migrations/test_migrations_plan/0005_fifth.py
+git checkout 2839659b42ef80038152768b6cedae1016c59d90 tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_plan/0005_fifth.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
 --- a/tests/migrations/test_commands.py
@@ -177,4 +178,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 migrations.test_commands migrations.test_migrations_plan.0005_fifth
 : '>>>>> End Test Output'
-git checkout 2839659b42ef80038152768b6cedae1016c59d90 tests/migrations/test_commands.py tests/migrations/test_migrations_plan/0005_fifth.py
+git checkout 2839659b42ef80038152768b6cedae1016c59d90 tests/migrations/test_commands.py
+rm -f tests/migrations/test_migrations_plan/0005_fifth.py

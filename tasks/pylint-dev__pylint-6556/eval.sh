@@ -11,7 +11,8 @@ git -c core.fileMode=false diff fa183c7d15b5f3c7dd8dee86fc74caae42c3926c
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout fa183c7d15b5f3c7dd8dee86fc74caae42c3926c tests/functional/b/bad_option_value_disable.py tests/functional/b/bad_option_value_disable.txt tests/lint/unittest_lint.py tests/regrtest_data/long_test_file.py tests/test_deprecation.py
+git checkout fa183c7d15b5f3c7dd8dee86fc74caae42c3926c tests/lint/unittest_lint.py tests/test_deprecation.py
+rm -f tests/functional/b/bad_option_value_disable.py tests/functional/b/bad_option_value_disable.txt tests/regrtest_data/long_test_file.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/functional/b/bad_option_value_disable.py b/tests/functional/b/bad_option_value_disable.py
 new file mode 100644
@@ -210,4 +211,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/functional/b/bad_option_value_disable.py tests/lint/unittest_lint.py tests/regrtest_data/long_test_file.py tests/test_deprecation.py
 : '>>>>> End Test Output'
-git checkout fa183c7d15b5f3c7dd8dee86fc74caae42c3926c tests/functional/b/bad_option_value_disable.py tests/functional/b/bad_option_value_disable.txt tests/lint/unittest_lint.py tests/regrtest_data/long_test_file.py tests/test_deprecation.py
+git checkout fa183c7d15b5f3c7dd8dee86fc74caae42c3926c tests/lint/unittest_lint.py tests/test_deprecation.py
+rm -f tests/functional/b/bad_option_value_disable.py tests/functional/b/bad_option_value_disable.txt tests/regrtest_data/long_test_file.py

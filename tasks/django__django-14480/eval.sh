@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 795da6306a048b18c0158496b0d49e8e4f197a32
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 795da6306a048b18c0158496b0d49e8e4f197a32 tests/aggregation_regress/tests.py tests/expressions/tests.py tests/queries/test_q.py tests/queries/test_qs_combinators.py tests/queries/tests.py tests/xor_lookups/__init__.py tests/xor_lookups/models.py tests/xor_lookups/tests.py
+git checkout 795da6306a048b18c0158496b0d49e8e4f197a32 tests/aggregation_regress/tests.py tests/expressions/tests.py tests/queries/test_q.py tests/queries/test_qs_combinators.py tests/queries/tests.py
+rm -f tests/xor_lookups/__init__.py tests/xor_lookups/models.py tests/xor_lookups/tests.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/aggregation_regress/tests.py b/tests/aggregation_regress/tests.py
 --- a/tests/aggregation_regress/tests.py
@@ -334,4 +335,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 aggregation_regress.tests expressions.tests queries.test_q queries.test_qs_combinators queries.tests xor_lookups.__init__ xor_lookups.models xor_lookups.tests
 : '>>>>> End Test Output'
-git checkout 795da6306a048b18c0158496b0d49e8e4f197a32 tests/aggregation_regress/tests.py tests/expressions/tests.py tests/queries/test_q.py tests/queries/test_qs_combinators.py tests/queries/tests.py tests/xor_lookups/__init__.py tests/xor_lookups/models.py tests/xor_lookups/tests.py
+git checkout 795da6306a048b18c0158496b0d49e8e4f197a32 tests/aggregation_regress/tests.py tests/expressions/tests.py tests/queries/test_q.py tests/queries/test_qs_combinators.py tests/queries/tests.py
+rm -f tests/xor_lookups/__init__.py tests/xor_lookups/models.py tests/xor_lookups/tests.py

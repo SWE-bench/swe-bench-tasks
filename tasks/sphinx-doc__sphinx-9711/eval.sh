@@ -11,7 +11,7 @@ git -c core.fileMode=false diff 81a4fd973d4cfcb25d01a7b0be62cdb28f82406d
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 81a4fd973d4cfcb25d01a7b0be62cdb28f82406d tests/test_extension.py
+rm -f tests/test_extension.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/test_extension.py b/tests/test_extension.py
 new file mode 100644
@@ -54,4 +54,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/test_extension.py
 : '>>>>> End Test Output'
-git checkout 81a4fd973d4cfcb25d01a7b0be62cdb28f82406d tests/test_extension.py
+rm -f tests/test_extension.py

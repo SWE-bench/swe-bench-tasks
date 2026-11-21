@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 2444c4711e9142a40dee4032bb921867c8f2b9fb
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 2444c4711e9142a40dee4032bb921867c8f2b9fb tests/roots/test-highlight_options/conf.py tests/roots/test-highlight_options/index.rst tests/test_build_html.py
+git checkout 2444c4711e9142a40dee4032bb921867c8f2b9fb tests/test_build_html.py
+rm -f tests/roots/test-highlight_options/conf.py tests/roots/test-highlight_options/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-highlight_options/conf.py b/tests/roots/test-highlight_options/conf.py
 new file mode 100644
@@ -94,4 +95,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-highlight_options/conf.py tests/roots/test-highlight_options/index.rst tests/test_build_html.py
 : '>>>>> End Test Output'
-git checkout 2444c4711e9142a40dee4032bb921867c8f2b9fb tests/roots/test-highlight_options/conf.py tests/roots/test-highlight_options/index.rst tests/test_build_html.py
+git checkout 2444c4711e9142a40dee4032bb921867c8f2b9fb tests/test_build_html.py
+rm -f tests/roots/test-highlight_options/conf.py tests/roots/test-highlight_options/index.rst

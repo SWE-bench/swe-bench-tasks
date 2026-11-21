@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 113e1d8759e444342544bd97ed93bc1622b9a6bb
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 113e1d8759e444342544bd97ed93bc1622b9a6bb tests/roots/test-transforms-post_transforms-keyboard/conf.py tests/roots/test-transforms-post_transforms-keyboard/index.rst tests/test_transforms_post_transforms.py
+git checkout 113e1d8759e444342544bd97ed93bc1622b9a6bb tests/test_transforms_post_transforms.py
+rm -f tests/roots/test-transforms-post_transforms-keyboard/conf.py tests/roots/test-transforms-post_transforms-keyboard/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-transforms-post_transforms-keyboard/conf.py b/tests/roots/test-transforms-post_transforms-keyboard/conf.py
 new file mode 100644
@@ -45,4 +46,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-transforms-post_transforms-keyboard/conf.py tests/roots/test-transforms-post_transforms-keyboard/index.rst tests/test_transforms_post_transforms.py
 : '>>>>> End Test Output'
-git checkout 113e1d8759e444342544bd97ed93bc1622b9a6bb tests/roots/test-transforms-post_transforms-keyboard/conf.py tests/roots/test-transforms-post_transforms-keyboard/index.rst tests/test_transforms_post_transforms.py
+git checkout 113e1d8759e444342544bd97ed93bc1622b9a6bb tests/test_transforms_post_transforms.py
+rm -f tests/roots/test-transforms-post_transforms-keyboard/conf.py tests/roots/test-transforms-post_transforms-keyboard/index.rst

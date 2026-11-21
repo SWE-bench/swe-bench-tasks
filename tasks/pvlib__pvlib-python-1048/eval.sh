@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 7fc595a13bcd42e3269c0806f5505ac907af9730
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[all]
-git checkout 7fc595a13bcd42e3269c0806f5505ac907af9730 pvlib/tests/ivtools/test_utils.py
+git checkout 7fc595a13bcd42e3269c0806f5505ac907af9730 pvlib/tests/ivtools/test_utility.py
+rm -f pvlib/tests/ivtools/test_utils.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/pvlib/tests/ivtools/test_utility.py b/pvlib/tests/ivtools/test_utils.py
 similarity index 96%
@@ -35,4 +36,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA pvlib/tests/ivtools/test_utils.py
 : '>>>>> End Test Output'
-git checkout 7fc595a13bcd42e3269c0806f5505ac907af9730 pvlib/tests/ivtools/test_utils.py
+git checkout 7fc595a13bcd42e3269c0806f5505ac907af9730 pvlib/tests/ivtools/test_utility.py
+rm -f pvlib/tests/ivtools/test_utils.py

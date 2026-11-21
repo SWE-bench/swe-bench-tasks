@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 4689b195d8539ef04fd0c30423037a5f4932a20f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 4689b195d8539ef04fd0c30423037a5f4932a20f tests/regrtest_data/pkg_mod_imports/__init__.py tests/regrtest_data/pkg_mod_imports/base/__init__.py tests/regrtest_data/pkg_mod_imports/base/errors.py tests/regrtest_data/test_no_name_in_module.py tests/test_self.py
+git checkout 4689b195d8539ef04fd0c30423037a5f4932a20f tests/test_self.py
+rm -f tests/regrtest_data/pkg_mod_imports/__init__.py tests/regrtest_data/pkg_mod_imports/base/__init__.py tests/regrtest_data/pkg_mod_imports/base/errors.py tests/regrtest_data/test_no_name_in_module.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/regrtest_data/pkg_mod_imports/__init__.py b/tests/regrtest_data/pkg_mod_imports/__init__.py
 new file mode 100644
@@ -63,4 +64,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/regrtest_data/pkg_mod_imports/__init__.py tests/regrtest_data/pkg_mod_imports/base/__init__.py tests/regrtest_data/pkg_mod_imports/base/errors.py tests/regrtest_data/test_no_name_in_module.py tests/test_self.py
 : '>>>>> End Test Output'
-git checkout 4689b195d8539ef04fd0c30423037a5f4932a20f tests/regrtest_data/pkg_mod_imports/__init__.py tests/regrtest_data/pkg_mod_imports/base/__init__.py tests/regrtest_data/pkg_mod_imports/base/errors.py tests/regrtest_data/test_no_name_in_module.py tests/test_self.py
+git checkout 4689b195d8539ef04fd0c30423037a5f4932a20f tests/test_self.py
+rm -f tests/regrtest_data/pkg_mod_imports/__init__.py tests/regrtest_data/pkg_mod_imports/base/__init__.py tests/regrtest_data/pkg_mod_imports/base/errors.py tests/regrtest_data/test_no_name_in_module.py

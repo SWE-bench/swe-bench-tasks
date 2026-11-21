@@ -15,7 +15,8 @@ git -c core.fileMode=false diff fc9566d42daf28cdaa25a5db1b5ade253ceb064f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout fc9566d42daf28cdaa25a5db1b5ade253ceb064f tests/check_framework/test_urls.py tests/check_framework/urls/bad_error_handlers_invalid_path.py
+git checkout fc9566d42daf28cdaa25a5db1b5ade253ceb064f tests/check_framework/test_urls.py
+rm -f tests/check_framework/urls/bad_error_handlers_invalid_path.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/check_framework/test_urls.py b/tests/check_framework/test_urls.py
 --- a/tests/check_framework/test_urls.py
@@ -66,4 +67,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 check_framework.test_urls check_framework.urls.bad_error_handlers_invalid_path
 : '>>>>> End Test Output'
-git checkout fc9566d42daf28cdaa25a5db1b5ade253ceb064f tests/check_framework/test_urls.py tests/check_framework/urls/bad_error_handlers_invalid_path.py
+git checkout fc9566d42daf28cdaa25a5db1b5ade253ceb064f tests/check_framework/test_urls.py
+rm -f tests/check_framework/urls/bad_error_handlers_invalid_path.py

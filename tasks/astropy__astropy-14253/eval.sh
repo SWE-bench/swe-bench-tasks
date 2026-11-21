@@ -11,7 +11,8 @@ git -c core.fileMode=false diff dd2304672cdf4ea1b6f124f9f22ec5069a13c9f5
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test] --verbose
-git checkout dd2304672cdf4ea1b6f124f9f22ec5069a13c9f5 astropy/units/tests/test_quantity.py astropy/units/tests/test_quantity_info.py
+git checkout dd2304672cdf4ea1b6f124f9f22ec5069a13c9f5 astropy/units/tests/test_quantity.py
+rm -f astropy/units/tests/test_quantity_info.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/astropy/units/tests/test_quantity.py b/astropy/units/tests/test_quantity.py
 --- a/astropy/units/tests/test_quantity.py
@@ -181,4 +182,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA astropy/units/tests/test_quantity.py astropy/units/tests/test_quantity_info.py
 : '>>>>> End Test Output'
-git checkout dd2304672cdf4ea1b6f124f9f22ec5069a13c9f5 astropy/units/tests/test_quantity.py astropy/units/tests/test_quantity_info.py
+git checkout dd2304672cdf4ea1b6f124f9f22ec5069a13c9f5 astropy/units/tests/test_quantity.py
+rm -f astropy/units/tests/test_quantity_info.py

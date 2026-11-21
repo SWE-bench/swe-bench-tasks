@@ -11,7 +11,8 @@ git -c core.fileMode=false diff dc1f5f6cbb1e649feab8ae53ed8be88845afeaf1
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout dc1f5f6cbb1e649feab8ae53ed8be88845afeaf1 tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml tests/config/functional/toml/toml_with_specific_disable_before_enable_all.toml tests/config/functional/toml/toml_with_specific_enable_before_disable_all.toml tests/config/test_config.py tests/config/test_functional_config_loading.py tests/regrtest_data/fixme.py tests/test_self.py
+git checkout dc1f5f6cbb1e649feab8ae53ed8be88845afeaf1 tests/config/test_config.py tests/config/test_functional_config_loading.py tests/test_self.py
+rm -f tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml tests/config/functional/toml/toml_with_specific_disable_before_enable_all.toml tests/config/functional/toml/toml_with_specific_enable_before_disable_all.toml tests/regrtest_data/fixme.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml b/tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml
 new file mode 100644
@@ -140,4 +141,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/config/test_config.py tests/config/test_functional_config_loading.py tests/regrtest_data/fixme.py tests/test_self.py
 : '>>>>> End Test Output'
-git checkout dc1f5f6cbb1e649feab8ae53ed8be88845afeaf1 tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml tests/config/functional/toml/toml_with_specific_disable_before_enable_all.toml tests/config/functional/toml/toml_with_specific_enable_before_disable_all.toml tests/config/test_config.py tests/config/test_functional_config_loading.py tests/regrtest_data/fixme.py tests/test_self.py
+git checkout dc1f5f6cbb1e649feab8ae53ed8be88845afeaf1 tests/config/test_config.py tests/config/test_functional_config_loading.py tests/test_self.py
+rm -f tests/config/functional/toml/toml_with_mutually_exclusive_disable_enable_all.toml tests/config/functional/toml/toml_with_specific_disable_before_enable_all.toml tests/config/functional/toml/toml_with_specific_enable_before_disable_all.toml tests/regrtest_data/fixme.py

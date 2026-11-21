@@ -11,7 +11,7 @@ git -c core.fileMode=false diff 15b54340ee7dc7cb870a418d1b5f6f553672f5dd
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -v --no-use-pep517 --no-build-isolation -e .
-git checkout 15b54340ee7dc7cb870a418d1b5f6f553672f5dd sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py
+rm -f sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py
 new file mode 100644
@@ -213,4 +213,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py
 : '>>>>> End Test Output'
-git checkout 15b54340ee7dc7cb870a418d1b5f6f553672f5dd sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py
+rm -f sklearn/ensemble/_hist_gradient_boosting/tests/test_warm_start.py

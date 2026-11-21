@@ -11,7 +11,8 @@ git -c core.fileMode=false diff da4929882a0492492549f8dd5a67f262df1ff142
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout da4929882a0492492549f8dd5a67f262df1ff142 sympy/codegen/tests/test_pyutils.py sympy/printing/tests/test_lambdarepr.py sympy/printing/tests/test_pycode.py sympy/utilities/tests/test_lambdify.py
+git checkout da4929882a0492492549f8dd5a67f262df1ff142 sympy/printing/tests/test_lambdarepr.py sympy/printing/tests/test_pycode.py sympy/utilities/tests/test_lambdify.py
+rm -f sympy/codegen/tests/test_pyutils.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sympy/codegen/tests/test_pyutils.py b/sympy/codegen/tests/test_pyutils.py
 new file mode 100644
@@ -187,4 +188,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 PYTHONWARNINGS='ignore::UserWarning,ignore::SyntaxWarning' bin/test -C --verbose sympy/codegen/tests/test_pyutils.py sympy/printing/tests/test_lambdarepr.py sympy/printing/tests/test_pycode.py sympy/utilities/tests/test_lambdify.py
 : '>>>>> End Test Output'
-git checkout da4929882a0492492549f8dd5a67f262df1ff142 sympy/codegen/tests/test_pyutils.py sympy/printing/tests/test_lambdarepr.py sympy/printing/tests/test_pycode.py sympy/utilities/tests/test_lambdify.py
+git checkout da4929882a0492492549f8dd5a67f262df1ff142 sympy/printing/tests/test_lambdarepr.py sympy/printing/tests/test_pycode.py sympy/utilities/tests/test_lambdify.py
+rm -f sympy/codegen/tests/test_pyutils.py

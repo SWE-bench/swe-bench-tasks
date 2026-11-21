@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 905044f26df65188c6c612695c3370fcc2d007f0
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 905044f26df65188c6c612695c3370fcc2d007f0 tests/mappers/test_mapper.py tests/mappers/test_volume_mapper.py tests/test_actor.py tests/test_volume_property.py
+git checkout 905044f26df65188c6c612695c3370fcc2d007f0 tests/mappers/test_mapper.py tests/test_actor.py
+rm -f tests/mappers/test_volume_mapper.py tests/test_volume_property.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/mappers/test_mapper.py b/tests/mappers/test_mapper.py
 --- a/tests/mappers/test_mapper.py
@@ -190,4 +191,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA tests/mappers/test_mapper.py tests/mappers/test_volume_mapper.py tests/test_actor.py tests/test_volume_property.py
 : '>>>>> End Test Output'
-git checkout 905044f26df65188c6c612695c3370fcc2d007f0 tests/mappers/test_mapper.py tests/mappers/test_volume_mapper.py tests/test_actor.py tests/test_volume_property.py
+git checkout 905044f26df65188c6c612695c3370fcc2d007f0 tests/mappers/test_mapper.py tests/test_actor.py
+rm -f tests/mappers/test_volume_mapper.py tests/test_volume_property.py

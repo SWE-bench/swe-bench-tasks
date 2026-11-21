@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 7b7fd603a19755a9f3707ebbf95d18ee635716d8
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 7b7fd603a19755a9f3707ebbf95d18ee635716d8 test/cli/commands_test.py test/core/errors_test.py
+git checkout 7b7fd603a19755a9f3707ebbf95d18ee635716d8 test/cli/commands_test.py
+rm -f test/core/errors_test.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/cli/commands_test.py b/test/cli/commands_test.py
 --- a/test/cli/commands_test.py
@@ -122,4 +123,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/cli/commands_test.py test/core/errors_test.py
 : '>>>>> End Test Output'
-git checkout 7b7fd603a19755a9f3707ebbf95d18ee635716d8 test/cli/commands_test.py test/core/errors_test.py
+git checkout 7b7fd603a19755a9f3707ebbf95d18ee635716d8 test/cli/commands_test.py
+rm -f test/core/errors_test.py

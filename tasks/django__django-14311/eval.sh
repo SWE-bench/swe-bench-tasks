@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 5a8e8f80bb82a867eab7e4d9d099f21d0a976d22
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 5a8e8f80bb82a867eab7e4d9d099f21d0a976d22 tests/utils_tests/test_autoreload.py tests/utils_tests/test_module/main_module.py
+git checkout 5a8e8f80bb82a867eab7e4d9d099f21d0a976d22 tests/utils_tests/test_autoreload.py
+rm -f tests/utils_tests/test_module/main_module.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
 --- a/tests/utils_tests/test_autoreload.py
@@ -48,4 +49,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 utils_tests.test_autoreload utils_tests.test_module.main_module
 : '>>>>> End Test Output'
-git checkout 5a8e8f80bb82a867eab7e4d9d099f21d0a976d22 tests/utils_tests/test_autoreload.py tests/utils_tests/test_module/main_module.py
+git checkout 5a8e8f80bb82a867eab7e4d9d099f21d0a976d22 tests/utils_tests/test_autoreload.py
+rm -f tests/utils_tests/test_module/main_module.py

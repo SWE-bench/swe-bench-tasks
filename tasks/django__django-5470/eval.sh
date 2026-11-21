@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python setup.py install
-git checkout 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a tests/user_commands/management/commands/reverse_url.py tests/user_commands/tests.py tests/user_commands/urls.py
+git checkout 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/reverse_url.py tests/user_commands/urls.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/user_commands/management/commands/reverse_url.py b/tests/user_commands/management/commands/reverse_url.py
 new file mode 100644
@@ -82,4 +83,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 user_commands.management.commands.reverse_url user_commands.tests user_commands.urls
 : '>>>>> End Test Output'
-git checkout 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a tests/user_commands/management/commands/reverse_url.py tests/user_commands/tests.py tests/user_commands/urls.py
+git checkout 9dcfecb7c6c8285630ad271888a9ec4ba9140e3a tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/reverse_url.py tests/user_commands/urls.py

@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 590957a0eb9a87a6f2bd3463226b0a7f1405d817
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 590957a0eb9a87a6f2bd3463226b0a7f1405d817 tests/fixtures/fixtures/circular_reference_natural_key.json tests/fixtures/models.py tests/fixtures/tests.py
+git checkout 590957a0eb9a87a6f2bd3463226b0a7f1405d817 tests/fixtures/models.py tests/fixtures/tests.py
+rm -f tests/fixtures/fixtures/circular_reference_natural_key.json
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/fixtures/fixtures/circular_reference_natural_key.json b/tests/fixtures/fixtures/circular_reference_natural_key.json
 new file mode 100644
@@ -114,4 +115,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 fixtures.models fixtures.tests
 : '>>>>> End Test Output'
-git checkout 590957a0eb9a87a6f2bd3463226b0a7f1405d817 tests/fixtures/fixtures/circular_reference_natural_key.json tests/fixtures/models.py tests/fixtures/tests.py
+git checkout 590957a0eb9a87a6f2bd3463226b0a7f1405d817 tests/fixtures/models.py tests/fixtures/tests.py
+rm -f tests/fixtures/fixtures/circular_reference_natural_key.json

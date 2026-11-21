@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 2ac8e125604aa1f19d9811f7dc5bd56eefa654ac
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 2ac8e125604aa1f19d9811f7dc5bd56eefa654ac test/cli/commands_test.py test/cli/test_click_deprecated_option.py
+git checkout 2ac8e125604aa1f19d9811f7dc5bd56eefa654ac test/cli/commands_test.py
+rm -f test/cli/test_click_deprecated_option.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/cli/commands_test.py b/test/cli/commands_test.py
 --- a/test/cli/commands_test.py
@@ -248,4 +249,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/cli/commands_test.py test/cli/test_click_deprecated_option.py
 : '>>>>> End Test Output'
-git checkout 2ac8e125604aa1f19d9811f7dc5bd56eefa654ac test/cli/commands_test.py test/cli/test_click_deprecated_option.py
+git checkout 2ac8e125604aa1f19d9811f7dc5bd56eefa654ac test/cli/commands_test.py
+rm -f test/cli/test_click_deprecated_option.py

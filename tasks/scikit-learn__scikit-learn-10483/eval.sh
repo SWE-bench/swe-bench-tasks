@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 98eb09e9206cb714da85c5a0616deff3cc85a1d5
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -v --no-use-pep517 --no-build-isolation -e .
-git checkout 98eb09e9206cb714da85c5a0616deff3cc85a1d5 sklearn/model_selection/tests/test_search.py sklearn/model_selection/tests/test_validation.py sklearn/preprocessing/tests/test_imputation.py sklearn/tests/test_calibration.py sklearn/tests/test_impute.py
+git checkout 98eb09e9206cb714da85c5a0616deff3cc85a1d5 sklearn/model_selection/tests/test_search.py sklearn/model_selection/tests/test_validation.py sklearn/preprocessing/tests/test_imputation.py sklearn/tests/test_calibration.py
+rm -f sklearn/tests/test_impute.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sklearn/model_selection/tests/test_search.py b/sklearn/model_selection/tests/test_search.py
 --- a/sklearn/model_selection/tests/test_search.py
@@ -550,4 +551,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA sklearn/model_selection/tests/test_search.py sklearn/model_selection/tests/test_validation.py sklearn/preprocessing/tests/test_imputation.py sklearn/tests/test_calibration.py sklearn/tests/test_impute.py
 : '>>>>> End Test Output'
-git checkout 98eb09e9206cb714da85c5a0616deff3cc85a1d5 sklearn/model_selection/tests/test_search.py sklearn/model_selection/tests/test_validation.py sklearn/preprocessing/tests/test_imputation.py sklearn/tests/test_calibration.py sklearn/tests/test_impute.py
+git checkout 98eb09e9206cb714da85c5a0616deff3cc85a1d5 sklearn/model_selection/tests/test_search.py sklearn/model_selection/tests/test_validation.py sklearn/preprocessing/tests/test_imputation.py sklearn/tests/test_calibration.py
+rm -f sklearn/tests/test_impute.py

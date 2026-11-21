@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 4652f1f0aa459a7b980441d629648707c32e36bf
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 4652f1f0aa459a7b980441d629648707c32e36bf tests/asgi/project/static/file.txt tests/asgi/tests.py tests/staticfiles_tests/test_handlers.py
+git checkout 4652f1f0aa459a7b980441d629648707c32e36bf tests/asgi/tests.py
+rm -f tests/asgi/project/static/file.txt tests/staticfiles_tests/test_handlers.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/asgi/project/static/file.txt b/tests/asgi/project/static/file.txt
 new file mode 100644
@@ -131,4 +132,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 asgi.tests staticfiles_tests.test_handlers
 : '>>>>> End Test Output'
-git checkout 4652f1f0aa459a7b980441d629648707c32e36bf tests/asgi/project/static/file.txt tests/asgi/tests.py tests/staticfiles_tests/test_handlers.py
+git checkout 4652f1f0aa459a7b980441d629648707c32e36bf tests/asgi/tests.py
+rm -f tests/asgi/project/static/file.txt tests/staticfiles_tests/test_handlers.py

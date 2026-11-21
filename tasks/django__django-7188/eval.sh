@@ -15,7 +15,7 @@ git -c core.fileMode=false diff 0368d63a78b07e794138a65216b91eadbb47fc2f
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python setup.py install
-git checkout 0368d63a78b07e794138a65216b91eadbb47fc2f tests/auth_tests/test_apps.py
+rm -f tests/auth_tests/test_apps.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/auth_tests/test_apps.py b/tests/auth_tests/test_apps.py
 new file mode 100644
@@ -88,4 +88,4 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 auth_tests.test_apps
 : '>>>>> End Test Output'
-git checkout 0368d63a78b07e794138a65216b91eadbb47fc2f tests/auth_tests/test_apps.py
+rm -f tests/auth_tests/test_apps.py

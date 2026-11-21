@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 1af469e67fd3928a4b01722d4706c066000014e9
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 1af469e67fd3928a4b01722d4706c066000014e9 tests/model_fields/models.py tests/model_fields/test_autofield.py tests/model_fields/test_floatfield.py tests/model_fields/test_integerfield.py tests/queries/tests.py
+git checkout 1af469e67fd3928a4b01722d4706c066000014e9 tests/model_fields/models.py tests/model_fields/test_floatfield.py tests/model_fields/test_integerfield.py tests/queries/tests.py
+rm -f tests/model_fields/test_autofield.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
 --- a/tests/model_fields/models.py
@@ -144,4 +145,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 model_fields.models model_fields.test_autofield model_fields.test_floatfield model_fields.test_integerfield queries.tests
 : '>>>>> End Test Output'
-git checkout 1af469e67fd3928a4b01722d4706c066000014e9 tests/model_fields/models.py tests/model_fields/test_autofield.py tests/model_fields/test_floatfield.py tests/model_fields/test_integerfield.py tests/queries/tests.py
+git checkout 1af469e67fd3928a4b01722d4706c066000014e9 tests/model_fields/models.py tests/model_fields/test_floatfield.py tests/model_fields/test_integerfield.py tests/queries/tests.py
+rm -f tests/model_fields/test_autofield.py

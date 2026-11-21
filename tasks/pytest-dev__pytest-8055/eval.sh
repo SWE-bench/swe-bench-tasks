@@ -11,7 +11,8 @@ git -c core.fileMode=false diff d59a4996ae7d32498b2bd4c2f2a36eda4599a2e1
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout d59a4996ae7d32498b2bd4c2f2a36eda4599a2e1 testing/acceptance_test.py testing/test_threadexception.py testing/test_unraisableexception.py
+git checkout d59a4996ae7d32498b2bd4c2f2a36eda4599a2e1 testing/acceptance_test.py
+rm -f testing/test_threadexception.py testing/test_unraisableexception.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/testing/acceptance_test.py b/testing/acceptance_test.py
 --- a/testing/acceptance_test.py
@@ -308,4 +309,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA testing/acceptance_test.py testing/test_threadexception.py testing/test_unraisableexception.py
 : '>>>>> End Test Output'
-git checkout d59a4996ae7d32498b2bd4c2f2a36eda4599a2e1 testing/acceptance_test.py testing/test_threadexception.py testing/test_unraisableexception.py
+git checkout d59a4996ae7d32498b2bd4c2f2a36eda4599a2e1 testing/acceptance_test.py
+rm -f testing/test_threadexception.py testing/test_unraisableexception.py

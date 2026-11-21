@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 4a80d0f22021bb0af842f038eba45958e9576bec
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 4a80d0f22021bb0af842f038eba45958e9576bec tests/check_framework/test_urls.py tests/check_framework/urls/bad_class_based_error_handlers.py tests/check_framework/urls/bad_function_based_error_handlers.py tests/check_framework/urls/good_class_based_error_handlers.py tests/check_framework/urls/good_function_based_error_handlers.py tests/generic_views/test_base.py
+git checkout 4a80d0f22021bb0af842f038eba45958e9576bec tests/check_framework/test_urls.py tests/check_framework/urls/bad_error_handlers.py tests/check_framework/urls/good_error_handlers.py tests/generic_views/test_base.py
+rm -f tests/check_framework/urls/bad_class_based_error_handlers.py tests/check_framework/urls/bad_function_based_error_handlers.py tests/check_framework/urls/good_class_based_error_handlers.py tests/check_framework/urls/good_function_based_error_handlers.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/check_framework/test_urls.py b/tests/check_framework/test_urls.py
 --- a/tests/check_framework/test_urls.py
@@ -156,4 +157,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 check_framework.test_urls check_framework.urls.bad_class_based_error_handlers check_framework.urls.bad_function_based_error_handlers check_framework.urls.good_class_based_error_handlers check_framework.urls.good_function_based_error_handlers generic_views.test_base
 : '>>>>> End Test Output'
-git checkout 4a80d0f22021bb0af842f038eba45958e9576bec tests/check_framework/test_urls.py tests/check_framework/urls/bad_class_based_error_handlers.py tests/check_framework/urls/bad_function_based_error_handlers.py tests/check_framework/urls/good_class_based_error_handlers.py tests/check_framework/urls/good_function_based_error_handlers.py tests/generic_views/test_base.py
+git checkout 4a80d0f22021bb0af842f038eba45958e9576bec tests/check_framework/test_urls.py tests/check_framework/urls/bad_error_handlers.py tests/check_framework/urls/good_error_handlers.py tests/generic_views/test_base.py
+rm -f tests/check_framework/urls/bad_class_based_error_handlers.py tests/check_framework/urls/bad_function_based_error_handlers.py tests/check_framework/urls/good_class_based_error_handlers.py tests/check_framework/urls/good_function_based_error_handlers.py

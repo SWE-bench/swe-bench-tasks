@@ -15,7 +15,8 @@ git -c core.fileMode=false diff cfb4845f061ed6e81e9b5a1873d1c08d98c4b5a9
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python setup.py install
-git checkout cfb4845f061ed6e81e9b5a1873d1c08d98c4b5a9 tests/admin_scripts/configured_settings_manage.py tests/admin_scripts/tests.py
+git checkout cfb4845f061ed6e81e9b5a1873d1c08d98c4b5a9 tests/admin_scripts/tests.py
+rm -f tests/admin_scripts/configured_settings_manage.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/admin_scripts/configured_settings_manage.py b/tests/admin_scripts/configured_settings_manage.py
 new file mode 100644
@@ -74,4 +75,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 admin_scripts.configured_settings_manage admin_scripts.tests
 : '>>>>> End Test Output'
-git checkout cfb4845f061ed6e81e9b5a1873d1c08d98c4b5a9 tests/admin_scripts/configured_settings_manage.py tests/admin_scripts/tests.py
+git checkout cfb4845f061ed6e81e9b5a1873d1c08d98c4b5a9 tests/admin_scripts/tests.py
+rm -f tests/admin_scripts/configured_settings_manage.py

@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 24b9f5082344a127147266dd52d5d2dcd1c9cb44
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 24b9f5082344a127147266dd52d5d2dcd1c9cb44 tests/migrations/test_commands.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/__init__.py tests/migrations/test_fake_initial_case_insensitive/initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/initial/__init__.py
+git checkout 24b9f5082344a127147266dd52d5d2dcd1c9cb44 tests/migrations/test_commands.py
+rm -f tests/migrations/test_fake_initial_case_insensitive/fake_initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/__init__.py tests/migrations/test_fake_initial_case_insensitive/initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/initial/__init__.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
 --- a/tests/migrations/test_commands.py
@@ -132,4 +133,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 migrations.test_commands migrations.test_fake_initial_case_insensitive.fake_initial.0001_initial migrations.test_fake_initial_case_insensitive.fake_initial.__init__ migrations.test_fake_initial_case_insensitive.initial.0001_initial migrations.test_fake_initial_case_insensitive.initial.__init__
 : '>>>>> End Test Output'
-git checkout 24b9f5082344a127147266dd52d5d2dcd1c9cb44 tests/migrations/test_commands.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/__init__.py tests/migrations/test_fake_initial_case_insensitive/initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/initial/__init__.py
+git checkout 24b9f5082344a127147266dd52d5d2dcd1c9cb44 tests/migrations/test_commands.py
+rm -f tests/migrations/test_fake_initial_case_insensitive/fake_initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/fake_initial/__init__.py tests/migrations/test_fake_initial_case_insensitive/initial/0001_initial.py tests/migrations/test_fake_initial_case_insensitive/initial/__init__.py

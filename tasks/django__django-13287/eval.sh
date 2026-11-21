@@ -15,7 +15,8 @@ git -c core.fileMode=false diff ad827ddaef05069a1385cc2d26fd2ab9c6ba1f4d
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout ad827ddaef05069a1385cc2d26fd2ab9c6ba1f4d tests/apps/explicit_default_config_empty_apps/__init__.py tests/apps/explicit_default_config_empty_apps/apps.py tests/apps/explicit_default_config_without_apps/__init__.py tests/apps/tests.py
+git checkout ad827ddaef05069a1385cc2d26fd2ab9c6ba1f4d tests/apps/tests.py
+rm -f tests/apps/explicit_default_config_empty_apps/__init__.py tests/apps/explicit_default_config_empty_apps/apps.py tests/apps/explicit_default_config_without_apps/__init__.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/apps/explicit_default_config_empty_apps/__init__.py b/tests/apps/explicit_default_config_empty_apps/__init__.py
 new file mode 100644
@@ -117,4 +118,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 apps.explicit_default_config_empty_apps.__init__ apps.explicit_default_config_empty_apps.apps apps.explicit_default_config_without_apps.__init__ apps.tests
 : '>>>>> End Test Output'
-git checkout ad827ddaef05069a1385cc2d26fd2ab9c6ba1f4d tests/apps/explicit_default_config_empty_apps/__init__.py tests/apps/explicit_default_config_empty_apps/apps.py tests/apps/explicit_default_config_without_apps/__init__.py tests/apps/tests.py
+git checkout ad827ddaef05069a1385cc2d26fd2ab9c6ba1f4d tests/apps/tests.py
+rm -f tests/apps/explicit_default_config_empty_apps/__init__.py tests/apps/explicit_default_config_empty_apps/apps.py tests/apps/explicit_default_config_without_apps/__init__.py

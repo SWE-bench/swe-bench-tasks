@@ -11,7 +11,8 @@ git -c core.fileMode=false diff fcd44b889f36c4be87910745614a0a4c88d7a3d8
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout fcd44b889f36c4be87910745614a0a4c88d7a3d8 tests/check_framework/test_urls.py tests/check_framework/urls/cbv_as_view.py tests/urlpatterns/tests.py
+git checkout fcd44b889f36c4be87910745614a0a4c88d7a3d8 tests/check_framework/test_urls.py tests/urlpatterns/tests.py
+rm -f tests/check_framework/urls/cbv_as_view.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/check_framework/test_urls.py b/tests/check_framework/test_urls.py
 --- a/tests/check_framework/test_urls.py
@@ -93,4 +94,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 check_framework.test_urls check_framework.urls.cbv_as_view urlpatterns.tests
 : '>>>>> End Test Output'
-git checkout fcd44b889f36c4be87910745614a0a4c88d7a3d8 tests/check_framework/test_urls.py tests/check_framework/urls/cbv_as_view.py tests/urlpatterns/tests.py
+git checkout fcd44b889f36c4be87910745614a0a4c88d7a3d8 tests/check_framework/test_urls.py tests/urlpatterns/tests.py
+rm -f tests/check_framework/urls/cbv_as_view.py

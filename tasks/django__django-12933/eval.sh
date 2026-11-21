@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 270072c4c231acd72a03534357a4aa59010e76ff
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 270072c4c231acd72a03534357a4aa59010e76ff tests/sessions_tests/no_clear_expired.py tests/sessions_tests/tests.py
+git checkout 270072c4c231acd72a03534357a4aa59010e76ff tests/sessions_tests/tests.py
+rm -f tests/sessions_tests/no_clear_expired.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/sessions_tests/no_clear_expired.py b/tests/sessions_tests/no_clear_expired.py
 new file mode 100644
@@ -51,4 +52,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 sessions_tests.no_clear_expired sessions_tests.tests
 : '>>>>> End Test Output'
-git checkout 270072c4c231acd72a03534357a4aa59010e76ff tests/sessions_tests/no_clear_expired.py tests/sessions_tests/tests.py
+git checkout 270072c4c231acd72a03534357a4aa59010e76ff tests/sessions_tests/tests.py
+rm -f tests/sessions_tests/no_clear_expired.py

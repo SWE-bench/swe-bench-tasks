@@ -11,7 +11,8 @@ git -c core.fileMode=false diff d5a0ba0838b9058d815e5376241c96b0eb48e889
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout d5a0ba0838b9058d815e5376241c96b0eb48e889 test/core/parser/grammar/grammar_base_test.py test/core/parser/grammar/grammar_ref_test.py test/core/parser/match_algorithms_test.py
+git checkout d5a0ba0838b9058d815e5376241c96b0eb48e889 test/core/parser/grammar/grammar_base_test.py test/core/parser/grammar/grammar_ref_test.py
+rm -f test/core/parser/match_algorithms_test.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/test/core/parser/grammar/grammar_base_test.py b/test/core/parser/grammar/grammar_base_test.py
 --- a/test/core/parser/grammar/grammar_base_test.py
@@ -431,4 +432,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA test/core/parser/grammar/grammar_base_test.py test/core/parser/grammar/grammar_ref_test.py test/core/parser/match_algorithms_test.py
 : '>>>>> End Test Output'
-git checkout d5a0ba0838b9058d815e5376241c96b0eb48e889 test/core/parser/grammar/grammar_base_test.py test/core/parser/grammar/grammar_ref_test.py test/core/parser/match_algorithms_test.py
+git checkout d5a0ba0838b9058d815e5376241c96b0eb48e889 test/core/parser/grammar/grammar_base_test.py test/core/parser/grammar/grammar_ref_test.py
+rm -f test/core/parser/match_algorithms_test.py

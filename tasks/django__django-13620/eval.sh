@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 966b5b49b6521483f1c90b4499c4c80e80136de3
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 966b5b49b6521483f1c90b4499c4c80e80136de3 tests/user_commands/management/commands/mutually_exclusive_required.py tests/user_commands/management/commands/required_list_option.py tests/user_commands/tests.py
+git checkout 966b5b49b6521483f1c90b4499c4c80e80136de3 tests/user_commands/management/commands/mutually_exclusive_required.py tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/required_list_option.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/user_commands/management/commands/mutually_exclusive_required.py b/tests/user_commands/management/commands/mutually_exclusive_required.py
 --- a/tests/user_commands/management/commands/mutually_exclusive_required.py
@@ -86,4 +87,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 user_commands.management.commands.mutually_exclusive_required user_commands.management.commands.required_list_option user_commands.tests
 : '>>>>> End Test Output'
-git checkout 966b5b49b6521483f1c90b4499c4c80e80136de3 tests/user_commands/management/commands/mutually_exclusive_required.py tests/user_commands/management/commands/required_list_option.py tests/user_commands/tests.py
+git checkout 966b5b49b6521483f1c90b4499c4c80e80136de3 tests/user_commands/management/commands/mutually_exclusive_required.py tests/user_commands/tests.py
+rm -f tests/user_commands/management/commands/required_list_option.py

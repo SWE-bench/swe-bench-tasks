@@ -11,7 +11,8 @@ git -c core.fileMode=false diff ac2b7599d212af7d04649959ce6926c63c3133fa
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout ac2b7599d212af7d04649959ce6926c63c3133fa tests/roots/test-ext-inheritance_diagram/conf.py tests/roots/test-ext-inheritance_diagram/index.rst tests/roots/test-ext-inheritance_diagram/subdir/index.rst tests/roots/test-ext-inheritance_diagram/subdir/other.py tests/roots/test-ext-inheritance_diagram/test.py tests/test_ext_inheritance_diagram.py
+git checkout ac2b7599d212af7d04649959ce6926c63c3133fa tests/roots/test-ext-inheritance_diagram/conf.py tests/roots/test-ext-inheritance_diagram/index.rst tests/roots/test-ext-inheritance_diagram/test.py tests/test_ext_inheritance_diagram.py
+rm -f tests/roots/test-ext-inheritance_diagram/subdir/index.rst tests/roots/test-ext-inheritance_diagram/subdir/other.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-ext-inheritance_diagram/conf.py b/tests/roots/test-ext-inheritance_diagram/conf.py
 --- a/tests/roots/test-ext-inheritance_diagram/conf.py
@@ -230,4 +231,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-ext-inheritance_diagram/conf.py tests/roots/test-ext-inheritance_diagram/index.rst tests/roots/test-ext-inheritance_diagram/subdir/index.rst tests/roots/test-ext-inheritance_diagram/subdir/other.py tests/roots/test-ext-inheritance_diagram/test.py tests/test_ext_inheritance_diagram.py
 : '>>>>> End Test Output'
-git checkout ac2b7599d212af7d04649959ce6926c63c3133fa tests/roots/test-ext-inheritance_diagram/conf.py tests/roots/test-ext-inheritance_diagram/index.rst tests/roots/test-ext-inheritance_diagram/subdir/index.rst tests/roots/test-ext-inheritance_diagram/subdir/other.py tests/roots/test-ext-inheritance_diagram/test.py tests/test_ext_inheritance_diagram.py
+git checkout ac2b7599d212af7d04649959ce6926c63c3133fa tests/roots/test-ext-inheritance_diagram/conf.py tests/roots/test-ext-inheritance_diagram/index.rst tests/roots/test-ext-inheritance_diagram/test.py tests/test_ext_inheritance_diagram.py
+rm -f tests/roots/test-ext-inheritance_diagram/subdir/index.rst tests/roots/test-ext-inheritance_diagram/subdir/other.py

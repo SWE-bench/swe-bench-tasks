@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 74b8046b46c70b201fe118cc36b29ce6c0d3b9ec
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 74b8046b46c70b201fe118cc36b29ce6c0d3b9ec sympy/core/tests/test_arit.py sympy/core/tests/test_parameters.py
+git checkout 74b8046b46c70b201fe118cc36b29ce6c0d3b9ec sympy/core/tests/test_arit.py sympy/core/tests/test_evaluate.py
+rm -f sympy/core/tests/test_parameters.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py
 --- a/sympy/core/tests/test_arit.py
@@ -43,4 +44,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 PYTHONWARNINGS='ignore::UserWarning,ignore::SyntaxWarning' bin/test -C --verbose sympy/core/tests/test_arit.py sympy/core/tests/test_parameters.py
 : '>>>>> End Test Output'
-git checkout 74b8046b46c70b201fe118cc36b29ce6c0d3b9ec sympy/core/tests/test_arit.py sympy/core/tests/test_parameters.py
+git checkout 74b8046b46c70b201fe118cc36b29ce6c0d3b9ec sympy/core/tests/test_arit.py sympy/core/tests/test_evaluate.py
+rm -f sympy/core/tests/test_parameters.py

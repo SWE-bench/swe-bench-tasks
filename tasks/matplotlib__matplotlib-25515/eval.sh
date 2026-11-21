@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 3218d1f9d3242d29e7d789fd4d27bffcc7da64a4
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 3218d1f9d3242d29e7d789fd4d27bffcc7da64a4 lib/matplotlib/tests/test_sphinxext.py lib/matplotlib/tests/tinypages/conf.py lib/matplotlib/tests/tinypages/index.rst lib/matplotlib/tests/tinypages/nestedpage/index.rst lib/matplotlib/tests/tinypages/nestedpage2/index.rst
+git checkout 3218d1f9d3242d29e7d789fd4d27bffcc7da64a4 lib/matplotlib/tests/test_sphinxext.py lib/matplotlib/tests/tinypages/conf.py lib/matplotlib/tests/tinypages/index.rst
+rm -f lib/matplotlib/tests/tinypages/nestedpage/index.rst lib/matplotlib/tests/tinypages/nestedpage2/index.rst
 git apply -v - <<'EOF_114329324912'
 diff --git a/lib/matplotlib/tests/test_sphinxext.py b/lib/matplotlib/tests/test_sphinxext.py
 --- a/lib/matplotlib/tests/test_sphinxext.py
@@ -147,4 +148,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 pytest -rA lib/matplotlib/tests/test_sphinxext.py lib/matplotlib/tests/tinypages/conf.py lib/matplotlib/tests/tinypages/index.rst lib/matplotlib/tests/tinypages/nestedpage/index.rst lib/matplotlib/tests/tinypages/nestedpage2/index.rst
 : '>>>>> End Test Output'
-git checkout 3218d1f9d3242d29e7d789fd4d27bffcc7da64a4 lib/matplotlib/tests/test_sphinxext.py lib/matplotlib/tests/tinypages/conf.py lib/matplotlib/tests/tinypages/index.rst lib/matplotlib/tests/tinypages/nestedpage/index.rst lib/matplotlib/tests/tinypages/nestedpage2/index.rst
+git checkout 3218d1f9d3242d29e7d789fd4d27bffcc7da64a4 lib/matplotlib/tests/test_sphinxext.py lib/matplotlib/tests/tinypages/conf.py lib/matplotlib/tests/tinypages/index.rst
+rm -f lib/matplotlib/tests/tinypages/nestedpage/index.rst lib/matplotlib/tests/tinypages/nestedpage2/index.rst

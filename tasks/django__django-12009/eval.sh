@@ -15,7 +15,8 @@ git -c core.fileMode=false diff 82a88d2f48e13ef5d472741d5ed1c183230cfe4c
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout 82a88d2f48e13ef5d472741d5ed1c183230cfe4c tests/admin_scripts/test_django_admin_py.py tests/admin_scripts/tests.py
+git checkout 82a88d2f48e13ef5d472741d5ed1c183230cfe4c tests/admin_scripts/tests.py
+rm -f tests/admin_scripts/test_django_admin_py.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/admin_scripts/test_django_admin_py.py b/tests/admin_scripts/test_django_admin_py.py
 new file mode 100644
@@ -163,4 +164,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 admin_scripts.test_django_admin_py admin_scripts.tests
 : '>>>>> End Test Output'
-git checkout 82a88d2f48e13ef5d472741d5ed1c183230cfe4c tests/admin_scripts/test_django_admin_py.py tests/admin_scripts/tests.py
+git checkout 82a88d2f48e13ef5d472741d5ed1c183230cfe4c tests/admin_scripts/tests.py
+rm -f tests/admin_scripts/test_django_admin_py.py

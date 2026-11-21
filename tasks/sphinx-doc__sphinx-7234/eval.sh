@@ -11,7 +11,8 @@ git -c core.fileMode=false diff 0e89979355c6c88adb960a7272c633d5afd34e67
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .[test]
-git checkout 0e89979355c6c88adb960a7272c633d5afd34e67 tests/roots/test-ext-autodoc/target/singledispatch.py tests/roots/test-ext-autodoc/target/singledispatchmethod.py tests/test_autodoc.py
+git checkout 0e89979355c6c88adb960a7272c633d5afd34e67 tests/test_autodoc.py
+rm -f tests/roots/test-ext-autodoc/target/singledispatch.py tests/roots/test-ext-autodoc/target/singledispatchmethod.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/roots/test-ext-autodoc/target/singledispatch.py b/tests/roots/test-ext-autodoc/target/singledispatch.py
 new file mode 100644
@@ -120,4 +121,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 tox --current-env -epy39 -v -- tests/roots/test-ext-autodoc/target/singledispatch.py tests/roots/test-ext-autodoc/target/singledispatchmethod.py tests/test_autodoc.py
 : '>>>>> End Test Output'
-git checkout 0e89979355c6c88adb960a7272c633d5afd34e67 tests/roots/test-ext-autodoc/target/singledispatch.py tests/roots/test-ext-autodoc/target/singledispatchmethod.py tests/test_autodoc.py
+git checkout 0e89979355c6c88adb960a7272c633d5afd34e67 tests/test_autodoc.py
+rm -f tests/roots/test-ext-autodoc/target/singledispatch.py tests/roots/test-ext-autodoc/target/singledispatchmethod.py

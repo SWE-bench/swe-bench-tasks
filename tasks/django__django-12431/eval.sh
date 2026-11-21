@@ -15,7 +15,8 @@ git -c core.fileMode=false diff e3f6e18513224c8ad081e5a19da641f49b0b43da
 source /opt/miniconda3/bin/activate
 conda activate testbed
 python -m pip install -e .
-git checkout e3f6e18513224c8ad081e5a19da641f49b0b43da tests/builtin_server/tests.py tests/builtin_server/urls.py tests/builtin_server/views.py tests/responses/test_fileresponse.py
+git checkout e3f6e18513224c8ad081e5a19da641f49b0b43da tests/builtin_server/tests.py tests/responses/test_fileresponse.py
+rm -f tests/builtin_server/urls.py tests/builtin_server/views.py
 git apply -v - <<'EOF_114329324912'
 diff --git a/tests/builtin_server/tests.py b/tests/builtin_server/tests.py
 --- a/tests/builtin_server/tests.py
@@ -153,4 +154,5 @@ EOF_114329324912
 : '>>>>> Start Test Output'
 ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 builtin_server.tests builtin_server.urls builtin_server.views responses.test_fileresponse
 : '>>>>> End Test Output'
-git checkout e3f6e18513224c8ad081e5a19da641f49b0b43da tests/builtin_server/tests.py tests/builtin_server/urls.py tests/builtin_server/views.py tests/responses/test_fileresponse.py
+git checkout e3f6e18513224c8ad081e5a19da641f49b0b43da tests/builtin_server/tests.py tests/responses/test_fileresponse.py
+rm -f tests/builtin_server/urls.py tests/builtin_server/views.py
