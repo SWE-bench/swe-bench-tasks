@@ -268,6 +268,16 @@ diff --git a/tests/utils_tests/test_html.py b/tests/utils_tests/test_html.py
              ('<adf>a', 'a'),
              ('</adf>a', 'a'),
              ('<asdf><asdf>e', 'e'),
+@@ -243,4 +245,9 @@
+     def test_urlize(self):
++        escaped_url = escape("http://example.com/?q='test'")
+         tests = (
++            (
++                escaped_url,
++                '<a href="http://example.com/?q=%27test%27">{}</a>'.format(escaped_url),
++            ),
+             (
+                 'Search for google.com/?q=! and see.',
 diff --git a/tests/view_tests/tests/test_csrf.py b/tests/view_tests/tests/test_csrf.py
 --- a/tests/view_tests/tests/test_csrf.py
 +++ b/tests/view_tests/tests/test_csrf.py
