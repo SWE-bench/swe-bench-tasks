@@ -16,13 +16,15 @@ git apply -v - <<'EOF_114329324912'
 diff --git a/astropy/utils/tests/test_introspection.py b/astropy/utils/tests/test_introspection.py
 --- a/astropy/utils/tests/test_introspection.py
 +++ b/astropy/utils/tests/test_introspection.py
-@@ -67,7 +67,7 @@ def test_minversion():
+@@ -67,7 +67,9 @@ def test_minversion():
      from types import ModuleType
      test_module = ModuleType(str("test_module"))
      test_module.__version__ = '0.12.2'
 -    good_versions = ['0.12', '0.12.1', '0.12.0.dev']
-+    good_versions = ['0.12', '0.12.1', '0.12.0.dev', '0.12dev']
++    good_versions = ['0.12', '0.12.1', '0.12.0.dev', '0.12dev', '0.12.2.dev']
      bad_versions = ['1', '1.2rc1']
++    assert minversion(test_module, '0.12.2', inclusive=True)
++    assert not minversion(test_module, '0.12.2', inclusive=False)
      for version in good_versions:
          assert minversion(test_module, version)
 
