@@ -927,7 +927,8 @@ SPECS_PVLIB = {
     k: {
         "python": "3.9",
         "install": "python -m pip install -e .[all]",
-        "packages": "pandas scipy",
+        # pvlib adopted NumPy 2 in pvlib-python#2027 (2024-05), after every task commit
+        "packages": "pandas scipy 'numpy<2'",
         "pip_packages": ["jupyter", "ipython", "matplotlib", "pytest", "flake8"],
         "test_cmd": TEST_PYTEST,
     }

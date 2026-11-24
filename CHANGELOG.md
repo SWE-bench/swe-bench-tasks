@@ -1,5 +1,10 @@
 # Changelog
 
+- **[2026-11-19] Pin NumPy below 2 for pvlib**: `SPECS_PVLIB` installed `pandas scipy`
+  unpinned, which resolves NumPy 2.0.2 on Python 3.9. Every pvlib task commit predates
+  NumPy 2 support (pvlib-python#2027), so importing pvlib fails on `np.Inf` during test
+  collection and gold patches grade as unresolved; pinned `'numpy<2'` (resolves 1.26.4).
+  All 63 `pvlib__pvlib-python-*` instances (SWE-bench#681, #274).
 - **[2026-08-13] Remove future commits reliably when cloning**: the tag prune ran as
   `git tag -l | while read`, and a git call in the loop body ate the piped stdin so it
   stopped after ~29 tags; switched to a `for` loop and added `git gc --prune=now` so
