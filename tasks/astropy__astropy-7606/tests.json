@@ -35,6 +35,7 @@
     "astropy/units/tests/test_units.py::test_complex_compose",
     "astropy/units/tests/test_units.py::test_equiv_compose",
     "astropy/units/tests/test_units.py::test_empty_compose",
+    "astropy/units/tests/test_units.py::test_compose_roundtrip[unit0]",
     "astropy/units/tests/test_units.py::test_compose_roundtrip[%]",
     "astropy/units/tests/test_units.py::test_compose_roundtrip[A]",
     "astropy/units/tests/test_units.py::test_compose_roundtrip[AU]",
