@@ -31,14 +31,14 @@ RUN conda config --append channels conda-forge
 
 RUN adduser --disabled-password --gecos 'dog' nonroot
 
-RUN <<EOF_06382fa9cee6
+RUN <<EOF_4b283fee4c1a
 #!/bin/bash
 set -euxo pipefail
 source /opt/miniconda3/bin/activate
-conda create -n testbed python=3.9 pandas scipy -y
+conda create -n testbed python=3.9 pandas scipy 'numpy<2' -y
 conda activate testbed
 python -m pip install jupyter ipython matplotlib pytest flake8
-EOF_06382fa9cee6
+EOF_4b283fee4c1a
 
 
 RUN echo "source /opt/miniconda3/etc/profile.d/conda.sh && conda activate testbed" > /root/.bashrc
